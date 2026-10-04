@@ -1,6 +1,7 @@
 import "fake-indexeddb/auto";
-import { beforeEach, expect, it, vi } from "vitest";
+import { afterAll, beforeEach, expect, it, vi } from "vitest";
 import { db } from "./db";
+import { createTestDatabase } from "./storage/testDatabase";
 import { DEFAULT_SETTINGS, loadSettings, saveSetting } from "./settings";
 
 const mocks = vi.hoisted(() => ({
@@ -39,7 +40,9 @@ vi.mock("./shortcuts", () => ({
 
 import { resetPreferences } from "./resetPreferences";
 
+const storage = createTestDatabase();
 beforeEach(async () => {
+  vi.spyOn(db.connection, "request").mockImplementation(storage.request);
   await db.settings.clear();
 
   for (const mock of Object.values(mocks)) {
@@ -114,4 +117,9 @@ it("can reset on a backend without global shortcuts without claiming a native bi
 
   expect((await loadSettings()).popoutRevealShortcut).toBe(DEFAULT_SETTINGS.popoutRevealShortcut);
   expect(mocks.registerReveal).not.toHaveBeenCalled();
+});
+
+afterAll(() => {
+  vi.restoreAllMocks();
+  storage.sqlite.close();
 });

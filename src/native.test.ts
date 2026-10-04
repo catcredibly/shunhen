@@ -1,6 +1,7 @@
 import "fake-indexeddb/auto";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { db } from "./db";
+import { createTestDatabase } from "./storage/testDatabase";
 import { loadSettings, saveSetting } from "./settings";
 import {
   setPopoutDocked,
@@ -33,7 +34,9 @@ const native = vi.hoisted(() => ({
   ticket: null as { generation: number; sequence: number } | null,
 }));
 vi.mock("@tauri-apps/api/core", () => ({ isTauri: () => true, invoke: native.invoke }));
+const storage = createTestDatabase();
 beforeEach(async () => {
+  vi.spyOn(db.connection, "request").mockImplementation(storage.request);
   await db.settings.clear();
   native.failPosition = false;
   native.ticket = null;
@@ -52,12 +55,12 @@ beforeEach(async () => {
     requested: true,
     workArea: { x: 0, y: 0, width: 1920, height: 1040 },
   });
-  let tail = Promise.resolve();
+  const lockTails = new Map<string, Promise<unknown>>();
   vi.stubGlobal("navigator", {
     locks: {
-      request: (_name: string, operation: () => Promise<void>) => {
-        const result = tail.catch(() => undefined).then(operation);
-        tail = result;
+      request: (name: string, operation: () => Promise<unknown>) => {
+        const result = (lockTails.get(name) ?? Promise.resolve()).catch(() => undefined).then(operation);
+        lockTails.set(name, result);
         return result;
       },
     },
@@ -299,4 +302,10 @@ it("normal Auto-hide ignores a timeout from an older reveal", async () => {
   await saveSetting("popoutDockAutoHide", true);
   await hideTimerAutomatically({ generation: 0, revealSequence: -1 });
   expect(native.invoke.mock.calls.some(([command]) => command === "show_timer_auto_hide_tab")).toBe(false);
+});
+
+afterAll(() => {
+  vi.restoreAllMocks();
+  vi.unstubAllGlobals();
+  storage.sqlite.close();
 });
