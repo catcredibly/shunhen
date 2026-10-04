@@ -684,6 +684,21 @@ const zhCN: Record<keyof typeof en, string> = {
   "Change end day": "更改结束日期",
   "Same day": "同一天",
   "Previous day": "前一天",
+  "Unexpected backup field.": "备份包含不支持的字段。",
+  "Invalid Settings object.": "备份中的设置对象无效。",
+  "Invalid Session identities.": "备份中的专注记录来源标识无效。",
+  "The legacy backup data structure is incomplete.": "旧版备份的数据结构不完整。",
+  "Unsupported legacy Session timing version.": "不支持此旧版专注记录的计时格式。",
+  "Invalid legacy Session timing.": "旧版专注记录的时间数据无效。",
+  "The previous SQLite backup structure is incomplete.": "先前 SQLite 备份的数据结构不完整。",
+  "Invalid Session identity or manual state.": "专注记录的来源标识或手动状态无效。",
+  "Setting references missing Academic Year.": "设置引用了不存在的学年。",
+  "Ambiguous Academic Year match.": "存在多个无法区分的学年匹配项。",
+  "Ambiguous Subject match.": "存在多个无法区分的科目匹配项。",
+  "Conflicting Session identities in import.": "导入文件中相同的专注记录标识对应不同内容。",
+  "Session identity cannot be changed.": "不能更改专注记录的来源标识。",
+  "Duplicate - skipped": "重复记录 - 已跳过",
+  "Session ID conflicts with an existing record.": "专注记录标识与现有记录的内容冲突。",
 };
 
 export default zhCN;

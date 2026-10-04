@@ -685,6 +685,21 @@ const zhTW: Record<keyof typeof en, string> = {
   "Change end day": "變更結束日期",
   "Same day": "同一天",
   "Previous day": "前一天",
+  "Unexpected backup field.": "備份包含不支援的欄位。",
+  "Invalid Settings object.": "備份中的設定物件無效。",
+  "Invalid Session identities.": "備份中的專注記錄來源識別碼無效。",
+  "The legacy backup data structure is incomplete.": "舊版備份的資料結構不完整。",
+  "Unsupported legacy Session timing version.": "不支援此舊版專注記錄的計時格式。",
+  "Invalid legacy Session timing.": "舊版專注記錄的時間資料無效。",
+  "The previous SQLite backup structure is incomplete.": "先前 SQLite 備份的資料結構不完整。",
+  "Invalid Session identity or manual state.": "專注記錄的來源識別碼或手動狀態無效。",
+  "Setting references missing Academic Year.": "設定參照了不存在的學年。",
+  "Ambiguous Academic Year match.": "存在多個無法區分的學年符合項目。",
+  "Ambiguous Subject match.": "存在多個無法區分的科目符合項目。",
+  "Conflicting Session identities in import.": "匯入檔案中相同的專注記錄識別碼對應不同內容。",
+  "Session identity cannot be changed.": "不能變更專注記錄的來源識別碼。",
+  "Duplicate - skipped": "重複記錄 - 已略過",
+  "Session ID conflicts with an existing record.": "專注記錄識別碼與現有記錄的內容衝突。",
 };
 
 export default zhTW;

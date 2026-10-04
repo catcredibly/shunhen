@@ -1,11 +1,29 @@
 import type { FocusSession } from "../types";
 
+import type { NormalizedData, StoredYear, StoredSubject, StoredSession } from "../storage/model";
+
 export type FocusBackup = {
-  format: "focus-backup";
+  format: "shunhen-backup";
   formatVersion: 2;
-  exportedAt: string;
+  exportedAt?: string;
   appVersion: string;
-  data: import("../storage/model").NormalizedData;
+  academicYears: StoredYear[];
+  subjects: StoredSubject[];
+  sessions: (Omit<StoredSession, "sourceIdentity"> & { sourceIdentity?: string })[];
+  settings: Record<string, string>;
+  /** Read compatibility for earlier v2 files; never emitted by current exports. */
+  sessionIdentities?: Record<string, string>;
+};
+
+/** Validated internal import model shared by legacy and logical v2 parsers. */
+export type NormalizedBackup = {
+  format: "shunhen-backup";
+  formatVersion: 2;
+  exportedAt?: string;
+  appVersion: string;
+  data: NormalizedData;
+  unidentifiedSessionIds?: number[];
+  repeatedSessions?: number;
 };
 
 export type ConflictPolicy = "keep-existing" | "use-imported";
@@ -22,9 +40,10 @@ export type ImportSummary = {
 };
 
 export type BackupAnalysis = {
-  backup: FocusBackup;
+  backup: NormalizedBackup;
   duplicates: number;
   conflicts: number;
+  ambiguities?: string[];
 };
 
 export type CsvMapping = Partial<
@@ -52,9 +71,14 @@ export type CsvPreviewRow = {
   subjectName?: string;
   errors: string[];
   duplicate: boolean;
+  duplicateKind?: "identity" | "fingerprint";
+  conflict?: boolean;
 };
 
 export type CsvPreview = {
+  sourceText: string;
+  destinationYearId?: string;
+  identityConflict?: boolean;
   headers: string[];
   rows: CsvPreviewRow[];
   mapping: CsvMapping;

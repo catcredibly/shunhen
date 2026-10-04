@@ -700,6 +700,21 @@ const en = {
   "Change end day": "Change end day",
   "Same day": "Same day",
   "Previous day": "Previous day",
+  "Unexpected backup field.": "Unexpected backup field.",
+  "Invalid Settings object.": "Invalid Settings object.",
+  "Invalid Session identities.": "Invalid Session identities.",
+  "The legacy backup data structure is incomplete.": "The legacy backup data structure is incomplete.",
+  "Unsupported legacy Session timing version.": "Unsupported legacy Session timing version.",
+  "Invalid legacy Session timing.": "Invalid legacy Session timing.",
+  "The previous SQLite backup structure is incomplete.": "The previous SQLite backup structure is incomplete.",
+  "Invalid Session identity or manual state.": "Invalid Session identity or manual state.",
+  "Setting references missing Academic Year.": "Setting references missing Academic Year.",
+  "Ambiguous Academic Year match.": "Ambiguous Academic Year match.",
+  "Ambiguous Subject match.": "Ambiguous Subject match.",
+  "Conflicting Session identities in import.": "Conflicting Session identities in import.",
+  "Session identity cannot be changed.": "Session identity cannot be changed.",
+  "Duplicate - skipped": "Duplicate - skipped",
+  "Session ID conflicts with an existing record.": "Session ID conflicts with an existing record.",
 } as const;
 
 export default en;

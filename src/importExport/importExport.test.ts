@@ -3,6 +3,7 @@ import { createTestDatabase } from "../storage/testDatabase";
 import { createSession } from "../data";
 import { createBackup, validateBackup, restoreBackup } from "./backup";
 import { exportSessionsCsv, previewCsv, importCsvPreview, parseCsv, escapeCsv } from "./csv";
+import { logicalBackup } from "./backupFormat";
 import { readNormalized } from "../storage/migration";
 async function seeded() {
   const test = createTestDatabase();
@@ -21,7 +22,7 @@ it("exports normalized backups and remaps all IDs/defaults into an existing data
   const source = await seeded(),
     target = await seeded();
   await target.database.academicYears.update(target.year.id, { name: "Unrelated" });
-  const backup = await createBackup(source.database);
+  const backup = validateBackup(await createBackup(source.database));
   expect(backup.formatVersion).toBe(2);
   expect(backup.data.subjects[0]).toMatchObject({ id: 1, academicYearId: 1, colorId: 5 });
   expect(backup.data.sessions[0]).toMatchObject({ id: 1, subjectId: 1, startedAt: 1, elapsedSeconds: 5, pauses: [] });
@@ -92,10 +93,10 @@ it("imports legacy backup relationships, palette colors, archive intent and prec
 });
 it("rejects corrupt backups and rolls back a failed replace", async () => {
   const source = await seeded(),
-    backup = await createBackup(source.database);
-  expect(() => validateBackup({ ...backup, formatVersion: 99 })).toThrow("Unsupported");
+    backup = validateBackup(await createBackup(source.database));
+  expect(() => validateBackup({ format: "shunhen-backup", formatVersion: 99 })).toThrow("Unsupported");
   expect(() =>
-    validateBackup({ ...backup, data: { ...backup.data, sessions: [{ ...backup.data.sessions[0], subjectId: 999 }] } }),
+    validateBackup({ ...logicalBackup(backup), sessions: [{ ...logicalBackup(backup).sessions[0], subjectId: 999 }] }),
   ).toThrow("relationship");
   source.sqlite.exec("CREATE TRIGGER fail_subject BEFORE INSERT ON subjects BEGIN SELECT RAISE(ABORT,'failed'); END");
   await expect(restoreBackup(backup, "replace", "use-imported", source.database)).rejects.toThrow("failed");
@@ -121,7 +122,7 @@ it("retains distinct source sessions at identical second-level timing", async ()
   const source = await seeded(),
     { database, sqlite } = createTestDatabase();
   const row = (await source.database.sessions.toArray())[0];
-  const csv = exportSessionsCsv([row, { ...row, id: "2", sourceIdentity: "different-source:2" }]);
+  const csv = exportSessionsCsv([row, { ...row, id: "2", sourceIdentity: "session:different-source:2" }]);
   expect(
     (await importCsvPreview(await previewCsv(csv, undefined, undefined, database), database)).sessionsImported,
   ).toBe(2);
@@ -148,25 +149,25 @@ it("keeps legacy Shunhen CSV and mapped generic CSV importable", async () => {
 
 it("preserves distinct parents with identical names and explicit numeric source identities", async () => {
   const source = await seeded(),
-    backup = await createBackup(source.database),
+    backup = validateBackup(await createBackup(source.database)),
     { database, sqlite } = createTestDatabase();
   backup.data.academicYears.push({ ...backup.data.academicYears[0], id: 2 });
   backup.data.subjects.push({ ...backup.data.subjects[0], id: 2, academicYearId: 2 });
-  backup.data.sessions.push({ ...backup.data.sessions[0], id: 2, subjectId: 2, sourceIdentity: "123" });
+  backup.data.sessions.push({ ...backup.data.sessions[0], id: 2, subjectId: 2, sourceIdentity: "session:123" });
   const summary = await restoreBackup(backup, "replace", "use-imported", database);
   expect(summary.academicYearsCreated).toBe(2);
   expect(summary.subjectsCreated).toBe(2);
   expect(await database.sessions.count()).toBe(2);
-  const first = await database.sessions.getBySource("123");
+  const first = await database.sessions.getBySource("session:123");
   expect(first).toBeDefined();
-  await restoreBackup(backup, "merge", "keep-existing", database);
+  await expect(restoreBackup(backup, "merge", "keep-existing", database)).rejects.toThrow("Ambiguous Academic Year");
   expect(await database.sessions.count()).toBe(2);
   source.sqlite.close();
   sqlite.close();
 });
 it("retains pause timing on normalized manual imports and clears deleted Subject defaults", async () => {
   const source = await seeded(),
-    backup = await createBackup(source.database),
+    backup = validateBackup(await createBackup(source.database)),
     { database, sqlite } = createTestDatabase();
   backup.data.sessions[0].pauses = [{ offsetSeconds: 1, durationSeconds: 2 }];
   await restoreBackup(backup, "replace", "use-imported", database);
@@ -176,7 +177,7 @@ it("retains pause timing on normalized manual imports and clears deleted Subject
   await database.subjects.delete(String(data.subjects[0].id));
   expect((await database.settings.get("defaultSubjectId"))?.value).toBe("");
   expect((await database.settings.get("lastSubjectId"))?.value).toBe("");
-  expect((await createBackup(database)).data.sessions).toEqual([]);
+  expect((await createBackup(database)).sessions).toEqual([]);
   source.sqlite.close();
   sqlite.close();
 });

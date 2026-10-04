@@ -1,7 +1,8 @@
 import type { AcademicYear, Subject, FocusSession, AppSetting } from "../types";
 import type { FocusDatabase } from "../db";
+import { newSourceIdentity, requireSourceIdentity } from "./identity";
 import { noteMetrics } from "../notes";
-import { COLOR_PALETTE, colorId, normalizeTiming } from "./model";
+import { COLOR_PALETTE, colorId, normalizeTiming, validateTiming, type StoredSession } from "./model";
 import { readSessionViews, yearView } from "./queries";
 
 /** UI selectors serialize row IDs to strings. All SQL IDs and foreign keys are integers. */
@@ -168,6 +169,8 @@ export class SessionRepository extends Repository<FocusSession> {
   }
   async getBySource(sourceIdentity: string) {
     return this.database.access(async (connection) => {
+      requireSourceIdentity(sourceIdentity);
+
       const source = (
         await connection.select("SELECT session_id FROM session_sources WHERE source_key=?", [sourceIdentity])
       )[0];
@@ -175,20 +178,8 @@ export class SessionRepository extends Repository<FocusSession> {
     });
   }
   async get(id: string) {
-    const key = /^\d+$/.test(id)
-      ? id
-      : (
-          await this.database.access((connection) =>
-            connection.select("SELECT session_id FROM session_sources WHERE source_key IN (?,?,?)", [
-              id,
-              `session:${id}`,
-              `legacy-session:${id}`,
-            ]),
-          )
-        )[0]?.session_id;
-    return key === undefined
-      ? undefined
-      : (await this.database.access((connection) => readSessionViews(connection, Number(key))))[0];
+    if (!/^\d+$/.test(id)) return this.getBySource(id.includes(":") ? id : `session:${id}`);
+    return (await this.database.access((connection) => readSessionViews(connection, rowId(id))))[0];
   }
   async add(row: FocusSession) {
     return this.save(row, false);
@@ -199,36 +190,57 @@ export class SessionRepository extends Repository<FocusSession> {
   private async save(row: FocusSession, allowUpdate: boolean): Promise<string> {
     if (!noteMetrics(row.note ?? "").valid) throw new Error("Note exceeds the allowed limits.");
     const timing = normalizeTiming(row);
+    return this.putNormalized(
+      {
+        ...timing,
+        id: allowUpdate && /^\d+$/.test(row.id) ? rowId(row.id) : undefined,
+        subjectId: rowId(row.subjectId),
+        manual: row.manual === true,
+        note: row.note,
+        sourceIdentity: row.sourceIdentity ?? (!/^\d+$/.test(row.id) && row.id ? `session:${row.id}` : undefined),
+      },
+      allowUpdate,
+    );
+  }
+  async putNormalized(
+    row: Omit<StoredSession, "id" | "sourceIdentity"> & { id?: number; sourceIdentity?: string },
+    allowUpdate = true,
+  ): Promise<string> {
+    validateTiming(row.startedAt, row.elapsedSeconds, row.pauses);
+    if (!noteMetrics(row.note ?? "").valid) throw new Error("Note exceeds the allowed limits.");
+    if (row.id !== undefined) rowId(row.id);
+    rowId(row.subjectId);
+    if (
+      typeof row.manual !== "boolean" ||
+      (row.sourceIdentity !== undefined && (typeof row.sourceIdentity !== "string" || !row.sourceIdentity))
+    )
+      throw new Error("Invalid Session identity or manual state.");
     return this.database.transaction("rw", async (database) => {
       const connection = database.connection;
       const previousSource =
-        allowUpdate && /^\d+$/.test(row.id)
-          ? (
-              await connection.select("SELECT MIN(source_key) AS source_key FROM session_sources WHERE session_id=?", [
-                rowId(row.id),
-              ])
-            )[0]?.source_key
+        allowUpdate && row.id !== undefined
+          ? (await connection.select("SELECT source_key FROM session_sources WHERE session_id=?", [rowId(row.id)]))[0]
+              ?.source_key
           : undefined;
-      const sourceIdentity =
-        row.sourceIdentity ??
-        (previousSource
-          ? String(previousSource)
-          : `session:${/^\d+$/.test(row.id) || !row.id ? crypto.randomUUID() : row.id}`);
+      const sourceIdentity = row.sourceIdentity ?? (previousSource ? String(previousSource) : newSourceIdentity());
+      requireSourceIdentity(sourceIdentity);
+      if (previousSource && previousSource !== sourceIdentity) throw new Error("Session identity cannot be changed.");
       const source = (
         await connection.select("SELECT session_id FROM session_sources WHERE source_key=?", [sourceIdentity])
       )[0];
-      let id: number | null = allowUpdate && /^\d+$/.test(row.id) ? rowId(row.id) : null;
+      let id: number | null = allowUpdate && row.id !== undefined ? rowId(row.id) : null;
       if (source) {
+        if (id !== null && id !== Number(source.session_id)) throw new Error("Session identity cannot be changed.");
         if (!allowUpdate) return String(source.session_id);
         id = Number(source.session_id);
       }
       if (id !== null) await connection.execute("DELETE FROM session_pauses WHERE session_id=?", [id]);
       const result = await connection.execute(
         "INSERT INTO sessions(id,subject_id,started_at,elapsed_seconds,note,manual) VALUES(?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET subject_id=excluded.subject_id,started_at=excluded.started_at,elapsed_seconds=excluded.elapsed_seconds,note=excluded.note,manual=excluded.manual",
-        [id, rowId(row.subjectId), timing.startedAt, timing.elapsedSeconds, row.note ?? null, row.manual === true],
+        [id, rowId(row.subjectId), row.startedAt, row.elapsedSeconds, row.note ?? null, row.manual === true],
       );
       id ??= result.id;
-      for (const pause of timing.pauses)
+      for (const pause of row.pauses)
         await connection.execute(
           "INSERT INTO session_pauses(session_id,offset_seconds,duration_seconds) VALUES(?,?,?)",
           [id, pause.offsetSeconds, pause.durationSeconds],

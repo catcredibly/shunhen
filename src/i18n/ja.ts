@@ -701,6 +701,21 @@ const ja: Record<keyof typeof en, string> = {
   "Change end day": "終了日を変更",
   "Same day": "同じ日",
   "Previous day": "前の日",
+  "Unexpected backup field.": "バックアップに未対応の項目が含まれています。",
+  "Invalid Settings object.": "バックアップの設定オブジェクトが無効です。",
+  "Invalid Session identities.": "バックアップのセッション識別情報が無効です。",
+  "The legacy backup data structure is incomplete.": "旧形式のバックアップのデータ構造が不完全です。",
+  "Unsupported legacy Session timing version.": "旧形式のセッションの時間形式に対応していません。",
+  "Invalid legacy Session timing.": "旧形式のセッションの時間データが無効です。",
+  "The previous SQLite backup structure is incomplete.": "以前の SQLite バックアップのデータ構造が不完全です。",
+  "Invalid Session identity or manual state.": "セッションの識別情報または手動状態が無効です。",
+  "Setting references missing Academic Year.": "設定が存在しない学年を参照しています。",
+  "Ambiguous Academic Year match.": "学年の一致候補が複数あり、判別できません。",
+  "Ambiguous Subject match.": "科目の一致候補が複数あり、判別できません。",
+  "Conflicting Session identities in import.": "インポートファイル内で同じセッション識別情報の内容が矛盾しています。",
+  "Session identity cannot be changed.": "セッションの識別情報は変更できません。",
+  "Duplicate - skipped": "重複記録 - スキップ",
+  "Session ID conflicts with an existing record.": "セッション識別情報が既存の記録の内容と矛盾しています。",
 };
 
 export default ja;

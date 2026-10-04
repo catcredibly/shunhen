@@ -62,7 +62,10 @@ export function synchronizeStartup<T = void>(
         }
       }
       try {
-        await persist();
+        // A backup owns its Settings writes in one transaction. Failure must not
+        // insert a new preference outside that rolled-back transaction.
+        if (commit) await readNativeState();
+        else await persist();
       } catch (failure) {
         failures.push(failure);
       }

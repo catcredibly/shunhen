@@ -33,12 +33,11 @@ CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL) 
 -- Source identities are external import/recovery keys, never local primary keys.
 CREATE TABLE IF NOT EXISTS session_sources (
   source_key TEXT PRIMARY KEY,
-  session_id INTEGER NOT NULL REFERENCES sessions(id) ON DELETE CASCADE
+  session_id INTEGER NOT NULL UNIQUE REFERENCES sessions(id) ON DELETE CASCADE
 ) WITHOUT ROWID;
 CREATE INDEX IF NOT EXISTS subjects_year ON subjects(academic_year_id);
 CREATE INDEX IF NOT EXISTS sessions_start ON sessions(started_at DESC);
 CREATE INDEX IF NOT EXISTS sessions_subject_start ON sessions(subject_id, started_at DESC);
-CREATE INDEX IF NOT EXISTS session_sources_session ON session_sources(session_id);
 CREATE TRIGGER IF NOT EXISTS pause_insert_bounds BEFORE INSERT ON session_pauses BEGIN
   SELECT CASE WHEN NEW.offset_seconds + NEW.duration_seconds > (SELECT elapsed_seconds FROM sessions WHERE id=NEW.session_id)
     OR EXISTS(SELECT 1 FROM session_pauses WHERE session_id=NEW.session_id
@@ -54,4 +53,4 @@ CREATE TRIGGER IF NOT EXISTS session_update_bounds BEFORE UPDATE OF elapsed_seco
     AND offset_seconds + duration_seconds > NEW.elapsed_seconds)
     THEN RAISE(ABORT, 'Session ends before its pauses') END;
 END;
-PRAGMA user_version = 1;
+PRAGMA user_version = 2;

@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { FocusDatabase } from "./db";
 import { startupState, synchronizeStartup } from "./autostart";
 import { restoreBackup, BACKUP_FORMAT, BACKUP_VERSION } from "./importExport/backup";
-import type { FocusBackup } from "./importExport/types";
+import type { NormalizedBackup } from "./importExport/types";
 
 const native = vi.hoisted(() => ({ enabled: false, enable: vi.fn(), disable: vi.fn(), read: vi.fn() }));
 vi.mock("@tauri-apps/api/core", () => ({ isTauri: () => true }));
@@ -27,7 +27,7 @@ beforeEach(() => {
 });
 afterEach(() => database.delete());
 const stored = async () => (await database.settings.get("launchAtStartup"))?.value;
-const backup = (value?: boolean): FocusBackup => ({
+const backup = (value?: boolean): NormalizedBackup => ({
   format: BACKUP_FORMAT,
   formatVersion: BACKUP_VERSION,
   exportedAt: new Date().toISOString(),
@@ -106,24 +106,25 @@ describe("backup startup restore", () => {
     await restoreBackup(backup(), "replace", "use-imported", database);
     expect(await stored()).toBe("true");
   });
-  it("aborts restore and persists actual state when native mutation fails", async () => {
+  it("aborts restore without changing Settings when native mutation fails", async () => {
     await database.settings.put({ key: "theme", value: "light" });
     native.enable.mockRejectedValue(new Error("denied"));
     await expect(restoreBackup(backup(true), "replace", "use-imported", database)).rejects.toThrow();
-    expect(await stored()).toBe("false");
+    expect(await stored()).toBeUndefined();
     expect((await database.settings.get("theme"))?.value).toBe("light");
   });
   it("rolls native state back after a failed restore transaction", async () => {
     vi.spyOn(database, "transaction").mockRejectedValueOnce(new Error("database failure"));
     await expect(restoreBackup(backup(true), "replace", "use-imported", database)).rejects.toThrow();
     expect(native.enabled).toBe(false);
-    expect(await stored()).toBe("false");
+    expect(await stored()).toBeUndefined();
   });
-  it("persists actual state and reports failure if rollback also fails", async () => {
+  it("reports observed native state without changing Settings if rollback also fails", async () => {
     vi.spyOn(database, "transaction").mockRejectedValueOnce(new Error("database failure"));
     native.disable.mockRejectedValue(new Error("rollback failure"));
     await expect(restoreBackup(backup(true), "replace", "use-imported", database)).rejects.toThrow();
     expect(native.enabled).toBe(true);
-    expect(await stored()).toBe("true");
+    expect(await stored()).toBeUndefined();
+    expect(startupState.snapshot()).toBe(true);
   });
 });

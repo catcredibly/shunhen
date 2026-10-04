@@ -100,7 +100,11 @@ export function ImportExportPage({
     try {
       if (!/\.(json|csv)$/i.test(file.name)) throw new Error("Choose a .json or .csv file.");
       if (/\.json$/i.test(file.name))
-        setPreview({ kind: "json", analysis: await analyzeBackup(parseBackupText(file.text)), name: file.name });
+        setPreview({
+          kind: "json",
+          analysis: await analyzeBackup(parseBackupText(file.text), db, mode),
+          name: file.name,
+        });
       else
         setPreview({
           kind: "csv",
@@ -140,7 +144,7 @@ export function ImportExportPage({
       const summary =
         preview.kind === "json"
           ? await restoreBackup(preview.analysis.backup, mode, policy)
-          : await importCsvPreview(preview.preview);
+          : await importCsvPreview(preview.preview, db, policy);
       setResult({ ...emptySummary, ...summary });
       setPreview(undefined);
     } catch (reason) {
@@ -229,13 +233,22 @@ export function ImportExportPage({
           <JsonPreview
             analysis={preview.analysis}
             mode={mode}
-            setMode={setMode}
+            setMode={async (value) => {
+              try {
+                setPreview({ ...preview, analysis: await analyzeBackup(preview.analysis.backup, db, value) });
+                setMode(value);
+              } catch (reason) {
+                setError(translateError(reason, "Import failed. No partial changes were kept."));
+              }
+            }}
             policy={policy}
             setPolicy={setPolicy}
           />
         ) : (
           <CsvPreviewPanel
             data={preview.preview}
+            policy={policy}
+            setPolicy={setPolicy}
             years={years}
             destinationYear={destinationYear}
             onDestination={(id) => remap(preview.preview.mapping, id)}
@@ -339,7 +352,14 @@ function JsonPreview({
     <div className="preview-layout">
       <section className="preview-panel">
         <h2>{t("Shunhen backup")}</h2>
-        <p>{t("Created {{date}}", { date: new Date(backup.exportedAt).toLocaleString(localeCode()) })}</p>
+        {analysis.ambiguities?.map((message) => (
+          <p className="notice notice--error" key={message}>
+            {t(message)}
+          </p>
+        ))}
+        {backup.exportedAt && (
+          <p>{t("Created {{date}}", { date: new Date(backup.exportedAt).toLocaleString(localeCode()) })}</p>
+        )}
         <div className="preview-counts">
           <span>
             {t("Academic Years")}
@@ -412,12 +432,16 @@ const fields: [keyof CsvMapping, string][] = [
 ];
 function CsvPreviewPanel({
   data,
+  policy,
+  setPolicy,
   years,
   destinationYear,
   onDestination,
   onMapping,
 }: {
   data: CsvPreview;
+  policy: ConflictPolicy;
+  setPolicy: (value: ConflictPolicy) => void;
   years: AcademicYear[];
   destinationYear: string;
   onDestination: (id: string) => void;
@@ -431,6 +455,15 @@ function CsvPreviewPanel({
     <div className="preview-layout preview-layout--csv">
       <section className="preview-panel">
         <h2>{t(data.recognizedFocusCsv ? "Shunhen Sessions CSV" : "Map CSV columns")}</h2>
+        {data.recognizedFocusCsv && data.rows.some((row) => row.conflict) && (
+          <label>
+            {t("Conflicts")}
+            <select value={policy} onChange={(event) => setPolicy(event.target.value as ConflictPolicy)}>
+              <option value="keep-existing">{t("Keep existing records")}</option>
+              <option value="use-imported">{t("Use imported records")}</option>
+            </select>
+          </label>
+        )}
         {!data.recognizedFocusCsv && (
           <div className="mapping-grid">
             {fields.map(([field, label]) => (
@@ -502,8 +535,9 @@ function CsvPreviewPanel({
               </span>
               <small>
                 {row.duplicate
-                  ? t("Probable duplicate - skipped")
-                  : row.errors.map((entry) => t(entry)).join(" ") || t("Ready to import")}
+                  ? t(row.duplicateKind === "identity" ? "Duplicate - skipped" : "Probable duplicate - skipped")
+                  : row.errors.map((entry) => t(entry)).join(" ") ||
+                    t(row.conflict ? "Session ID conflicts with an existing record." : "Ready to import")}
               </small>
             </div>
           ))}

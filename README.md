@@ -22,7 +22,7 @@ Shunhen is a desktop focus timer and study tracker that combines a clean countdo
 - Analytics for trends, streaks, Subjects, Academic Years, and study patterns
 - Dark and light themes with six accent colors
 - English, Simplified Chinese, Traditional Chinese, and Japanese interfaces
-- Full JSON backup and restore, plus CSV Session import and export
+- Portable JSON backup and restore, including older backups, plus CSV Session import and export
 
 ## Understand your study habits
 

@@ -3,7 +3,9 @@ import { sessionInvalidReason } from "../sessionValidity";
 import { db, type FocusDatabase } from "../db";
 import type { AcademicYear, FocusSession, Subject } from "../types";
 import { focusIntervals, normalizeTiming, validateTiming, type Pause } from "../storage/model";
-import type { CsvMapping, CsvPreview, CsvPreviewRow, ImportSummary } from "./types";
+import { requireSourceIdentity } from "../storage/identity";
+import { canonicalSession, classifySession, fallbackFingerprint, normalizedName, matchOne } from "./duplicates";
+import type { ConflictPolicy, CsvMapping, CsvPreview, CsvPreviewRow, ImportSummary } from "./types";
 
 export const FOCUS_CSV_HEADERS = [
   "Source Identity",
@@ -28,7 +30,7 @@ export function exportSessionsCsv(sessions: FocusSession[]) {
       ...sessions.map((session) => {
         const timing = normalizeTiming(session);
         return [
-          session.sourceIdentity ?? `legacy-session:${session.id}`,
+          requireSourceIdentity(session.sourceIdentity),
           session.id,
           session.academicYearName,
           session.subjectName,
@@ -84,7 +86,7 @@ export function parseCsv(text: string) {
       .map((values) => Object.fromEntries(headers.map((header, index) => [header, values[index] ?? ""]))),
   };
 }
-const normalize = (value: string) => value.trim().toLocaleLowerCase();
+const normalize = normalizedName;
 export function detectMapping(headers: string[]): CsvMapping {
   const find = (...names: string[]) => headers.find((header) => names.includes(normalize(header)));
   return {
@@ -107,16 +109,11 @@ const combine = (date?: string, time?: string) =>
 export function sessionFingerprint(
   session: Pick<FocusSession, "startTime" | "endTime" | "focusedDurationSeconds"> & Partial<FocusSession>,
 ) {
-  const timing = normalizeTiming(session);
-  return JSON.stringify([
-    normalize(session.academicYearName ?? ""),
-    normalize(session.subjectName ?? ""),
-    timing.startedAt,
-    timing.elapsedSeconds,
-    timing.pauses,
-    session.note ?? "",
-    session.manual === true,
-  ]);
+  return fallbackFingerprint(
+    { ...normalizeTiming(session), manual: session.manual === true, note: session.note },
+    session.academicYearName ?? "",
+    session.subjectName ?? "",
+  );
 }
 
 export async function previewCsv(
@@ -145,16 +142,22 @@ export async function previewCsv(
     subjects,
     sessions: existing,
   } = await import("../storage/queries").then(({ readHistorySnapshot }) => readHistorySnapshot(database));
-  const yearByName = new Map(years.map((year) => [normalize(year.name), year]));
-  const subjectByPair = new Map(
-    subjects.map((subject) => [`${subject.academicYearId}|${normalize(subject.name)}`, subject]),
-  );
+  const groupedYears = new Map<string, AcademicYear[]>();
+  for (const year of years)
+    groupedYears.set(normalize(year.name), [...(groupedYears.get(normalize(year.name)) ?? []), year]);
+  const groupedSubjects = new Map<string, Subject[]>();
+  for (const subject of subjects) {
+    const key = `${subject.academicYearId}|${normalize(subject.name)}`;
+    groupedSubjects.set(key, [...(groupedSubjects.get(key) ?? []), subject]);
+  }
+  const yearByName = new Map<string, AcademicYear>();
+  const subjectByPair = new Map<string, Subject>();
   const fingerprints = new Map<string, number>();
   for (const session of existing) {
     const key = sessionFingerprint(session);
     fingerprints.set(key, (fingerprints.get(key) ?? 0) + 1);
   }
-  const sourceKeys = new Set(existing.map((session) => session.sourceIdentity));
+  const sourceKeys = new Map(existing.map((session) => [session.sourceIdentity, session]));
   const pendingSources = new Map<string, string>();
   const academicYearsToCreate = new Set<string>(),
     subjectsToCreate = new Map<string, { academicYearName: string; subjectName: string }>();
@@ -166,14 +169,55 @@ export async function previewCsv(
     const subjectName = mapping.subject ? record[mapping.subject]?.trim() : "";
     if (!academicYearName) errors.push("Academic Year is required.");
     if (!subjectName) errors.push("Subject is required.");
-    let year = academicYearName ? yearByName.get(normalize(academicYearName)) : undefined;
-    if (academicYearName && !year) {
+    let year =
+      !mapping.academicYear && destinationYearId
+        ? years.find((year) => year.id === destinationYearId)
+        : academicYearName
+          ? yearByName.get(normalize(academicYearName))
+          : undefined;
+    if (!year && academicYearName) {
+      try {
+        const candidates = groupedYears.get(normalize(academicYearName)) ?? [];
+        const picked = matchOne(
+          candidates.map((row) => ({ ...row, id: Number(row.id) })),
+          "",
+          () => "",
+          new Set(),
+          "Ambiguous Academic Year match.",
+        );
+        if (picked) {
+          year = { ...picked, id: String(picked.id) };
+          yearByName.set(normalize(academicYearName), year);
+        }
+      } catch (error) {
+        errors.push((error as Error).message);
+      }
+    }
+    if (academicYearName && !year && !errors.length) {
       year = { id: `preview-year:${academicYearsToCreate.size}`, name: academicYearName, archived: false };
       yearByName.set(normalize(academicYearName), year);
       academicYearsToCreate.add(academicYearName);
     }
     let subject = year && subjectName ? subjectByPair.get(`${year.id}|${normalize(subjectName)}`) : undefined;
     if (year && subjectName && !subject) {
+      try {
+        const candidates = groupedSubjects.get(`${year.id}|${normalize(subjectName)}`) ?? [];
+        const picked = matchOne(
+          candidates.map((row) => ({ ...row, id: Number(row.id) })),
+          "",
+          () => "",
+          new Set(),
+          "Ambiguous Subject match.",
+        );
+        if (picked) {
+          subject = { ...picked, id: String(picked.id) };
+          subjectByPair.set(`${year.id}|${normalize(subjectName)}`, subject);
+        }
+      } catch (error) {
+        errors.push((error as Error).message);
+      }
+    }
+    if (year && subjectName && !subject && !errors.length) {
       subject = {
         id: `preview-subject:${subjectsToCreate.size}`,
         academicYearId: year.id,
@@ -185,7 +229,9 @@ export async function previewCsv(
       subjectsToCreate.set(subject.id, { academicYearName: year.name, subjectName });
     }
     let session: FocusSession | undefined,
-      duplicate = false;
+      duplicate = false,
+      conflict = false;
+    let duplicateKind: "identity" | "fingerprint" | undefined;
     if (!errors.length && year && subject) {
       try {
         let startTime = mapping.startDateTime
@@ -248,41 +294,69 @@ export async function previewCsv(
         session.focusedDurationSeconds =
           timing.elapsedSeconds - timing.pauses.reduce((sum, pause) => sum + pause.durationSeconds, 0);
         const externalId = mapping.sessionId ? record[mapping.sessionId]?.trim() : "";
-        session.sourceIdentity =
-          record["Source Identity"]?.trim() ||
-          (externalId && legacyCsv
-            ? `legacy-session:${externalId}`
-            : externalId
-              ? `csv-session:${externalId}`
-              : undefined);
+        session.sourceIdentity = normalizedCsv
+          ? requireSourceIdentity(record["Source Identity"])
+          : legacyCsv && externalId
+            ? requireSourceIdentity(`legacy-session:${externalId}`)
+            : undefined;
         if (session.sourceIdentity) {
-          duplicate = sourceKeys.has(session.sourceIdentity) || pendingSources.has(session.sourceIdentity);
-          if (sourceKeys.has(session.sourceIdentity)) {
-            const match = existing.find((row) => row.sourceIdentity === session!.sourceIdentity)!;
-            if (sessionFingerprint(match) !== sessionFingerprint(session)) {
-              duplicate = false;
-              errors.push("Session ID conflicts with an existing record.");
-            }
-          }
+          const content = canonicalSession(
+            { ...timing, manual: session.manual === true, note: session.note },
+            session.subjectId,
+          );
           const pending = pendingSources.get(session.sourceIdentity);
-          if (pending && pending !== sessionFingerprint(session)) {
-            duplicate = false;
-            errors.push("Session ID conflicts with an existing record.");
+          if (pending) {
+            if (pending !== content) errors.push("Conflicting Session identities in import.");
+            else {
+              duplicate = true;
+              duplicateKind = "identity";
+            }
+          } else {
+            const match = sourceKeys.get(session.sourceIdentity);
+            if (match) {
+              const same =
+                classifySession({ ...timing, manual: session.manual === true, note: session.note }, session.subjectId, {
+                  ...normalizeTiming(match),
+                  id: Number(match.id),
+                  subjectId: Number(match.subjectId),
+                  manual: match.manual === true,
+                  note: match.note,
+                  sourceIdentity: match.sourceIdentity!,
+                }) === "duplicate";
+              duplicate = same;
+              conflict = !same;
+              if (same) duplicateKind = "identity";
+            }
+            pendingSources.set(session.sourceIdentity, content);
           }
-          pendingSources.set(session.sourceIdentity, sessionFingerprint(session));
         } else {
           const key = sessionFingerprint(session),
             count = fingerprints.get(key) ?? 0;
           duplicate = count > 0;
+          if (duplicate) duplicateKind = "fingerprint";
           if (count) fingerprints.set(key, count - 1);
         }
       } catch (error) {
         errors.push(error instanceof Error ? error.message : "Invalid session");
       }
     }
-    return { rowNumber: index + 2, session, academicYearName, subjectName, errors, duplicate };
+    return { rowNumber: index + 2, session, academicYearName, subjectName, errors, duplicate, duplicateKind, conflict };
   });
+  const conflictingIdentities = new Set(
+    rows
+      .filter((row) => row.errors.includes("Conflicting Session identities in import."))
+      .map((row) => row.session?.sourceIdentity),
+  );
+  for (const row of rows)
+    if (row.session?.sourceIdentity && conflictingIdentities.has(row.session.sourceIdentity)) {
+      row.duplicate = false;
+      if (!row.errors.includes("Conflicting Session identities in import."))
+        row.errors.push("Conflicting Session identities in import.");
+    }
   return {
+    sourceText: text,
+    destinationYearId,
+    identityConflict: conflictingIdentities.size > 0,
     headers: parsed.headers,
     rows,
     mapping,
@@ -292,7 +366,11 @@ export async function previewCsv(
   };
 }
 
-export async function importCsvPreview(preview: CsvPreview, database: FocusDatabase = db): Promise<ImportSummary> {
+export async function importCsvPreview(
+  preview: CsvPreview,
+  database: FocusDatabase = db,
+  policy: ConflictPolicy = "keep-existing",
+): Promise<ImportSummary> {
   const summary: ImportSummary = {
     academicYearsCreated: 0,
     subjectsCreated: 0,
@@ -302,31 +380,57 @@ export async function importCsvPreview(preview: CsvPreview, database: FocusDatab
     invalidRowsSkipped: 0,
   };
   await database.transaction("rw", async (database) => {
+    // Recompute against the transaction snapshot instead of trusting a stale preview.
+    preview = await previewCsv(preview.sourceText, preview.mapping, preview.destinationYearId, database);
+    if (preview.identityConflict) throw new Error("Conflicting Session identities in import.");
+    const ambiguity = preview.rows.flatMap((row) => row.errors).find((error) => error.startsWith("Ambiguous "));
+    if (ambiguity) throw new Error(ambiguity);
     const years = await database.academicYears.toArray(),
-      subjects = await database.subjects.toArray();
+      subjects: Subject[] = await database.subjects.toArray();
     for (const row of preview.rows) {
       if (row.errors.length || !row.session) {
         summary.invalidRowsSkipped++;
         if (row.errors.some((error) => error.includes("conflicts"))) summary.conflicts++;
         continue;
       }
-      if (
-        row.duplicate ||
-        (row.session.sourceIdentity && (await database.sessions.getBySource(row.session.sourceIdentity)))
-      ) {
+      if (row.duplicate) {
         summary.duplicatesSkipped++;
         continue;
       }
-      let year = years.find((year) => normalize(year.name) === normalize(row.academicYearName!));
+      if (row.conflict) {
+        summary.conflicts++;
+        if (policy === "keep-existing") continue;
+      }
+      const yearCandidates = years.filter((year) => normalize(year.name) === normalize(row.academicYearName!));
+      const yearMatch = matchOne(
+        yearCandidates
+          .filter((year) => !/^\d+$/.test(row.session!.academicYearId) || year.id === row.session!.academicYearId)
+          .map((row) => ({ ...row, id: Number(row.id) })),
+        "",
+        () => "",
+        new Set(),
+        "Ambiguous Academic Year match.",
+      );
+      let year: AcademicYear | undefined = yearMatch ? { ...yearMatch, id: String(yearMatch.id) } : undefined;
       if (!year) {
         year = { id: "", name: row.academicYearName!, archived: false };
         await database.academicYears.add(year);
         years.push(year);
         summary.academicYearsCreated++;
       }
-      let subject = subjects.find(
+      const subjectCandidates = subjects.filter(
         (subject) => subject.academicYearId === year!.id && normalize(subject.name) === normalize(row.subjectName!),
       );
+      const subjectMatch = matchOne(
+        subjectCandidates
+          .filter((subject) => !/^\d+$/.test(row.session!.subjectId) || subject.id === row.session!.subjectId)
+          .map((row) => ({ ...row, id: Number(row.id) })),
+        "",
+        () => "",
+        new Set(),
+        "Ambiguous Subject match.",
+      );
+      let subject: Subject | undefined = subjectMatch ? { ...subjectMatch, id: String(subjectMatch.id) } : undefined;
       if (!subject) {
         subject = { id: "", academicYearId: year.id, name: row.subjectName!, color: "#4da3ff", archived: false };
         await database.subjects.add(subject);
@@ -334,7 +438,16 @@ export async function importCsvPreview(preview: CsvPreview, database: FocusDatab
         summary.subjectsCreated++;
       }
       const session = { ...row.session, id: "", subjectId: subject.id, academicYearId: year.id };
-      await database.sessions.add(session);
+      await database.sessions.putNormalized(
+        {
+          ...normalizeTiming(session),
+          subjectId: Number(subject.id),
+          manual: session.manual === true,
+          note: session.note,
+          sourceIdentity: session.sourceIdentity,
+        },
+        row.conflict === true,
+      );
       summary.sessionsImported++;
       if (sessionInvalidReason(session, year))
         summary.invalidSessionsImported = (summary.invalidSessionsImported ?? 0) + 1;

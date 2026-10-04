@@ -1,6 +1,5 @@
 import "fake-indexeddb/auto";
 import { describe, expect, it } from "vitest";
-import Dexie from "dexie";
 import { createTestDatabase } from "./testDatabase";
 import { initializeStorage, readNormalized } from "./migration";
 import { readLegacy, deleteLegacy } from "./legacy";
@@ -49,13 +48,29 @@ function legacy(): LegacyData {
   };
 }
 async function fixture(name: string, data = legacy()) {
-  const db = new Dexie(name);
-  db.version(6).stores({ academicYears: "id", subjects: "id", sessions: "id", settings: "key" });
-  await db.table("academicYears").bulkAdd(data.academicYears);
-  await db.table("subjects").bulkAdd(data.subjects);
-  await db.table("sessions").bulkAdd(data.sessions);
-  await db.table("settings").bulkAdd(data.settings);
-  db.close();
+  const database = await new Promise<IDBDatabase>((resolve, reject) => {
+    const request = indexedDB.open(name, 6);
+    request.onupgradeneeded = () => {
+      for (const table of ["academicYears", "subjects", "sessions", "settings"] as const) {
+        request.result.createObjectStore(table, { keyPath: table === "settings" ? "key" : "id" });
+      }
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+  try {
+    await new Promise<void>((resolve, reject) => {
+      const tables = ["academicYears", "subjects", "sessions", "settings"] as const;
+      const transaction = database.transaction([...tables], "readwrite");
+      transaction.oncomplete = () => resolve();
+      transaction.onabort = () => reject(transaction.error);
+      for (const table of tables) {
+        for (const row of data[table]) transaction.objectStore(table).add(row);
+      }
+    });
+  } finally {
+    database.close();
+  }
 }
 describe("SQLite upgrade", () => {
   it("rounds absolute boundaries with deterministic ties and converts Focus gaps", () => {

@@ -1,4 +1,5 @@
 import type { AcademicYear, FocusSession, Subject, AppSetting } from "../types";
+import { isSourceIdentity } from "./identity";
 import { normalizeNote, noteMetrics } from "../notes";
 
 // Append new palette entries; never reorder or reuse these persisted IDs.
@@ -58,6 +59,7 @@ export function nearestSecond(milliseconds: number) {
 export function validateTiming(startedAt: number, elapsedSeconds: number, pauses: Pause[]) {
   if (
     !Number.isSafeInteger(startedAt) ||
+    !Number.isFinite(new Date(startedAt * 1000).getTime()) ||
     !Number.isSafeInteger(elapsedSeconds) ||
     elapsedSeconds <= 0 ||
     !Number.isFinite(new Date((startedAt + elapsedSeconds) * 1000).getTime())
@@ -66,6 +68,7 @@ export function validateTiming(startedAt: number, elapsedSeconds: number, pauses
   let end = 0;
   for (const pause of pauses) {
     if (
+      !pause ||
       !Number.isSafeInteger(pause.offsetSeconds) ||
       !Number.isSafeInteger(pause.durationSeconds) ||
       pause.offsetSeconds < end ||
@@ -199,8 +202,7 @@ export function validateData(data: NormalizedData) {
       !subjects.has(row.subjectId) ||
       typeof row.manual !== "boolean" ||
       !Array.isArray(row.pauses) ||
-      typeof row.sourceIdentity !== "string" ||
-      !row.sourceIdentity ||
+      !isSourceIdentity(row.sourceIdentity) ||
       sources.has(row.sourceIdentity) ||
       (row.note !== undefined && (typeof row.note !== "string" || !noteMetrics(row.note).valid))
     )
@@ -219,6 +221,8 @@ export function validateData(data: NormalizedData) {
       !subjects.has(Number(setting.value))
     )
       throw new Error("Setting references missing Subject.");
+    if (setting.key === "currentAcademicYearId" && setting.value && !years.has(Number(setting.value)))
+      throw new Error("Setting references missing Academic Year.");
   }
 }
 
@@ -261,7 +265,7 @@ export function normalizeLegacy(data: LegacyData) {
       ...timing,
       note: row.note === undefined ? undefined : normalizeNote(row.note),
       manual: row.manual === true,
-      sourceIdentity: row.sourceIdentity ?? `legacy-session:${row.id}`,
+      sourceIdentity: isSourceIdentity(row.sourceIdentity) ? row.sourceIdentity : `legacy-session:${row.id}`,
     };
   });
   const settings = data.settings.map((row) => {

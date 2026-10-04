@@ -1,2995 +1,2080 @@
 {
-  "format": "focus-backup",
-  "formatVersion": 1,
+  "format": "shunhen-backup",
+  "formatVersion": 2,
   "exportedAt": "2026-10-02T21:35:08.307Z",
   "appVersion": "2.4.2",
-  "sessionTimingVersion": 1,
-  "data": {
-    "academicYears": [
-      {
-        "id": "5d599131-5312-4d45-8004-a1e492e41dfa",
-        "name": "Summer Internship",
-        "archived": true,
-        "startDate": "2025-11-24",
-        "endDate": "2026-02-06"
-      },
-      {
-        "id": "72c5bc25-e03d-4715-b8f7-e20c70d59d74",
-        "name": "First Year",
-        "archived": true,
-        "startDate": "2024-02-19",
-        "endDate": "2024-11-15"
-      },
-      {
-        "id": "846436ad-4379-4c7e-b706-b10af421e499",
-        "name": "Self-Study",
-        "archived": false
-      },
-      {
-        "id": "99a04c06-6ebf-46f4-84a6-15f6eec134cd",
-        "name": "Second Year",
-        "archived": true,
-        "startDate": "2025-02-17",
-        "endDate": "2025-11-14"
-      },
-      {
-        "id": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "name": "Third Year",
-        "archived": false,
-        "startDate": "2026-02-16",
-        "endDate": "2026-11-13"
-      }
-    ],
-    "subjects": [
-      {
-        "id": "0e49e27f-bc3a-4b90-af39-3a41f473153f",
-        "academicYearId": "72c5bc25-e03d-4715-b8f7-e20c70d59d74",
-        "name": "Calculus I",
-        "color": "#4da3ff",
-        "archived": true,
-        "archivedBeforeParent": false
-      },
-      {
-        "id": "1a3080ae-fdfa-42e2-b574-7db95d5effbb",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "name": "Spanish",
-        "color": "#2cb7a9",
-        "archived": false
-      },
-      {
-        "id": "1e432af1-4592-4339-954e-a5ecc4ad77c3",
-        "academicYearId": "5d599131-5312-4d45-8004-a1e492e41dfa",
-        "name": "Project Work",
-        "color": "#45d9e8",
-        "archived": true,
-        "archivedBeforeParent": false
-      },
-      {
-        "id": "236d1d58-d260-43ce-b6ea-9786b417af5a",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "name": "Physical Chemistry",
-        "color": "#ff4d57",
-        "archived": false
-      },
-      {
-        "id": "354d13da-e438-4790-8aba-3e9d4b4aab64",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "name": "Differential Equations",
-        "color": "#4da3ff",
-        "archived": false
-      },
-      {
-        "id": "704bf74a-c895-47c7-8ecd-60e54d422a09",
-        "academicYearId": "99a04c06-6ebf-46f4-84a6-15f6eec134cd",
-        "name": "Macroeconomics",
-        "color": "#6672e5",
-        "archived": true,
-        "archivedBeforeParent": false
-      },
-      {
-        "id": "7a662f0d-8319-4e6b-9809-1ec37b0f72e7",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "name": "Econometrics",
-        "color": "#4dd39a",
-        "archived": false
-      },
-      {
-        "id": "7ebc4ef8-e224-41eb-9e64-2218fee0f8b8",
-        "academicYearId": "72c5bc25-e03d-4715-b8f7-e20c70d59d74",
-        "name": "Microeconomics",
-        "color": "#4dd39a",
-        "archived": true,
-        "archivedBeforeParent": false
-      },
-      {
-        "id": "81264910-ae0b-402f-abbe-fd55cee53a87",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "name": "Quantum Mechanics",
-        "color": "#ffad3b",
-        "archived": false
-      },
-      {
-        "id": "83f1e275-a661-46a1-9077-82b86741f14f",
-        "academicYearId": "72c5bc25-e03d-4715-b8f7-e20c70d59d74",
-        "name": "Classical Mechanics",
-        "color": "#ffad3b",
-        "archived": true,
-        "archivedBeforeParent": false
-      },
-      {
-        "id": "89817228-63a9-456d-a356-87ef4d33a38a",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "name": "Drawing",
-        "color": "#d95fe8",
-        "archived": false
-      },
-      {
-        "id": "8a0fb9de-0dad-4d83-a95e-c282f4579e0f",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "name": "Japanese",
-        "color": "#a879ff",
-        "archived": false
-      },
-      {
-        "id": "9d0cc453-2239-48c6-9d4a-626234bf85e1",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "name": "Guitar",
-        "color": "#ff7eb6",
-        "archived": false
-      },
-      {
-        "id": "a0c8b071-5e12-4505-9a3e-42de6e32ae3c",
-        "academicYearId": "99a04c06-6ebf-46f4-84a6-15f6eec134cd",
-        "name": "Organic Chemistry",
-        "color": "#f4d64e",
-        "archived": true,
-        "archivedBeforeParent": false
-      },
-      {
-        "id": "b55a680b-0a95-4178-9b56-766b9f2798fc",
-        "academicYearId": "99a04c06-6ebf-46f4-84a6-15f6eec134cd",
-        "name": "Linear Algebra",
-        "color": "#45d9e8",
-        "archived": true,
-        "archivedBeforeParent": false
-      },
-      {
-        "id": "b8217282-43ac-460b-a1a0-23bf8315dbe6",
-        "academicYearId": "72c5bc25-e03d-4715-b8f7-e20c70d59d74",
-        "name": "General Chemistry",
-        "color": "#ff4d57",
-        "archived": true,
-        "archivedBeforeParent": false
-      },
-      {
-        "id": "d3523540-272c-4583-acaf-8ad9ef652c44",
-        "academicYearId": "99a04c06-6ebf-46f4-84a6-15f6eec134cd",
-        "name": "Electricity & Magnetism",
-        "color": "#a8d94f",
-        "archived": true,
-        "archivedBeforeParent": false
-      }
-    ],
-    "sessions": [
-      {
-        "id": "025fbbeb-51b6-448b-a0f2-fd9f387a3845",
-        "subjectId": "236d1d58-d260-43ce-b6ea-9786b417af5a",
-        "subjectName": "Physical Chemistry",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1789029000000,
-        "endTime": 1789032011000,
-        "focusedDurationSeconds": 3000,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1789029011000,
-            "endTime": 1789032011000
-          }
-        ]
-      },
-      {
-        "id": "05f78deb-84a8-452a-8463-43331c177dcf",
-        "subjectId": "0e49e27f-bc3a-4b90-af39-3a41f473153f",
-        "subjectName": "Calculus I",
-        "academicYearId": "72c5bc25-e03d-4715-b8f7-e20c70d59d74",
-        "academicYearName": "First Year",
-        "startTime": 1721809200000,
-        "endTime": 1721813307000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1721809216000,
-            "endTime": 1721810536000
-          },
-          {
-            "startTime": 1721811027000,
-            "endTime": 1721813307000
-          }
-        ]
-      },
-      {
-        "id": "078d98aa-3f92-4d31-9a0e-c5d588f0a089",
-        "subjectId": "7ebc4ef8-e224-41eb-9e64-2218fee0f8b8",
-        "subjectName": "Microeconomics",
-        "academicYearId": "72c5bc25-e03d-4715-b8f7-e20c70d59d74",
-        "academicYearName": "First Year",
-        "startTime": 1721205600000,
-        "endTime": 1721209511000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1721205610000,
-            "endTime": 1721207530000
-          },
-          {
-            "startTime": 1721207831000,
-            "endTime": 1721209511000
-          }
-        ]
-      },
-      {
-        "id": "0869c772-5f00-50b2-ad5a-b73e32397fb5",
-        "subjectId": "81264910-ae0b-402f-abbe-fd55cee53a87",
-        "subjectName": "Quantum Mechanics",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1790493300000,
-        "endTime": 1790498700000,
-        "focusedDurationSeconds": 5400,
-        "durationMode": "locked",
-        "archived": false,
-        "note": "Reviewed yesterday's mistakes and completed a timed practice set.",
-        "focusIntervals": [
-          {
-            "startTime": 1790493300000,
-            "endTime": 1790498700000
-          }
-        ]
-      },
-      {
-        "id": "09fc77b8-1fdb-4fc3-88f1-c691159c2567",
-        "subjectId": "9d0cc453-2239-48c6-9d4a-626234bf85e1",
-        "subjectName": "Guitar",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1760251500000,
-        "endTime": 1760253916000,
-        "focusedDurationSeconds": 2400,
-        "durationMode": "unlocked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1760251516000,
-            "endTime": 1760253916000
-          }
-        ]
-      },
-      {
-        "id": "0cff2496-39e7-4fc6-86fe-a74afdbcd6b9",
-        "subjectId": "354d13da-e438-4790-8aba-3e9d4b4aab64",
-        "subjectName": "Differential Equations",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1786837200000,
-        "endTime": 1786841700000,
-        "focusedDurationSeconds": 4500,
-        "durationMode": "locked",
-        "archived": false,
-        "note": "Laplace transform review",
-        "legacyContinuous": true
-      },
-      {
-        "id": "129305e2-e92e-58ea-9c78-24606f49ce0f",
-        "subjectId": "7a662f0d-8319-4e6b-9809-1ec37b0f72e7",
-        "subjectName": "Econometrics",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1790401500000,
-        "endTime": 1790406000000,
-        "focusedDurationSeconds": 4500,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1790401500000,
-            "endTime": 1790406000000
-          }
-        ]
-      },
-      {
-        "id": "13915467-ab0d-5312-a84e-919c2dab6c35",
-        "subjectId": "354d13da-e438-4790-8aba-3e9d4b4aab64",
-        "subjectName": "Differential Equations",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1790147700000,
-        "endTime": 1790153100000,
-        "focusedDurationSeconds": 5400,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1790147700000,
-            "endTime": 1790153100000
-          }
-        ]
-      },
-      {
-        "id": "18299218-938a-4297-8469-bcb2163e47ca",
-        "subjectId": "0e49e27f-bc3a-4b90-af39-3a41f473153f",
-        "subjectName": "Calculus I",
-        "academicYearId": "72c5bc25-e03d-4715-b8f7-e20c70d59d74",
-        "academicYearName": "First Year",
-        "startTime": 1711947600000,
-        "endTime": 1711950606000,
-        "focusedDurationSeconds": 3000,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1711947606000,
-            "endTime": 1711950606000
-          }
-        ],
-        "note": "Review limits before tutorial"
-      },
-      {
-        "id": "185c4968-8ca1-5cde-9b0c-c84c5bcb58d9",
-        "subjectId": "1a3080ae-fdfa-42e2-b574-7db95d5effbb",
-        "subjectName": "Spanish",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1789688432000,
-        "endTime": 1789692032000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1789688432000,
-            "endTime": 1789692032000
-          }
-        ]
-      },
-      {
-        "id": "1b99ac9b-22cf-4937-b35f-6a3189cd47d0",
-        "subjectId": "1e432af1-4592-4339-954e-a5ecc4ad77c3",
-        "subjectName": "Project Work",
-        "academicYearId": "5d599131-5312-4d45-8004-a1e492e41dfa",
-        "academicYearName": "Summer Internship",
-        "startTime": 1766029200000,
-        "endTime": 1766031600000,
-        "focusedDurationSeconds": 2400,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1766029200000,
-            "endTime": 1766031600000
-          }
-        ]
-      },
-      {
-        "id": "1c0b0d41-27cd-5c22-9e38-e0e86a4f4802",
-        "subjectId": "1a3080ae-fdfa-42e2-b574-7db95d5effbb",
-        "subjectName": "Spanish",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1790651700000,
-        "endTime": 1790654400000,
-        "focusedDurationSeconds": 2700,
-        "durationMode": "unlocked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1790651700000,
-            "endTime": 1790654400000
-          }
-        ]
-      },
-      {
-        "id": "1cdf6960-4add-4037-b3f9-61c6e720be4e",
-        "subjectId": "8a0fb9de-0dad-4d83-a95e-c282f4579e0f",
-        "subjectName": "Japanese",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1783318200000,
-        "endTime": 1783320020000,
-        "focusedDurationSeconds": 1800,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1783318220000,
-            "endTime": 1783320020000
-          }
-        ]
-      },
-      {
-        "id": "20bb248a-53ca-42e4-bf87-e668cc688e59",
-        "subjectId": "704bf74a-c895-47c7-8ecd-60e54d422a09",
-        "subjectName": "Macroeconomics",
-        "academicYearId": "99a04c06-6ebf-46f4-84a6-15f6eec134cd",
-        "academicYearName": "Second Year",
-        "startTime": 1749089700000,
-        "endTime": 1749095770000,
-        "focusedDurationSeconds": 5400,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1749089708000,
-            "endTime": 1749093848000
-          },
-          {
-            "startTime": 1749094510000,
-            "endTime": 1749095770000
-          }
-        ]
-      },
-      {
-        "id": "21058dca-b9ee-4b94-8673-5092818a8534",
-        "subjectId": "236d1d58-d260-43ce-b6ea-9786b417af5a",
-        "subjectName": "Physical Chemistry",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1790566200000,
-        "endTime": 1790569207000,
-        "focusedDurationSeconds": 3000,
-        "durationMode": "unlocked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1790566207000,
-            "endTime": 1790569207000
-          }
-        ]
-      },
-      {
-        "id": "2301e7b4-e17a-4edd-8818-ec74c112181a",
-        "subjectId": "354d13da-e438-4790-8aba-3e9d4b4aab64",
-        "subjectName": "Differential Equations",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1784361000000,
-        "endTime": 1784366115000,
-        "focusedDurationSeconds": 4500,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1784361013000,
-            "endTime": 1784364253000
-          },
-          {
-            "startTime": 1784364855000,
-            "endTime": 1784366115000
-          }
-        ],
-        "note": "Laplace transform review"
-      },
-      {
-        "id": "23b64133-e34d-489f-916f-8aac5c0f8249",
-        "subjectId": "704bf74a-c895-47c7-8ecd-60e54d422a09",
-        "subjectName": "Macroeconomics",
-        "academicYearId": "99a04c06-6ebf-46f4-84a6-15f6eec134cd",
-        "academicYearName": "Second Year",
-        "startTime": 1744428600000,
-        "endTime": 1744432341000,
-        "focusedDurationSeconds": 3000,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1744428615000,
-            "endTime": 1744429995000
-          },
-          {
-            "startTime": 1744430721000,
-            "endTime": 1744432341000
-          }
-        ],
-        "note": "Review growth models"
-      },
-      {
-        "id": "2588a222-70be-4ed5-8c9e-55456378d936",
-        "subjectId": "8a0fb9de-0dad-4d83-a95e-c282f4579e0f",
-        "subjectName": "Japanese",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1786314600000,
-        "endTime": 1786318940000,
-        "focusedDurationSeconds": 3000,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1786314603000,
-            "endTime": 1786315923000
-          },
-          {
-            "startTime": 1786316474000,
-            "endTime": 1786317554000
-          },
-          {
-            "startTime": 1786318340000,
-            "endTime": 1786318940000
-          }
-        ]
-      },
-      {
-        "id": "2672d2ae-8cbf-5be2-b70d-bad5f633dfb5",
-        "subjectId": "236d1d58-d260-43ce-b6ea-9786b417af5a",
-        "subjectName": "Physical Chemistry",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1790838900000,
-        "endTime": 1790844300000,
-        "focusedDurationSeconds": 5400,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1790838900000,
-            "endTime": 1790844300000
-          }
-        ]
-      },
-      {
-        "id": "26849a87-6291-44ae-bc59-5bd1668b0d0b",
-        "subjectId": "b8217282-43ac-460b-a1a0-23bf8315dbe6",
-        "subjectName": "General Chemistry",
-        "academicYearId": "72c5bc25-e03d-4715-b8f7-e20c70d59d74",
-        "academicYearName": "First Year",
-        "startTime": 1727683200000,
-        "endTime": 1727687700000,
-        "focusedDurationSeconds": 4500,
-        "durationMode": "locked",
-        "archived": false,
-        "legacyContinuous": true
-      },
-      {
-        "id": "282a8bbb-8d93-4c7c-b9f4-b8a72aa038b8",
-        "subjectId": "236d1d58-d260-43ce-b6ea-9786b417af5a",
-        "subjectName": "Physical Chemistry",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1785139200000,
-        "endTime": 1785145100000,
-        "focusedDurationSeconds": 5400,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1785139210000,
-            "endTime": 1785141790000
-          },
-          {
-            "startTime": 1785142280000,
-            "endTime": 1785145100000
-          }
-        ]
-      },
-      {
-        "id": "29a7bad1-0541-455a-882c-0965057bf1a8",
-        "subjectId": "d3523540-272c-4583-acaf-8ad9ef652c44",
-        "subjectName": "Electricity & Magnetism",
-        "academicYearId": "99a04c06-6ebf-46f4-84a6-15f6eec134cd",
-        "academicYearName": "Second Year",
-        "startTime": 1762121400000,
-        "endTime": 1762125502000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "unlocked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1762121404000,
-            "endTime": 1762124044000
-          },
-          {
-            "startTime": 1762124542000,
-            "endTime": 1762125502000
-          }
-        ]
-      },
-      {
-        "id": "2a41fcbd-ecbd-43ec-a853-746a179426bd",
-        "subjectId": "354d13da-e438-4790-8aba-3e9d4b4aab64",
-        "subjectName": "Differential Equations",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1788425100000,
-        "endTime": 1788431400000,
-        "focusedDurationSeconds": 6300,
-        "durationMode": "locked",
-        "archived": false,
-        "legacyContinuous": true
-      },
-      {
-        "id": "2a96f0da-245c-4355-b9a3-59e533b10359",
-        "subjectId": "236d1d58-d260-43ce-b6ea-9786b417af5a",
-        "subjectName": "Physical Chemistry",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1789461600000,
-        "endTime": 1789465938000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1789461610000,
-            "endTime": 1789463890000
-          },
-          {
-            "startTime": 1789464618000,
-            "endTime": 1789465938000
-          }
-        ]
-      },
-      {
-        "id": "2bbe7693-e3a3-4e00-9df1-c1508ccfcfdd",
-        "subjectId": "354d13da-e438-4790-8aba-3e9d4b4aab64",
-        "subjectName": "Differential Equations",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1790310000000,
-        "endTime": 1790314509000,
-        "focusedDurationSeconds": 4500,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1790310009000,
-            "endTime": 1790314509000
-          }
-        ]
-      },
-      {
-        "id": "300816f0-67de-47f1-a874-1f955f24e8bf",
-        "subjectId": "81264910-ae0b-402f-abbe-fd55cee53a87",
-        "subjectName": "Quantum Mechanics",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1788765300000,
-        "endTime": 1788768137000,
-        "focusedDurationSeconds": 2400,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1788765306000,
-            "endTime": 1788767046000
-          },
-          {
-            "startTime": 1788767477000,
-            "endTime": 1788768137000
-          }
-        ],
-        "note": "Problem set 4"
-      },
-      {
-        "id": "316a53dd-431a-4d67-a627-d37e45acb354",
-        "subjectId": "d3523540-272c-4583-acaf-8ad9ef652c44",
-        "subjectName": "Electricity & Magnetism",
-        "academicYearId": "99a04c06-6ebf-46f4-84a6-15f6eec134cd",
-        "academicYearName": "Second Year",
-        "startTime": 1742103000000,
-        "endTime": 1742106000000,
-        "focusedDurationSeconds": 3000,
-        "durationMode": "unlocked",
-        "archived": false,
-        "legacyContinuous": true
-      },
-      {
-        "id": "32d71548-4239-4ea7-a7f8-83f9525b6add",
-        "subjectId": "1e432af1-4592-4339-954e-a5ecc4ad77c3",
-        "subjectName": "Project Work",
-        "academicYearId": "5d599131-5312-4d45-8004-a1e492e41dfa",
-        "academicYearName": "Summer Internship",
-        "startTime": 1769568000000,
-        "endTime": 1769572507000,
-        "focusedDurationSeconds": 4500,
-        "durationMode": "unlocked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1769568007000,
-            "endTime": 1769572507000
-          }
-        ],
-        "note": "Prepare project update"
-      },
-      {
-        "id": "3383a746-a13c-46e8-97e0-4709957757d1",
-        "subjectId": "1e432af1-4592-4339-954e-a5ecc4ad77c3",
-        "subjectName": "Project Work",
-        "academicYearId": "5d599131-5312-4d45-8004-a1e492e41dfa",
-        "academicYearName": "Summer Internship",
-        "startTime": 1767215400000,
-        "endTime": 1767219430000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1767215405000,
-            "endTime": 1767216785000
-          },
-          {
-            "startTime": 1767217210000,
-            "endTime": 1767219430000
-          }
-        ],
-        "note": "Prepare project update"
-      },
-      {
-        "id": "34054c63-04ef-5d09-beca-7a505bd2bbfe",
-        "subjectId": "354d13da-e438-4790-8aba-3e9d4b4aab64",
-        "subjectName": "Differential Equations",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1790368200000,
-        "endTime": 1790371800000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "unlocked",
-        "archived": false,
-        "note": "Short revision block: consolidate the main ideas before the next session.",
-        "manual": true
-      },
-      {
-        "id": "355b2fb1-b6f0-4c21-abe2-3c119d6e2774",
-        "subjectId": "b55a680b-0a95-4178-9b56-766b9f2798fc",
-        "subjectName": "Linear Algebra",
-        "academicYearId": "99a04c06-6ebf-46f4-84a6-15f6eec134cd",
-        "academicYearName": "Second Year",
-        "startTime": 1755337200000,
-        "endTime": 1755340200000,
-        "focusedDurationSeconds": 3000,
-        "durationMode": "locked",
-        "archived": false,
-        "legacyContinuous": true
-      },
-      {
-        "id": "36338a85-5875-4d63-9bb6-ce6a5277c358",
-        "subjectId": "7a662f0d-8319-4e6b-9809-1ec37b0f72e7",
-        "subjectName": "Econometrics",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1786074600000,
-        "endTime": 1786078210000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "unlocked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1786074610000,
-            "endTime": 1786078210000
-          }
-        ]
-      },
-      {
-        "id": "381c7902-a295-4465-9757-ac3f77e3588a",
-        "subjectId": "236d1d58-d260-43ce-b6ea-9786b417af5a",
-        "subjectName": "Physical Chemistry",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1785132600000,
-        "endTime": 1785136220000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1785132620000,
-            "endTime": 1785136220000
-          }
-        ]
-      },
-      {
-        "id": "3a540c51-8ce4-4abf-99ee-b798dbae574d",
-        "subjectId": "1e432af1-4592-4339-954e-a5ecc4ad77c3",
-        "subjectName": "Project Work",
-        "academicYearId": "5d599131-5312-4d45-8004-a1e492e41dfa",
-        "academicYearName": "Summer Internship",
-        "startTime": 1768980000000,
-        "endTime": 1768985412000,
-        "focusedDurationSeconds": 5400,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1768980012000,
-            "endTime": 1768985412000
-          }
-        ]
-      },
-      {
-        "id": "3e76279d-4dd4-4ec3-9d0e-667465764858",
-        "subjectId": "81264910-ae0b-402f-abbe-fd55cee53a87",
-        "subjectName": "Quantum Mechanics",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1789543800000,
-        "endTime": 1789548318000,
-        "focusedDurationSeconds": 4500,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1789543818000,
-            "endTime": 1789548318000
-          }
-        ]
-      },
-      {
-        "id": "4035f052-e227-4e8c-8cb6-fcdfaf8b334a",
-        "subjectId": "89817228-63a9-456d-a356-87ef4d33a38a",
-        "subjectName": "Drawing",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1783569600000,
-        "endTime": 1783574299000,
-        "focusedDurationSeconds": 3000,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1783569607000,
-            "endTime": 1783571287000
-          },
-          {
-            "startTime": 1783572018000,
-            "endTime": 1783572738000
-          },
-          {
-            "startTime": 1783573699000,
-            "endTime": 1783574299000
-          }
-        ]
-      },
-      {
-        "id": "41ea52a4-a1a7-46b4-915a-e73ba9ffc565",
-        "subjectId": "d3523540-272c-4583-acaf-8ad9ef652c44",
-        "subjectName": "Electricity & Magnetism",
-        "academicYearId": "99a04c06-6ebf-46f4-84a6-15f6eec134cd",
-        "academicYearName": "Second Year",
-        "startTime": 1747985400000,
-        "endTime": 1747989900000,
-        "focusedDurationSeconds": 4500,
-        "durationMode": "locked",
-        "archived": false,
-        "note": "Field and potential questions",
-        "legacyContinuous": true
-      },
-      {
-        "id": "42e4c4f9-9205-5d88-aa47-79e082065c67",
-        "subjectId": "81264910-ae0b-402f-abbe-fd55cee53a87",
-        "subjectName": "Quantum Mechanics",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1789927200000,
-        "endTime": 1789929300000,
-        "focusedDurationSeconds": 1500,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1789927200000,
-            "endTime": 1789927950000
-          },
-          {
-            "startTime": 1789928550000,
-            "endTime": 1789929300000
-          }
-        ]
-      },
-      {
-        "id": "4f9f9c63-c54d-40b2-a4d3-e3e4d966265e",
-        "subjectId": "1e432af1-4592-4339-954e-a5ecc4ad77c3",
-        "subjectName": "Project Work",
-        "academicYearId": "5d599131-5312-4d45-8004-a1e492e41dfa",
-        "academicYearName": "Summer Internship",
-        "startTime": 1767572400000,
-        "endTime": 1767576915000,
-        "focusedDurationSeconds": 4500,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1767572415000,
-            "endTime": 1767576915000
-          }
-        ],
-        "note": "Research implementation options"
-      },
-      {
-        "id": "520fce65-9c1a-4654-8931-204d7a12f37e",
-        "subjectId": "0e49e27f-bc3a-4b90-af39-3a41f473153f",
-        "subjectName": "Calculus I",
-        "academicYearId": "72c5bc25-e03d-4715-b8f7-e20c70d59d74",
-        "academicYearName": "First Year",
-        "startTime": 1712121000000,
-        "endTime": 1712126409000,
-        "focusedDurationSeconds": 5400,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1712121009000,
-            "endTime": 1712126409000
-          }
-        ],
-        "note": "Practice integration techniques"
-      },
-      {
-        "id": "53a7c1f9-6b64-51e3-ad14-01a9118778c8",
-        "subjectId": "354d13da-e438-4790-8aba-3e9d4b4aab64",
-        "subjectName": "Differential Equations",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1790930700000,
-        "endTime": 1790933700000,
-        "focusedDurationSeconds": 3000,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1790930700000,
-            "endTime": 1790933700000
-          }
-        ],
-        "note": "Reviewed solution methods for higher-order and systems of differential equations.\n\n- Practiced solving linear ODEs using characteristic equations.\n- Reviewed variation of parameters and undetermined coefficients.\n- Worked through systems using eigenvalues and eigenvectors.\n- Practiced phase-plane analysis and classifying equilibrium points.\n- Reviewed Laplace-transform methods for initial-value problems.\n- Looked at stability and qualitative behavior of nonlinear systems.\n- Completed timed problems and noted which methods took too long to identify."
-      },
-      {
-        "id": "53c20360-93f5-4985-87b9-fb7735f577e0",
-        "subjectId": "354d13da-e438-4790-8aba-3e9d4b4aab64",
-        "subjectName": "Differential Equations",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1789854300000,
-        "endTime": 1789858804000,
-        "focusedDurationSeconds": 4500,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1789854304000,
-            "endTime": 1789858804000
-          }
-        ]
-      },
-      {
-        "id": "5466d12a-639e-43a0-851c-6e7b8eaf9c58",
-        "subjectId": "7a662f0d-8319-4e6b-9809-1ec37b0f72e7",
-        "subjectName": "Econometrics",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1786696200000,
-        "endTime": 1786699816000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "unlocked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1786696216000,
-            "endTime": 1786699816000
-          }
-        ],
-        "note": "Regression exercises"
-      },
-      {
-        "id": "55163846-4f48-555f-b6bf-c4898e949142",
-        "subjectId": "236d1d58-d260-43ce-b6ea-9786b417af5a",
-        "subjectName": "Physical Chemistry",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1790272800000,
-        "endTime": 1790274900000,
-        "focusedDurationSeconds": 1500,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1790272800000,
-            "endTime": 1790273550000
-          },
-          {
-            "startTime": 1790274150000,
-            "endTime": 1790274900000
-          }
-        ]
-      },
-      {
-        "id": "558cc960-0be4-4173-b8af-4fdedcb8e919",
-        "subjectId": "83f1e275-a661-46a1-9077-82b86741f14f",
-        "subjectName": "Classical Mechanics",
-        "academicYearId": "72c5bc25-e03d-4715-b8f7-e20c70d59d74",
-        "academicYearName": "First Year",
-        "startTime": 1718607600000,
-        "endTime": 1718614816000,
-        "focusedDurationSeconds": 7200,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1718607616000,
-            "endTime": 1718614816000
-          }
-        ],
-        "note": "Review rotational motion"
-      },
-      {
-        "id": "56d162b9-8c50-5887-890c-455e3999128c",
-        "subjectId": "81264910-ae0b-402f-abbe-fd55cee53a87",
-        "subjectName": "Quantum Mechanics",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1789710300000,
-        "endTime": 1789714800000,
-        "focusedDurationSeconds": 4500,
-        "durationMode": "locked",
-        "archived": false,
-        "note": "Compared two approaches and wrote a brief summary of the differences.",
-        "focusIntervals": [
-          {
-            "startTime": 1789710300000,
-            "endTime": 1789714800000
-          }
-        ]
-      },
-      {
-        "id": "58920fab-4b01-49a9-8895-d5154dd86700",
-        "subjectId": "81264910-ae0b-402f-abbe-fd55cee53a87",
-        "subjectName": "Quantum Mechanics",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1784757000000,
-        "endTime": 1784762400000,
-        "focusedDurationSeconds": 5400,
-        "durationMode": "locked",
-        "archived": false,
-        "note": "Review wavefunctions",
-        "legacyContinuous": true
-      },
-      {
-        "id": "58b2ae62-eae9-4b16-98cc-f3a1e6f85f83",
-        "subjectId": "236d1d58-d260-43ce-b6ea-9786b417af5a",
-        "subjectName": "Physical Chemistry",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1788756600000,
-        "endTime": 1788762561000,
-        "focusedDurationSeconds": 5400,
-        "durationMode": "unlocked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1788756603000,
-            "endTime": 1788759003000
-          },
-          {
-            "startTime": 1788759561000,
-            "endTime": 1788762561000
-          }
-        ]
-      },
-      {
-        "id": "5a73a652-329e-42fe-8ef6-208c659d973d",
-        "subjectId": "8a0fb9de-0dad-4d83-a95e-c282f4579e0f",
-        "subjectName": "Japanese",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1784970900000,
-        "endTime": 1784972400000,
-        "focusedDurationSeconds": 1500,
-        "durationMode": "locked",
-        "archived": false,
-        "legacyContinuous": true
-      },
-      {
-        "id": "5d1a5569-9e86-4b78-b60f-250f2c855970",
-        "subjectId": "704bf74a-c895-47c7-8ecd-60e54d422a09",
-        "subjectName": "Macroeconomics",
-        "academicYearId": "99a04c06-6ebf-46f4-84a6-15f6eec134cd",
-        "academicYearName": "Second Year",
-        "startTime": 1758663000000,
-        "endTime": 1758664504000,
-        "focusedDurationSeconds": 1500,
-        "durationMode": "unlocked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1758663004000,
-            "endTime": 1758664504000
-          }
-        ]
-      },
-      {
-        "id": "601bac0d-23f8-5841-9e8e-a51f49c2f5c6",
-        "subjectId": "1a3080ae-fdfa-42e2-b574-7db95d5effbb",
-        "subjectName": "Spanish",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1790460000000,
-        "endTime": 1790462400000,
-        "focusedDurationSeconds": 1800,
-        "durationMode": "unlocked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1790460000000,
-            "endTime": 1790460900000
-          },
-          {
-            "startTime": 1790461500000,
-            "endTime": 1790462400000
-          }
-        ]
-      },
-      {
-        "id": "6335ed79-f099-5306-a46c-96804f4d3cdb",
-        "subjectId": "9d0cc453-2239-48c6-9d4a-626234bf85e1",
-        "subjectName": "Guitar",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1790889600000,
-        "endTime": 1790892000000,
-        "focusedDurationSeconds": 2400,
-        "durationMode": "unlocked",
-        "archived": false,
-        "note": "Short revision block: consolidate the main ideas before the next session.",
-        "focusIntervals": [
-          {
-            "startTime": 1790889600000,
-            "endTime": 1790892000000
-          }
-        ]
-      },
-      {
-        "id": "66cb4f8b-1d6e-4f39-bc8d-c3e565f94ba2",
-        "subjectId": "8a0fb9de-0dad-4d83-a95e-c282f4579e0f",
-        "subjectName": "Japanese",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1780199400000,
-        "endTime": 1780202599000,
-        "focusedDurationSeconds": 2400,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1780199415000,
-            "endTime": 1780200675000
-          },
-          {
-            "startTime": 1780201459000,
-            "endTime": 1780202599000
-          }
-        ],
-        "note": "Kanji review"
-      },
-      {
-        "id": "6843d64e-cf40-4c9a-b6ad-cec84fb776e6",
-        "subjectId": "354d13da-e438-4790-8aba-3e9d4b4aab64",
-        "subjectName": "Differential Equations",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1787537400000,
-        "endTime": 1787540418000,
-        "focusedDurationSeconds": 3000,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1787537418000,
-            "endTime": 1787540418000
-          }
-        ]
-      },
-      {
-        "id": "6ef45be6-c9d7-4691-a6d9-184ca80a61c6",
-        "subjectId": "a0c8b071-5e12-4505-9a3e-42de6e32ae3c",
-        "subjectName": "Organic Chemistry",
-        "academicYearId": "99a04c06-6ebf-46f4-84a6-15f6eec134cd",
-        "academicYearName": "Second Year",
-        "startTime": 1751507100000,
-        "endTime": 1751512500000,
-        "focusedDurationSeconds": 5400,
-        "durationMode": "locked",
-        "archived": false,
-        "note": "Spectroscopy review",
-        "legacyContinuous": true
-      },
-      {
-        "id": "6f69d5f5-f5d1-49ee-b9f6-e944b78e31dc",
-        "subjectId": "8a0fb9de-0dad-4d83-a95e-c282f4579e0f",
-        "subjectName": "Japanese",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1788489900000,
-        "endTime": 1788491400000,
-        "focusedDurationSeconds": 1500,
-        "durationMode": "unlocked",
-        "archived": false,
-        "legacyContinuous": true
-      },
-      {
-        "id": "6ffed509-d9e2-54a5-afa3-fb00a1a4d101",
-        "subjectId": "7a662f0d-8319-4e6b-9809-1ec37b0f72e7",
-        "subjectName": "Econometrics",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1790618400000,
-        "endTime": 1790620500000,
-        "focusedDurationSeconds": 1500,
-        "durationMode": "locked",
-        "archived": false,
-        "note": "Worked through practice questions and noted the steps to revisit.",
-        "focusIntervals": [
-          {
-            "startTime": 1790618400000,
-            "endTime": 1790619150000
-          },
-          {
-            "startTime": 1790619750000,
-            "endTime": 1790620500000
-          }
-        ]
-      },
-      {
-        "id": "71c08281-cd04-5aec-b130-cd7ee608f5b9",
-        "subjectId": "9d0cc453-2239-48c6-9d4a-626234bf85e1",
-        "subjectName": "Guitar",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1790306100000,
-        "endTime": 1790308800000,
-        "focusedDurationSeconds": 2700,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1790306100000,
-            "endTime": 1790308800000
-          }
-        ]
-      },
-      {
-        "id": "725de288-ba07-431a-be9f-0b8c91e98dca",
-        "subjectId": "0e49e27f-bc3a-4b90-af39-3a41f473153f",
-        "subjectName": "Calculus I",
-        "academicYearId": "72c5bc25-e03d-4715-b8f7-e20c70d59d74",
-        "academicYearName": "First Year",
-        "startTime": 1728284400000,
-        "endTime": 1728288013000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1728284413000,
-            "endTime": 1728288013000
-          }
-        ]
-      },
-      {
-        "id": "7a774a01-00bf-4381-af92-d5e6e599f4cb",
-        "subjectId": "354d13da-e438-4790-8aba-3e9d4b4aab64",
-        "subjectName": "Differential Equations",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1789680000000,
-        "endTime": 1789687532000,
-        "focusedDurationSeconds": 7200,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1789680013000,
-            "endTime": 1789683973000
-          },
-          {
-            "startTime": 1789684292000,
-            "endTime": 1789687532000
-          }
-        ]
-      },
-      {
-        "id": "7b70da20-4136-5245-9b22-32da71733627",
-        "subjectId": "236d1d58-d260-43ce-b6ea-9786b417af5a",
-        "subjectName": "Physical Chemistry",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1790884800000,
-        "endTime": 1790888700000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "locked",
-        "archived": false,
-        "note": "## Revision\n1. Compare reaction rates\n2. Summarise **activation energy**\n3. Mark two questions for the next session",
-        "focusIntervals": [
-          {
-            "startTime": 1790884800000,
-            "endTime": 1790886600000
-          },
-          {
-            "startTime": 1790886900000,
-            "endTime": 1790888700000
-          }
-        ]
-      },
-      {
-        "id": "7fd85cce-27de-4eed-b536-1625dec5eb83",
-        "subjectId": "81264910-ae0b-402f-abbe-fd55cee53a87",
-        "subjectName": "Quantum Mechanics",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1786416600000,
-        "endTime": 1786420200000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "unlocked",
-        "archived": false,
-        "legacyContinuous": true
-      },
-      {
-        "id": "86bd4918-b5f1-4668-bad7-da99591e9630",
-        "subjectId": "7a662f0d-8319-4e6b-9809-1ec37b0f72e7",
-        "subjectName": "Econometrics",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1788934800000,
-        "endTime": 1788939301000,
-        "focusedDurationSeconds": 4500,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1788934801000,
-            "endTime": 1788939301000
-          }
-        ],
-        "note": "Regression exercises"
-      },
-      {
-        "id": "87ae324e-29e3-401a-9316-54a655f9e1d9",
-        "subjectId": "1e432af1-4592-4339-954e-a5ecc4ad77c3",
-        "subjectName": "Project Work",
-        "academicYearId": "5d599131-5312-4d45-8004-a1e492e41dfa",
-        "academicYearName": "Summer Internship",
-        "startTime": 1767771900000,
-        "endTime": 1767776440000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1767771920000,
-            "endTime": 1767774800000
-          },
-          {
-            "startTime": 1767775720000,
-            "endTime": 1767776440000
-          }
-        ]
-      },
-      {
-        "id": "881a2fed-aebd-4a64-8ce8-5ee70c703bc2",
-        "subjectId": "8a0fb9de-0dad-4d83-a95e-c282f4579e0f",
-        "subjectName": "Japanese",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1772065800000,
-        "endTime": 1772067320000,
-        "focusedDurationSeconds": 1500,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1772065820000,
-            "endTime": 1772067320000
-          }
-        ]
-      },
-      {
-        "id": "884a34f9-dac9-56da-8c8c-14f701af7f88",
-        "subjectId": "1a3080ae-fdfa-42e2-b574-7db95d5effbb",
-        "subjectName": "Spanish",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1790239500000,
-        "endTime": 1790242500000,
-        "focusedDurationSeconds": 3000,
-        "durationMode": "unlocked",
-        "archived": false,
-        "note": "Compared two approaches and wrote a brief summary of the differences.",
-        "focusIntervals": [
-          {
-            "startTime": 1790239500000,
-            "endTime": 1790242500000
-          }
-        ]
-      },
-      {
-        "id": "8abd96b7-6715-56de-803c-0040b34c05c3",
-        "subjectId": "236d1d58-d260-43ce-b6ea-9786b417af5a",
-        "subjectName": "Physical Chemistry",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1789846200000,
-        "endTime": 1789848600000,
-        "focusedDurationSeconds": 2400,
-        "durationMode": "locked",
-        "archived": false,
-        "note": "Short revision block: consolidate the main ideas before the next session.",
-        "focusIntervals": [
-          {
-            "startTime": 1789846200000,
-            "endTime": 1789848600000
-          }
-        ]
-      },
-      {
-        "id": "8dd63827-50a5-4201-9089-3f66ac9cad36",
-        "subjectId": "81264910-ae0b-402f-abbe-fd55cee53a87",
-        "subjectName": "Quantum Mechanics",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1786932900000,
-        "endTime": 1786936500000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "locked",
-        "archived": false,
-        "legacyContinuous": true
-      },
-      {
-        "id": "8efc65a5-1b8b-4cce-8e7d-aaf4028f6698",
-        "subjectId": "236d1d58-d260-43ce-b6ea-9786b417af5a",
-        "subjectName": "Physical Chemistry",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1788477300000,
-        "endTime": 1788481511000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "unlocked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1788477308000,
-            "endTime": 1788479108000
-          },
-          {
-            "startTime": 1788479711000,
-            "endTime": 1788481511000
-          }
-        ]
-      },
-      {
-        "id": "90a6bbbb-e7ab-46e5-afc4-9f84ffbbf624",
-        "subjectId": "8a0fb9de-0dad-4d83-a95e-c282f4579e0f",
-        "subjectName": "Japanese",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1788243600000,
-        "endTime": 1788247640000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1788243620000,
-            "endTime": 1788244940000
-          },
-          {
-            "startTime": 1788245360000,
-            "endTime": 1788247640000
-          }
-        ]
-      },
-      {
-        "id": "90db2241-4371-4b8a-bbb6-262c141bd41c",
-        "subjectId": "81264910-ae0b-402f-abbe-fd55cee53a87",
-        "subjectName": "Quantum Mechanics",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1785136800000,
-        "endTime": 1785142200000,
-        "focusedDurationSeconds": 5400,
-        "durationMode": "locked",
-        "archived": false,
-        "note": "Problem set 4",
-        "legacyContinuous": true
-      },
-      {
-        "id": "9461b85d-8fb3-5247-9337-de4a268860fc",
-        "subjectId": "8a0fb9de-0dad-4d83-a95e-c282f4579e0f",
-        "subjectName": "Japanese",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1789960500000,
-        "endTime": 1789963200000,
-        "focusedDurationSeconds": 2700,
-        "durationMode": "unlocked",
-        "archived": false,
-        "note": "Reviewed yesterday's mistakes and completed a timed practice set.",
-        "manual": true
-      },
-      {
-        "id": "94b7fa88-323f-4040-950c-c56209979097",
-        "subjectId": "a0c8b071-5e12-4505-9a3e-42de6e32ae3c",
-        "subjectName": "Organic Chemistry",
-        "academicYearId": "99a04c06-6ebf-46f4-84a6-15f6eec134cd",
-        "academicYearName": "Second Year",
-        "startTime": 1753953600000,
-        "endTime": 1753958100000,
-        "focusedDurationSeconds": 4500,
-        "durationMode": "locked",
-        "archived": false,
-        "legacyContinuous": true
-      },
-      {
-        "id": "964ab455-a651-5dd1-bef0-68d779589139",
-        "subjectId": "89817228-63a9-456d-a356-87ef4d33a38a",
-        "subjectName": "Drawing",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1789802100000,
-        "endTime": 1789807500000,
-        "focusedDurationSeconds": 5400,
-        "durationMode": "unlocked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1789802100000,
-            "endTime": 1789807500000
-          }
-        ]
-      },
-      {
-        "id": "97c8474e-ea8c-46c2-873c-f2eeb9e8dfda",
-        "subjectId": "236d1d58-d260-43ce-b6ea-9786b417af5a",
-        "subjectName": "Physical Chemistry",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1787208300000,
-        "endTime": 1787211300000,
-        "focusedDurationSeconds": 3000,
-        "durationMode": "locked",
-        "archived": false,
-        "legacyContinuous": true
-      },
-      {
-        "id": "9dc35933-469f-58db-8740-4b0b2e31d368",
-        "subjectId": "7a662f0d-8319-4e6b-9809-1ec37b0f72e7",
-        "subjectName": "Econometrics",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1789614900000,
-        "endTime": 1789617600000,
-        "focusedDurationSeconds": 2700,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1789614900000,
-            "endTime": 1789617600000
-          }
-        ]
-      },
-      {
-        "id": "9dd5a95b-78b1-44f9-8350-bdc35b2ddc3a",
-        "subjectId": "81264910-ae0b-402f-abbe-fd55cee53a87",
-        "subjectName": "Quantum Mechanics",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1789699200000,
-        "endTime": 1789704024000,
-        "focusedDurationSeconds": 4500,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1789699210000,
-            "endTime": 1789702630000
-          },
-          {
-            "startTime": 1789702944000,
-            "endTime": 1789704024000
-          }
-        ]
-      },
-      {
-        "id": "9eaa26e4-0a36-448e-bea5-1cd8e747585e",
-        "subjectId": "7ebc4ef8-e224-41eb-9e64-2218fee0f8b8",
-        "subjectName": "Microeconomics",
-        "academicYearId": "72c5bc25-e03d-4715-b8f7-e20c70d59d74",
-        "academicYearName": "First Year",
-        "startTime": 1716950700000,
-        "endTime": 1716954300000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "locked",
-        "archived": false,
-        "legacyContinuous": true
-      },
-      {
-        "id": "9f0250b5-905d-5f8a-8e33-e15e57bb9b89",
-        "subjectId": "89817228-63a9-456d-a356-87ef4d33a38a",
-        "subjectName": "Drawing",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1790807400000,
-        "endTime": 1790809800000,
-        "focusedDurationSeconds": 1800,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1790807400000,
-            "endTime": 1790808300000
-          },
-          {
-            "startTime": 1790808900000,
-            "endTime": 1790809800000
-          }
-        ]
-      },
-      {
-        "id": "9fd5f291-abe7-491b-bc00-3dcee45fcfe1",
-        "subjectId": "7a662f0d-8319-4e6b-9809-1ec37b0f72e7",
-        "subjectName": "Econometrics",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1787899800000,
-        "endTime": 1787904316000,
-        "focusedDurationSeconds": 4500,
-        "durationMode": "unlocked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1787899816000,
-            "endTime": 1787904316000
-          }
-        ]
-      },
-      {
-        "id": "a06b2c62-d0b8-44ad-b308-d8a93f77bdfe",
-        "subjectId": "704bf74a-c895-47c7-8ecd-60e54d422a09",
-        "subjectName": "Macroeconomics",
-        "academicYearId": "99a04c06-6ebf-46f4-84a6-15f6eec134cd",
-        "academicYearName": "Second Year",
-        "startTime": 1747380000000,
-        "endTime": 1747384502000,
-        "focusedDurationSeconds": 4500,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1747380002000,
-            "endTime": 1747384502000
-          }
-        ]
-      },
-      {
-        "id": "a37bd2fc-57a9-4e89-b7ba-0e1bca2d99a2",
-        "subjectId": "d3523540-272c-4583-acaf-8ad9ef652c44",
-        "subjectName": "Electricity & Magnetism",
-        "academicYearId": "99a04c06-6ebf-46f4-84a6-15f6eec134cd",
-        "academicYearName": "Second Year",
-        "startTime": 1760513400000,
-        "endTime": 1760518820000,
-        "focusedDurationSeconds": 5400,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1760513420000,
-            "endTime": 1760518820000
-          }
-        ],
-        "note": "Circuit review"
-      },
-      {
-        "id": "a6126ddd-b3ce-5510-a866-ae89007b29d6",
-        "subjectId": "354d13da-e438-4790-8aba-3e9d4b4aab64",
-        "subjectName": "Differential Equations",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1789581600000,
-        "endTime": 1789583100000,
-        "focusedDurationSeconds": 1500,
-        "durationMode": "unlocked",
-        "archived": false,
-        "note": "Worked through practice questions and noted the steps to revisit.",
-        "manual": true
-      },
-      {
-        "id": "a89fd72c-522a-48ca-978d-c82ce11ed78c",
-        "subjectId": "236d1d58-d260-43ce-b6ea-9786b417af5a",
-        "subjectName": "Physical Chemistry",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1789096500000,
-        "endTime": 1789100108000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1789096508000,
-            "endTime": 1789100108000
-          }
-        ],
-        "note": "Review kinetics"
-      },
-      {
-        "id": "a8f07152-651a-44ff-9802-46ad8e1533e1",
-        "subjectId": "354d13da-e438-4790-8aba-3e9d4b4aab64",
-        "subjectName": "Differential Equations",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1790579700000,
-        "endTime": 1790582105000,
-        "focusedDurationSeconds": 2400,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1790579705000,
-            "endTime": 1790582105000
-          }
-        ],
-        "note": "Second-order ODE practice"
-      },
-      {
-        "id": "a95bf892-3016-4094-b8aa-e542019b2ed3",
-        "subjectId": "236d1d58-d260-43ce-b6ea-9786b417af5a",
-        "subjectName": "Physical Chemistry",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1787387400000,
-        "endTime": 1787391604000,
-        "focusedDurationSeconds": 4200,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1787387404000,
-            "endTime": 1787391604000
-          }
-        ]
-      },
-      {
-        "id": "aa369a2f-c831-5352-b0c9-6e5015a8bbe7",
-        "subjectId": "89817228-63a9-456d-a356-87ef4d33a38a",
-        "subjectName": "Drawing",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1790910000000,
-        "endTime": 1790912400000,
-        "focusedDurationSeconds": 2400,
-        "durationMode": "locked",
-        "archived": false,
-        "note": "Perspective study: two-point street scene. Next: repeat with a higher horizon.",
-        "focusIntervals": [
-          {
-            "startTime": 1790910000000,
-            "endTime": 1790912400000
-          }
-        ]
-      },
-      {
-        "id": "ab2e2fdb-49e7-4097-a572-ea22e84d34be",
-        "subjectId": "704bf74a-c895-47c7-8ecd-60e54d422a09",
-        "subjectName": "Macroeconomics",
-        "academicYearId": "99a04c06-6ebf-46f4-84a6-15f6eec134cd",
-        "academicYearName": "Second Year",
-        "startTime": 1753155000000,
-        "endTime": 1753159500000,
-        "focusedDurationSeconds": 4500,
-        "durationMode": "locked",
-        "archived": false,
-        "legacyContinuous": true
-      },
-      {
-        "id": "ab611931-39f7-4a89-94a5-a292261f4a22",
-        "subjectId": "9d0cc453-2239-48c6-9d4a-626234bf85e1",
-        "subjectName": "Guitar",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1789620600000,
-        "endTime": 1789623608000,
-        "focusedDurationSeconds": 3000,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1789620608000,
-            "endTime": 1789623608000
-          }
-        ]
-      },
-      {
-        "id": "ab7c7e44-0a79-4504-bbc4-63293ea4c049",
-        "subjectId": "83f1e275-a661-46a1-9077-82b86741f14f",
-        "subjectName": "Classical Mechanics",
-        "academicYearId": "72c5bc25-e03d-4715-b8f7-e20c70d59d74",
-        "academicYearName": "First Year",
-        "startTime": 1724121000000,
-        "endTime": 1724124614000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1724121014000,
-            "endTime": 1724124614000
-          }
-        ]
-      },
-      {
-        "id": "abdeb9de-1d96-470a-8a33-9167f36eb189",
-        "subjectId": "7a662f0d-8319-4e6b-9809-1ec37b0f72e7",
-        "subjectName": "Econometrics",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1785918600000,
-        "endTime": 1785922200000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "locked",
-        "archived": false,
-        "legacyContinuous": true
-      },
-      {
-        "id": "acb22aac-96c9-5a51-95ec-b9ad9675598c",
-        "subjectId": "89817228-63a9-456d-a356-87ef4d33a38a",
-        "subjectName": "Drawing",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1790585100000,
-        "endTime": 1790588100000,
-        "focusedDurationSeconds": 3000,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1790585100000,
-            "endTime": 1790588100000
-          }
-        ]
-      },
-      {
-        "id": "acfb3671-1420-4eab-af38-9a6043b20ae1",
-        "subjectId": "8a0fb9de-0dad-4d83-a95e-c282f4579e0f",
-        "subjectName": "Japanese",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1787469300000,
-        "endTime": 1787472859000,
-        "focusedDurationSeconds": 3000,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1787469302000,
-            "endTime": 1787471522000
-          },
-          {
-            "startTime": 1787472079000,
-            "endTime": 1787472859000
-          }
-        ]
-      },
-      {
-        "id": "adc54550-a328-4273-b992-517b3f7bd6da",
-        "subjectId": "236d1d58-d260-43ce-b6ea-9786b417af5a",
-        "subjectName": "Physical Chemistry",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1783915200000,
-        "endTime": 1783922659000,
-        "focusedDurationSeconds": 7200,
-        "durationMode": "unlocked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1783915207000,
-            "endTime": 1783920127000
-          },
-          {
-            "startTime": 1783920379000,
-            "endTime": 1783922659000
-          }
-        ]
-      },
-      {
-        "id": "af7ab609-a512-4be2-bfe6-f2a24470498d",
-        "subjectId": "1a3080ae-fdfa-42e2-b574-7db95d5effbb",
-        "subjectName": "Spanish",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1776840600000,
-        "endTime": 1776843600000,
-        "focusedDurationSeconds": 3000,
-        "durationMode": "locked",
-        "archived": false,
-        "legacyContinuous": true
-      },
-      {
-        "id": "affef798-8dd5-4a66-9f3d-fc609b302de9",
-        "subjectId": "b8217282-43ac-460b-a1a0-23bf8315dbe6",
-        "subjectName": "General Chemistry",
-        "academicYearId": "72c5bc25-e03d-4715-b8f7-e20c70d59d74",
-        "academicYearName": "First Year",
-        "startTime": 1725864300000,
-        "endTime": 1725868507000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1725864306000,
-            "endTime": 1725866346000
-          },
-          {
-            "startTime": 1725866947000,
-            "endTime": 1725868507000
-          }
-        ]
-      },
-      {
-        "id": "b1bfcf92-82e4-4fbf-a225-d386674610c0",
-        "subjectId": "81264910-ae0b-402f-abbe-fd55cee53a87",
-        "subjectName": "Quantum Mechanics",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1789114500000,
-        "endTime": 1789121885000,
-        "focusedDurationSeconds": 7200,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1789114502000,
-            "endTime": 1789120442000
-          },
-          {
-            "startTime": 1789120625000,
-            "endTime": 1789121885000
-          }
-        ],
-        "note": "Review wavefunctions"
-      },
-      {
-        "id": "b335c17a-da1f-4d42-8d1d-5b59865b1c79",
-        "subjectId": "a0c8b071-5e12-4505-9a3e-42de6e32ae3c",
-        "subjectName": "Organic Chemistry",
-        "academicYearId": "99a04c06-6ebf-46f4-84a6-15f6eec134cd",
-        "academicYearName": "Second Year",
-        "startTime": 1756353600000,
-        "endTime": 1756357200000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "locked",
-        "archived": false,
-        "legacyContinuous": true
-      },
-      {
-        "id": "b7e70a34-5865-49ff-88fb-4e87b299233e",
-        "subjectId": "d3523540-272c-4583-acaf-8ad9ef652c44",
-        "subjectName": "Electricity & Magnetism",
-        "academicYearId": "99a04c06-6ebf-46f4-84a6-15f6eec134cd",
-        "academicYearName": "Second Year",
-        "startTime": 1752477000000,
-        "endTime": 1752482911000,
-        "focusedDurationSeconds": 4500,
-        "durationMode": "unlocked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1752477002000,
-            "endTime": 1752479762000
-          },
-          {
-            "startTime": 1752480198000,
-            "endTime": 1752481338000
-          },
-          {
-            "startTime": 1752482311000,
-            "endTime": 1752482911000
-          }
-        ]
-      },
-      {
-        "id": "b8940192-1390-5ce6-ac2e-9c3331638ee8",
-        "subjectId": "354d13da-e438-4790-8aba-3e9d4b4aab64",
-        "subjectName": "Differential Equations",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1790712000000,
-        "endTime": 1790716200000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "locked",
-        "archived": false,
-        "note": "## Tutorial preparation\n- Review **second-order ODEs**\n- Rework the boundary-value example\n\nCheck the [course notes](https://example.com/course-notes) before the next tutorial.",
-        "focusIntervals": [
-          {
-            "startTime": 1790712000000,
-            "endTime": 1790713800000
-          },
-          {
-            "startTime": 1790714400000,
-            "endTime": 1790716200000
-          }
-        ]
-      },
-      {
-        "id": "b93025f4-4981-573a-b5d2-bb5c756011b1",
-        "subjectId": "9d0cc453-2239-48c6-9d4a-626234bf85e1",
-        "subjectName": "Guitar",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1789893900000,
-        "endTime": 1789896900000,
-        "focusedDurationSeconds": 3000,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1789893900000,
-            "endTime": 1789896900000
-          }
-        ]
-      },
-      {
-        "id": "ba692973-26ec-5c7e-bcbc-9d294d9f67cd",
-        "subjectId": "8a0fb9de-0dad-4d83-a95e-c282f4579e0f",
-        "subjectName": "Japanese",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1790747100000,
-        "endTime": 1790751600000,
-        "focusedDurationSeconds": 4500,
-        "durationMode": "unlocked",
-        "archived": false,
-        "note": "Compared two approaches and wrote a brief summary of the differences.",
-        "manual": true
-      },
-      {
-        "id": "bb45ebae-22f6-4a3f-901a-763f60026051",
-        "subjectId": "b55a680b-0a95-4178-9b56-766b9f2798fc",
-        "subjectName": "Linear Algebra",
-        "academicYearId": "99a04c06-6ebf-46f4-84a6-15f6eec134cd",
-        "academicYearName": "Second Year",
-        "startTime": 1741680600000,
-        "endTime": 1741684210000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "unlocked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1741680610000,
-            "endTime": 1741684210000
-          }
-        ]
-      },
-      {
-        "id": "c1001293-4500-4d15-a065-32a4356a6d43",
-        "subjectId": "81264910-ae0b-402f-abbe-fd55cee53a87",
-        "subjectName": "Quantum Mechanics",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1785114600000,
-        "endTime": 1785118947000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "unlocked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1785114611000,
-            "endTime": 1785116171000
-          },
-          {
-            "startTime": 1785116665000,
-            "endTime": 1785117985000
-          },
-          {
-            "startTime": 1785118227000,
-            "endTime": 1785118947000
-          }
-        ],
-        "note": "Particle in a box questions"
-      },
-      {
-        "id": "c24a94a1-0450-45ee-8b85-d78a763d67f3",
-        "subjectId": "354d13da-e438-4790-8aba-3e9d4b4aab64",
-        "subjectName": "Differential Equations",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1785730200000,
-        "endTime": 1785733820000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1785730220000,
-            "endTime": 1785733820000
-          }
-        ]
-      },
-      {
-        "id": "c2657752-f5a8-4999-926a-57ccd116d9c2",
-        "subjectId": "7ebc4ef8-e224-41eb-9e64-2218fee0f8b8",
-        "subjectName": "Microeconomics",
-        "academicYearId": "72c5bc25-e03d-4715-b8f7-e20c70d59d74",
-        "academicYearName": "First Year",
-        "startTime": 1718658600000,
-        "endTime": 1718660108000,
-        "focusedDurationSeconds": 1500,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1718658608000,
-            "endTime": 1718660108000
-          }
-        ]
-      },
-      {
-        "id": "c6b571f6-8736-4022-bdcd-ae07afe42442",
-        "subjectId": "0e49e27f-bc3a-4b90-af39-3a41f473153f",
-        "subjectName": "Calculus I",
-        "academicYearId": "72c5bc25-e03d-4715-b8f7-e20c70d59d74",
-        "academicYearName": "First Year",
-        "startTime": 1715073300000,
-        "endTime": 1715078003000,
-        "focusedDurationSeconds": 4500,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1715073320000,
-            "endTime": 1715075960000
-          },
-          {
-            "startTime": 1715076143000,
-            "endTime": 1715078003000
-          }
-        ]
-      },
-      {
-        "id": "c8233b57-87bf-42fd-ad5c-1a884de71edd",
-        "subjectId": "236d1d58-d260-43ce-b6ea-9786b417af5a",
-        "subjectName": "Physical Chemistry",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1790309700000,
-        "endTime": 1790313300000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "locked",
-        "archived": false,
-        "legacyContinuous": true
-      },
-      {
-        "id": "c8e332bc-9866-57b2-a41a-3b63145c3368",
-        "subjectId": "1a3080ae-fdfa-42e2-b574-7db95d5effbb",
-        "subjectName": "Spanish",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1790744400000,
-        "endTime": 1790746200000,
-        "focusedDurationSeconds": 1800,
-        "durationMode": "unlocked",
-        "archived": false,
-        "note": "Manual entry: vocabulary practice away from the computer.",
-        "manual": true
-      },
-      {
-        "id": "c90da04b-c1d0-443d-b195-124854b25657",
-        "subjectId": "81264910-ae0b-402f-abbe-fd55cee53a87",
-        "subjectName": "Quantum Mechanics",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1784514600000,
-        "endTime": 1784520018000,
-        "focusedDurationSeconds": 5400,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1784514618000,
-            "endTime": 1784520018000
-          }
-        ],
-        "note": "Particle in a box questions"
-      },
-      {
-        "id": "cce1ef92-d63b-4745-ace0-d0cf34458a6f",
-        "subjectId": "354d13da-e438-4790-8aba-3e9d4b4aab64",
-        "subjectName": "Differential Equations",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1785392400000,
-        "endTime": 1785396016000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1785392416000,
-            "endTime": 1785396016000
-          }
-        ]
-      },
-      {
-        "id": "d032cf6d-0b17-4bc2-9c76-10b99822d911",
-        "subjectId": "a0c8b071-5e12-4505-9a3e-42de6e32ae3c",
-        "subjectName": "Organic Chemistry",
-        "academicYearId": "99a04c06-6ebf-46f4-84a6-15f6eec134cd",
-        "academicYearName": "Second Year",
-        "startTime": 1756797300000,
-        "endTime": 1756800906000,
-        "focusedDurationSeconds": 3000,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1756797303000,
-            "endTime": 1756798683000
-          },
-          {
-            "startTime": 1756799286000,
-            "endTime": 1756800906000
-          }
-        ]
-      },
-      {
-        "id": "d478413b-cec5-508e-b768-0b9c8e937d1a",
-        "subjectId": "7a662f0d-8319-4e6b-9809-1ec37b0f72e7",
-        "subjectName": "Econometrics",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1790191800000,
-        "endTime": 1790194200000,
-        "focusedDurationSeconds": 2400,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1790191800000,
-            "endTime": 1790194200000
-          }
-        ]
-      },
-      {
-        "id": "d8a7f6d2-5592-5fdc-a980-00506a25e1f6",
-        "subjectId": "236d1d58-d260-43ce-b6ea-9786b417af5a",
-        "subjectName": "Physical Chemistry",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1790055900000,
-        "endTime": 1790060400000,
-        "focusedDurationSeconds": 4500,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1790055900000,
-            "endTime": 1790060400000
-          }
-        ]
-      },
-      {
-        "id": "d8b30a71-2044-45a3-9137-13cd2213d425",
-        "subjectId": "9d0cc453-2239-48c6-9d4a-626234bf85e1",
-        "subjectName": "Guitar",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1748672400000,
-        "endTime": 1748674800000,
-        "focusedDurationSeconds": 2400,
-        "durationMode": "unlocked",
-        "archived": false,
-        "legacyContinuous": true
-      },
-      {
-        "id": "dbbb0ab3-1f38-47d2-8209-cc6d9da102b9",
-        "subjectId": "1a3080ae-fdfa-42e2-b574-7db95d5effbb",
-        "subjectName": "Spanish",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1783913400000,
-        "endTime": 1783916002000,
-        "focusedDurationSeconds": 2400,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1783913406000,
-            "endTime": 1783914666000
-          },
-          {
-            "startTime": 1783914862000,
-            "endTime": 1783916002000
-          }
-        ],
-        "note": "Listening practice"
-      },
-      {
-        "id": "dddfe660-88a4-5bc6-b6d6-d7e7d8627bcf",
-        "subjectId": "8a0fb9de-0dad-4d83-a95e-c282f4579e0f",
-        "subjectName": "Japanese",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1789768800000,
-        "endTime": 1789771200000,
-        "focusedDurationSeconds": 1800,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1789768800000,
-            "endTime": 1789769700000
-          },
-          {
-            "startTime": 1789770300000,
-            "endTime": 1789771200000
-          }
-        ]
-      },
-      {
-        "id": "e418070d-56c2-4698-89bd-7dba8d8988d3",
-        "subjectId": "7ebc4ef8-e224-41eb-9e64-2218fee0f8b8",
-        "subjectName": "Microeconomics",
-        "academicYearId": "72c5bc25-e03d-4715-b8f7-e20c70d59d74",
-        "academicYearName": "First Year",
-        "startTime": 1718251800000,
-        "endTime": 1718255400000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "locked",
-        "archived": false,
-        "legacyContinuous": true
-      },
-      {
-        "id": "e5781bca-24fc-4517-b864-3d37111cc921",
-        "subjectId": "1e432af1-4592-4339-954e-a5ecc4ad77c3",
-        "subjectName": "Project Work",
-        "academicYearId": "5d599131-5312-4d45-8004-a1e492e41dfa",
-        "academicYearName": "Summer Internship",
-        "startTime": 1768799400000,
-        "endTime": 1768802403000,
-        "focusedDurationSeconds": 3000,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1768799403000,
-            "endTime": 1768802403000
-          }
-        ]
-      },
-      {
-        "id": "e7eabe51-6097-57d7-8f71-91224b4a74b0",
-        "subjectId": "9d0cc453-2239-48c6-9d4a-626234bf85e1",
-        "subjectName": "Guitar",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1790114400000,
-        "endTime": 1790116800000,
-        "focusedDurationSeconds": 1800,
-        "durationMode": "locked",
-        "archived": false,
-        "note": "Worked through practice questions and noted the steps to revisit.",
-        "focusIntervals": [
-          {
-            "startTime": 1790114400000,
-            "endTime": 1790115300000
-          },
-          {
-            "startTime": 1790115900000,
-            "endTime": 1790116800000
-          }
-        ]
-      },
-      {
-        "id": "e8aa7830-1532-4d4f-a935-d22c6d2e4e78",
-        "subjectId": "89817228-63a9-456d-a356-87ef4d33a38a",
-        "subjectName": "Drawing",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1752704400000,
-        "endTime": 1752706206000,
-        "focusedDurationSeconds": 1800,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1752704406000,
-            "endTime": 1752706206000
-          }
-        ],
-        "note": "Gesture drawing"
-      },
-      {
-        "id": "e95893ca-363c-472a-a5f8-37bf9d0fcdc5",
-        "subjectId": "8a0fb9de-0dad-4d83-a95e-c282f4579e0f",
-        "subjectName": "Japanese",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1785210300000,
-        "endTime": 1785212114000,
-        "focusedDurationSeconds": 1800,
-        "durationMode": "unlocked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1785210314000,
-            "endTime": 1785212114000
-          }
-        ]
-      },
-      {
-        "id": "e980c573-852f-4eb6-91ea-47573f0b61b0",
-        "subjectId": "9d0cc453-2239-48c6-9d4a-626234bf85e1",
-        "subjectName": "Guitar",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1741741200000,
-        "endTime": 1741743620000,
-        "focusedDurationSeconds": 2400,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1741741220000,
-            "endTime": 1741743620000
-          }
-        ]
-      },
-      {
-        "id": "ea9bb4c6-3bbf-4773-9517-e1e56f5a2ec8",
-        "subjectId": "236d1d58-d260-43ce-b6ea-9786b417af5a",
-        "subjectName": "Physical Chemistry",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1788730800000,
-        "endTime": 1788736275000,
-        "focusedDurationSeconds": 4500,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1788730804000,
-            "endTime": 1788732304000
-          },
-          {
-            "startTime": 1788733275000,
-            "endTime": 1788736275000
-          }
-        ]
-      },
-      {
-        "id": "ec456c28-6bb5-4189-870e-cc754b6dc875",
-        "subjectId": "236d1d58-d260-43ce-b6ea-9786b417af5a",
-        "subjectName": "Physical Chemistry",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1785464100000,
-        "endTime": 1785469207000,
-        "focusedDurationSeconds": 4200,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1785464104000,
-            "endTime": 1785467164000
-          },
-          {
-            "startTime": 1785468067000,
-            "endTime": 1785469207000
-          }
-        ],
-        "note": "Thermodynamics tutorial"
-      },
-      {
-        "id": "ecf104ee-6ebb-418f-8aee-5232eb638ace",
-        "subjectId": "8a0fb9de-0dad-4d83-a95e-c282f4579e0f",
-        "subjectName": "Japanese",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1782510000000,
-        "endTime": 1782513000000,
-        "focusedDurationSeconds": 3000,
-        "durationMode": "locked",
-        "archived": false,
-        "note": "Kanji review",
-        "legacyContinuous": true
-      },
-      {
-        "id": "ee5d1f47-891d-4cd0-8c89-57389fb079d7",
-        "subjectId": "83f1e275-a661-46a1-9077-82b86741f14f",
-        "subjectName": "Classical Mechanics",
-        "academicYearId": "72c5bc25-e03d-4715-b8f7-e20c70d59d74",
-        "academicYearName": "First Year",
-        "startTime": 1724037300000,
-        "endTime": 1724040320000,
-        "focusedDurationSeconds": 3000,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1724037320000,
-            "endTime": 1724040320000
-          }
-        ]
-      },
-      {
-        "id": "efe16089-db81-5f09-8c86-3387e5165711",
-        "subjectId": "8a0fb9de-0dad-4d83-a95e-c282f4579e0f",
-        "subjectName": "Japanese",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1790851200000,
-        "endTime": 1790853900000,
-        "focusedDurationSeconds": 2700,
-        "durationMode": "locked",
-        "archived": false,
-        "note": "Reading practice across midnight; revisit unfamiliar kanji tomorrow.",
-        "focusIntervals": [
-          {
-            "startTime": 1790851200000,
-            "endTime": 1790853900000
-          }
-        ]
-      },
-      {
-        "id": "f4cc7cf2-8a6a-4594-af28-2be46266241d",
-        "subjectId": "7a662f0d-8319-4e6b-9809-1ec37b0f72e7",
-        "subjectName": "Econometrics",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1784515500000,
-        "endTime": 1784519700000,
-        "focusedDurationSeconds": 4200,
-        "durationMode": "locked",
-        "archived": false,
-        "legacyContinuous": true
-      },
-      {
-        "id": "f4dea788-9350-5f1e-b4b9-b186ab243330",
-        "subjectId": "89817228-63a9-456d-a356-87ef4d33a38a",
-        "subjectName": "Drawing",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1790022600000,
-        "endTime": 1790026200000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "unlocked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1790022600000,
-            "endTime": 1790026200000
-          }
-        ]
-      },
-      {
-        "id": "f5936951-6eef-5056-897c-ff4baf877970",
-        "subjectId": "8a0fb9de-0dad-4d83-a95e-c282f4579e0f",
-        "subjectName": "Japanese",
-        "academicYearId": "846436ad-4379-4c7e-b706-b10af421e499",
-        "academicYearName": "Self-Study",
-        "startTime": 1790537400000,
-        "endTime": 1790539800000,
-        "focusedDurationSeconds": 2400,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1790537400000,
-            "endTime": 1790539800000
-          }
-        ]
-      },
-      {
-        "id": "f663db4b-6279-5dd8-8423-416a69c0aba8",
-        "subjectId": "81264910-ae0b-402f-abbe-fd55cee53a87",
-        "subjectName": "Quantum Mechanics",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1790802000000,
-        "endTime": 1790806500000,
-        "focusedDurationSeconds": 4500,
-        "durationMode": "locked",
-        "archived": false,
-        "note": "Practise operator identities and check each derivation.",
-        "focusIntervals": [
-          {
-            "startTime": 1790802000000,
-            "endTime": 1790806500000
-          }
-        ]
-      },
-      {
-        "id": "f75ac7d9-a36a-4442-8fac-b2a70deeeed9",
-        "subjectId": "d3523540-272c-4583-acaf-8ad9ef652c44",
-        "subjectName": "Electricity & Magnetism",
-        "academicYearId": "99a04c06-6ebf-46f4-84a6-15f6eec134cd",
-        "academicYearName": "Second Year",
-        "startTime": 1748558700000,
-        "endTime": 1748561889000,
-        "focusedDurationSeconds": 2400,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1748558709000,
-            "endTime": 1748560029000
-          },
-          {
-            "startTime": 1748560809000,
-            "endTime": 1748561889000
-          }
-        ]
-      },
-      {
-        "id": "f7e293c0-7912-4e85-b3e7-97c48fc85c54",
-        "subjectId": "354d13da-e438-4790-8aba-3e9d4b4aab64",
-        "subjectName": "Differential Equations",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1789378800000,
-        "endTime": 1789383301000,
-        "focusedDurationSeconds": 4500,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1789378801000,
-            "endTime": 1789383301000
-          }
-        ]
-      },
-      {
-        "id": "f88f862a-6ff5-4a09-bede-6994b80db304",
-        "subjectId": "1e432af1-4592-4339-954e-a5ecc4ad77c3",
-        "subjectName": "Project Work",
-        "academicYearId": "5d599131-5312-4d45-8004-a1e492e41dfa",
-        "academicYearName": "Summer Internship",
-        "startTime": 1766188800000,
-        "endTime": 1766191800000,
-        "focusedDurationSeconds": 3000,
-        "durationMode": "locked",
-        "archived": false,
-        "legacyContinuous": true
-      },
-      {
-        "id": "f94ad775-76c5-5eb2-8f02-c7f9931cf080",
-        "subjectId": "81264910-ae0b-402f-abbe-fd55cee53a87",
-        "subjectName": "Quantum Mechanics",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1790717100000,
-        "endTime": 1790720700000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1790717100000,
-            "endTime": 1790720700000
-          }
-        ],
-        "note": "Reviewed yesterday's mistakes and completed a timed practice set.\n- Reworked errors involving operator methods and commutators.\n- Reviewed normalization and expectation-value calculations.\n- Practiced solving time-independent Schrödinger equation problems under time pressure.\n- Checked mistakes involving angular momentum and eigenstates.\n- Reviewed when to use perturbation theory approximations.\n- Identified algebra and notation errors that caused lost marks.\n- Noted which derivations and standard results still need faster recall."
-      },
-      {
-        "id": "fa8c9e2a-6803-4303-822c-c5f3deb77bd3",
-        "subjectId": "b8217282-43ac-460b-a1a0-23bf8315dbe6",
-        "subjectName": "General Chemistry",
-        "academicYearId": "72c5bc25-e03d-4715-b8f7-e20c70d59d74",
-        "academicYearName": "First Year",
-        "startTime": 1710806400000,
-        "endTime": 1710810000000,
-        "focusedDurationSeconds": 3600,
-        "durationMode": "locked",
-        "archived": false,
-        "legacyContinuous": true
-      },
-      {
-        "id": "fd6e9d08-8c9a-4eec-81b2-10f7ab3d5d89",
-        "subjectId": "7a662f0d-8319-4e6b-9809-1ec37b0f72e7",
-        "subjectName": "Econometrics",
-        "academicYearId": "abf37039-f992-4dc2-8e90-976e66033e52",
-        "academicYearName": "Third Year",
-        "startTime": 1787525100000,
-        "endTime": 1787528783000,
-        "focusedDurationSeconds": 3000,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1787525112000,
-            "endTime": 1787527212000
-          },
-          {
-            "startTime": 1787527883000,
-            "endTime": 1787528783000
-          }
-        ],
-        "note": "Review hypothesis testing"
-      },
-      {
-        "id": "fe996e82-8516-4cb3-9ec2-5dcfaa65326f",
-        "subjectId": "d3523540-272c-4583-acaf-8ad9ef652c44",
-        "subjectName": "Electricity & Magnetism",
-        "academicYearId": "99a04c06-6ebf-46f4-84a6-15f6eec134cd",
-        "academicYearName": "Second Year",
-        "startTime": 1757558400000,
-        "endTime": 1757562906000,
-        "focusedDurationSeconds": 4500,
-        "durationMode": "locked",
-        "archived": false,
-        "focusIntervals": [
-          {
-            "startTime": 1757558406000,
-            "endTime": 1757562906000
-          }
-        ]
-      }
-    ],
-    "settings": [
-      {
-        "key": "accentColour",
-        "value": "orange"
-      },
-      {
-        "key": "allowDirectActiveDeletion",
-        "value": "false"
-      },
-      {
-        "key": "checkForUpdatesOnLaunch",
-        "value": "true"
-      },
-      {
-        "key": "clockFormat",
-        "value": "system"
-      },
-      {
-        "key": "completionNotification",
-        "value": "true"
-      },
-      {
-        "key": "completionSound",
-        "value": "true"
-      },
-      {
-        "key": "completionSoundChoice",
-        "value": "soft-chime"
-      },
-      {
-        "key": "completionSoundVolume",
-        "value": "65"
-      },
-      {
-        "key": "dailyGoalEnabled",
-        "value": "true"
-      },
-      {
-        "key": "dailyGoalSeconds",
-        "value": "7200"
-      },
-      {
-        "key": "dateFormat",
-        "value": "standard"
-      },
-      {
-        "key": "defaultSubjectId",
-        "value": ""
-      },
-      {
-        "key": "displayName",
-        "value": ""
-      },
-      {
-        "key": "fixedTimerDurationSeconds",
-        "value": "4500"
-      },
-      {
-        "key": "historyPageSize",
-        "value": "25"
-      },
-      {
-        "key": "language",
-        "value": "en"
-      },
-      {
-        "key": "lastBackupAt",
-        "value": "2026-10-02T21:12:23.572Z"
-      },
-      {
-        "key": "lastSubjectId",
-        "value": "236d1d58-d260-43ce-b6ea-9786b417af5a"
-      },
-      {
-        "key": "lastTimerDurationSeconds",
-        "value": "4500"
-      },
-      {
-        "key": "launchAtStartup",
-        "value": "false"
-      },
-      {
-        "key": "popoutAlwaysOnTop",
-        "value": "true"
-      },
-      {
-        "key": "popoutAutoHide",
-        "value": "1000"
-      },
-      {
-        "key": "popoutAutoHideDelaySeconds",
-        "value": "0.4"
-      },
-      {
-        "key": "popoutAutoHideEdge",
-        "value": "right"
-      },
-      {
-        "key": "popoutAutoHideOffset",
-        "value": "0"
-      },
-      {
-        "key": "popoutAutoHideShowAccent",
-        "value": "true"
-      },
-      {
-        "key": "popoutAutoHideTabSize",
-        "value": "medium"
-      },
-      {
-        "key": "popoutAutoOpen",
-        "value": "false"
-      },
-      {
-        "key": "popoutBorderOpacity",
-        "value": "100"
-      },
-      {
-        "key": "popoutDockAutoHide",
-        "value": "false"
-      },
-      {
-        "key": "popoutDockCorner",
-        "value": "top-right"
-      },
-      {
-        "key": "popoutDockMonitor",
-        "value": "current"
-      },
-      {
-        "key": "popoutDocked",
-        "value": "true"
-      },
-      {
-        "key": "popoutDockingEnabled",
-        "value": "true"
-      },
-      {
-        "key": "popoutFloatingHeight",
-        "value": "285"
-      },
-      {
-        "key": "popoutFloatingWidth",
-        "value": "493"
-      },
-      {
-        "key": "popoutHideControls",
-        "value": "true"
-      },
-      {
-        "key": "popoutLayout",
-        "value": "regular"
-      },
-      {
-        "key": "popoutPositionX",
-        "value": "192"
-      },
-      {
-        "key": "popoutPositionY",
-        "value": "192"
-      },
-      {
-        "key": "popoutRememberPosition",
-        "value": "true"
-      },
-      {
-        "key": "popoutRevealShortcut",
-        "value": "Ctrl+Alt+KeyF"
-      },
-      {
-        "key": "popoutRevealShortcutIntent",
-        "value": "default"
-      },
-      {
-        "key": "popoutRevealTimeoutSeconds",
-        "value": "5"
-      },
-      {
-        "key": "popoutShortcutEnabled",
-        "value": "true"
-      },
-      {
-        "key": "popoutShowClock",
-        "value": "true"
-      },
-      {
-        "key": "popoutShowInTaskbar",
-        "value": "false"
-      },
-      {
-        "key": "popoutShowSubject",
-        "value": "true"
-      },
-      {
-        "key": "popoutSize",
-        "value": "medium"
-      },
-      {
-        "key": "popoutTransparency",
-        "value": "100"
-      },
-      {
-        "key": "showClock",
-        "value": "true"
-      },
-      {
-        "key": "showDate",
-        "value": "true"
-      },
-      {
-        "key": "showWeekday",
-        "value": "true"
-      },
-      {
-        "key": "sidebarSubtitle",
-        "value": ""
-      },
-      {
-        "key": "startMaximized",
-        "value": "true"
-      },
-      {
-        "key": "subjectPickerMode",
-        "value": "remember"
-      },
-      {
-        "key": "theme",
-        "value": "dark"
-      },
-      {
-        "key": "timerDurationMode",
-        "value": "remember"
-      },
-      {
-        "key": "uiScale",
-        "value": "medium"
-      },
-      {
-        "key": "weekdayStyle",
-        "value": "short"
-      },
-      {
-        "key": "weeklyGoalEnabled",
-        "value": "true"
-      },
-      {
-        "key": "weeklyGoalSeconds",
-        "value": "43200"
-      }
-    ]
+  "academicYears": [
+    {
+      "id": 1,
+      "name": "Summer Internship",
+      "startDate": "2025-11-24",
+      "endDate": "2026-02-06",
+      "archived": true
+    },
+    {
+      "id": 2,
+      "name": "First Year",
+      "startDate": "2024-02-19",
+      "endDate": "2024-11-15",
+      "archived": true
+    },
+    {
+      "id": 3,
+      "name": "Self-Study",
+      "archived": false
+    },
+    {
+      "id": 4,
+      "name": "Second Year",
+      "startDate": "2025-02-17",
+      "endDate": "2025-11-14",
+      "archived": true
+    },
+    {
+      "id": 5,
+      "name": "Third Year",
+      "startDate": "2026-02-16",
+      "endDate": "2026-11-13",
+      "archived": false
+    }
+  ],
+  "subjects": [
+    {
+      "id": 1,
+      "academicYearId": 2,
+      "name": "Calculus I",
+      "colorId": 0,
+      "archived": false
+    },
+    {
+      "id": 2,
+      "academicYearId": 3,
+      "name": "Spanish",
+      "colorId": 10,
+      "archived": false
+    },
+    {
+      "id": 3,
+      "academicYearId": 1,
+      "name": "Project Work",
+      "colorId": 6,
+      "archived": false
+    },
+    {
+      "id": 4,
+      "academicYearId": 5,
+      "name": "Physical Chemistry",
+      "colorId": 1,
+      "archived": false
+    },
+    {
+      "id": 5,
+      "academicYearId": 5,
+      "name": "Differential Equations",
+      "colorId": 0,
+      "archived": false
+    },
+    {
+      "id": 6,
+      "academicYearId": 4,
+      "name": "Macroeconomics",
+      "colorId": 9,
+      "archived": false
+    },
+    {
+      "id": 7,
+      "academicYearId": 5,
+      "name": "Econometrics",
+      "colorId": 3,
+      "archived": false
+    },
+    {
+      "id": 8,
+      "academicYearId": 2,
+      "name": "Microeconomics",
+      "colorId": 3,
+      "archived": false
+    },
+    {
+      "id": 9,
+      "academicYearId": 5,
+      "name": "Quantum Mechanics",
+      "colorId": 2,
+      "archived": false
+    },
+    {
+      "id": 10,
+      "academicYearId": 2,
+      "name": "Classical Mechanics",
+      "colorId": 2,
+      "archived": false
+    },
+    {
+      "id": 11,
+      "academicYearId": 3,
+      "name": "Drawing",
+      "colorId": 11,
+      "archived": false
+    },
+    {
+      "id": 12,
+      "academicYearId": 3,
+      "name": "Japanese",
+      "colorId": 4,
+      "archived": false
+    },
+    {
+      "id": 13,
+      "academicYearId": 3,
+      "name": "Guitar",
+      "colorId": 5,
+      "archived": false
+    },
+    {
+      "id": 14,
+      "academicYearId": 4,
+      "name": "Organic Chemistry",
+      "colorId": 8,
+      "archived": false
+    },
+    {
+      "id": 15,
+      "academicYearId": 4,
+      "name": "Linear Algebra",
+      "colorId": 6,
+      "archived": false
+    },
+    {
+      "id": 16,
+      "academicYearId": 2,
+      "name": "General Chemistry",
+      "colorId": 1,
+      "archived": false
+    },
+    {
+      "id": 17,
+      "academicYearId": 4,
+      "name": "Electricity & Magnetism",
+      "colorId": 7,
+      "archived": false
+    }
+  ],
+  "sessions": [
+    {
+      "id": 1,
+      "subjectId": 4,
+      "startedAt": 1789029000,
+      "elapsedSeconds": 3011,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 11
+        }
+      ],
+      "sourceIdentity": "legacy-session:025fbbeb-51b6-448b-a0f2-fd9f387a3845"
+    },
+    {
+      "id": 2,
+      "subjectId": 1,
+      "startedAt": 1721809200,
+      "elapsedSeconds": 4107,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 16
+        },
+        {
+          "offsetSeconds": 1336,
+          "durationSeconds": 491
+        }
+      ],
+      "sourceIdentity": "legacy-session:05f78deb-84a8-452a-8463-43331c177dcf"
+    },
+    {
+      "id": 3,
+      "subjectId": 8,
+      "startedAt": 1721205600,
+      "elapsedSeconds": 3911,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 10
+        },
+        {
+          "offsetSeconds": 1930,
+          "durationSeconds": 301
+        }
+      ],
+      "sourceIdentity": "legacy-session:078d98aa-3f92-4d31-9a0e-c5d588f0a089"
+    },
+    {
+      "id": 4,
+      "subjectId": 9,
+      "startedAt": 1790493300,
+      "elapsedSeconds": 5400,
+      "note": "Reviewed yesterday's mistakes and completed a timed practice set.",
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:0869c772-5f00-50b2-ad5a-b73e32397fb5"
+    },
+    {
+      "id": 5,
+      "subjectId": 13,
+      "startedAt": 1760251500,
+      "elapsedSeconds": 2416,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 16
+        }
+      ],
+      "sourceIdentity": "legacy-session:09fc77b8-1fdb-4fc3-88f1-c691159c2567"
+    },
+    {
+      "id": 6,
+      "subjectId": 5,
+      "startedAt": 1786837200,
+      "elapsedSeconds": 4500,
+      "note": "Laplace transform review",
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:0cff2496-39e7-4fc6-86fe-a74afdbcd6b9"
+    },
+    {
+      "id": 7,
+      "subjectId": 7,
+      "startedAt": 1790401500,
+      "elapsedSeconds": 4500,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:129305e2-e92e-58ea-9c78-24606f49ce0f"
+    },
+    {
+      "id": 8,
+      "subjectId": 5,
+      "startedAt": 1790147700,
+      "elapsedSeconds": 5400,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:13915467-ab0d-5312-a84e-919c2dab6c35"
+    },
+    {
+      "id": 9,
+      "subjectId": 1,
+      "startedAt": 1711947600,
+      "elapsedSeconds": 3006,
+      "note": "Review limits before tutorial",
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 6
+        }
+      ],
+      "sourceIdentity": "legacy-session:18299218-938a-4297-8469-bcb2163e47ca"
+    },
+    {
+      "id": 10,
+      "subjectId": 2,
+      "startedAt": 1789688432,
+      "elapsedSeconds": 3600,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:185c4968-8ca1-5cde-9b0c-c84c5bcb58d9"
+    },
+    {
+      "id": 11,
+      "subjectId": 3,
+      "startedAt": 1766029200,
+      "elapsedSeconds": 2400,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:1b99ac9b-22cf-4937-b35f-6a3189cd47d0"
+    },
+    {
+      "id": 12,
+      "subjectId": 2,
+      "startedAt": 1790651700,
+      "elapsedSeconds": 2700,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:1c0b0d41-27cd-5c22-9e38-e0e86a4f4802"
+    },
+    {
+      "id": 13,
+      "subjectId": 12,
+      "startedAt": 1783318200,
+      "elapsedSeconds": 1820,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 20
+        }
+      ],
+      "sourceIdentity": "legacy-session:1cdf6960-4add-4037-b3f9-61c6e720be4e"
+    },
+    {
+      "id": 14,
+      "subjectId": 6,
+      "startedAt": 1749089700,
+      "elapsedSeconds": 6070,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 8
+        },
+        {
+          "offsetSeconds": 4148,
+          "durationSeconds": 662
+        }
+      ],
+      "sourceIdentity": "legacy-session:20bb248a-53ca-42e4-bf87-e668cc688e59"
+    },
+    {
+      "id": 15,
+      "subjectId": 4,
+      "startedAt": 1790566200,
+      "elapsedSeconds": 3007,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 7
+        }
+      ],
+      "sourceIdentity": "legacy-session:21058dca-b9ee-4b94-8673-5092818a8534"
+    },
+    {
+      "id": 16,
+      "subjectId": 5,
+      "startedAt": 1784361000,
+      "elapsedSeconds": 5115,
+      "note": "Laplace transform review",
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 13
+        },
+        {
+          "offsetSeconds": 3253,
+          "durationSeconds": 602
+        }
+      ],
+      "sourceIdentity": "legacy-session:2301e7b4-e17a-4edd-8818-ec74c112181a"
+    },
+    {
+      "id": 17,
+      "subjectId": 6,
+      "startedAt": 1744428600,
+      "elapsedSeconds": 3741,
+      "note": "Review growth models",
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 15
+        },
+        {
+          "offsetSeconds": 1395,
+          "durationSeconds": 726
+        }
+      ],
+      "sourceIdentity": "legacy-session:23b64133-e34d-489f-916f-8aac5c0f8249"
+    },
+    {
+      "id": 18,
+      "subjectId": 12,
+      "startedAt": 1786314600,
+      "elapsedSeconds": 4340,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 3
+        },
+        {
+          "offsetSeconds": 1323,
+          "durationSeconds": 551
+        },
+        {
+          "offsetSeconds": 2954,
+          "durationSeconds": 786
+        }
+      ],
+      "sourceIdentity": "legacy-session:2588a222-70be-4ed5-8c9e-55456378d936"
+    },
+    {
+      "id": 19,
+      "subjectId": 4,
+      "startedAt": 1790838900,
+      "elapsedSeconds": 5400,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:2672d2ae-8cbf-5be2-b70d-bad5f633dfb5"
+    },
+    {
+      "id": 20,
+      "subjectId": 16,
+      "startedAt": 1727683200,
+      "elapsedSeconds": 4500,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:26849a87-6291-44ae-bc59-5bd1668b0d0b"
+    },
+    {
+      "id": 21,
+      "subjectId": 4,
+      "startedAt": 1785139200,
+      "elapsedSeconds": 5900,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 10
+        },
+        {
+          "offsetSeconds": 2590,
+          "durationSeconds": 490
+        }
+      ],
+      "sourceIdentity": "legacy-session:282a8bbb-8d93-4c7c-b9f4-b8a72aa038b8"
+    },
+    {
+      "id": 22,
+      "subjectId": 17,
+      "startedAt": 1762121400,
+      "elapsedSeconds": 4102,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 4
+        },
+        {
+          "offsetSeconds": 2644,
+          "durationSeconds": 498
+        }
+      ],
+      "sourceIdentity": "legacy-session:29a7bad1-0541-455a-882c-0965057bf1a8"
+    },
+    {
+      "id": 23,
+      "subjectId": 5,
+      "startedAt": 1788425100,
+      "elapsedSeconds": 6300,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:2a41fcbd-ecbd-43ec-a853-746a179426bd"
+    },
+    {
+      "id": 24,
+      "subjectId": 4,
+      "startedAt": 1789461600,
+      "elapsedSeconds": 4338,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 10
+        },
+        {
+          "offsetSeconds": 2290,
+          "durationSeconds": 728
+        }
+      ],
+      "sourceIdentity": "legacy-session:2a96f0da-245c-4355-b9a3-59e533b10359"
+    },
+    {
+      "id": 25,
+      "subjectId": 5,
+      "startedAt": 1790310000,
+      "elapsedSeconds": 4509,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 9
+        }
+      ],
+      "sourceIdentity": "legacy-session:2bbe7693-e3a3-4e00-9df1-c1508ccfcfdd"
+    },
+    {
+      "id": 26,
+      "subjectId": 9,
+      "startedAt": 1788765300,
+      "elapsedSeconds": 2837,
+      "note": "Problem set 4",
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 6
+        },
+        {
+          "offsetSeconds": 1746,
+          "durationSeconds": 431
+        }
+      ],
+      "sourceIdentity": "legacy-session:300816f0-67de-47f1-a874-1f955f24e8bf"
+    },
+    {
+      "id": 27,
+      "subjectId": 17,
+      "startedAt": 1742103000,
+      "elapsedSeconds": 3000,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:316a53dd-431a-4d67-a627-d37e45acb354"
+    },
+    {
+      "id": 28,
+      "subjectId": 3,
+      "startedAt": 1769568000,
+      "elapsedSeconds": 4507,
+      "note": "Prepare project update",
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 7
+        }
+      ],
+      "sourceIdentity": "legacy-session:32d71548-4239-4ea7-a7f8-83f9525b6add"
+    },
+    {
+      "id": 29,
+      "subjectId": 3,
+      "startedAt": 1767215400,
+      "elapsedSeconds": 4030,
+      "note": "Prepare project update",
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 5
+        },
+        {
+          "offsetSeconds": 1385,
+          "durationSeconds": 425
+        }
+      ],
+      "sourceIdentity": "legacy-session:3383a746-a13c-46e8-97e0-4709957757d1"
+    },
+    {
+      "id": 30,
+      "subjectId": 5,
+      "startedAt": 1790368200,
+      "elapsedSeconds": 3600,
+      "note": "Short revision block: consolidate the main ideas before the next session.",
+      "manual": true,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:34054c63-04ef-5d09-beca-7a505bd2bbfe"
+    },
+    {
+      "id": 31,
+      "subjectId": 15,
+      "startedAt": 1755337200,
+      "elapsedSeconds": 3000,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:355b2fb1-b6f0-4c21-abe2-3c119d6e2774"
+    },
+    {
+      "id": 32,
+      "subjectId": 7,
+      "startedAt": 1786074600,
+      "elapsedSeconds": 3610,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 10
+        }
+      ],
+      "sourceIdentity": "legacy-session:36338a85-5875-4d63-9bb6-ce6a5277c358"
+    },
+    {
+      "id": 33,
+      "subjectId": 4,
+      "startedAt": 1785132600,
+      "elapsedSeconds": 3620,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 20
+        }
+      ],
+      "sourceIdentity": "legacy-session:381c7902-a295-4465-9757-ac3f77e3588a"
+    },
+    {
+      "id": 34,
+      "subjectId": 3,
+      "startedAt": 1768980000,
+      "elapsedSeconds": 5412,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 12
+        }
+      ],
+      "sourceIdentity": "legacy-session:3a540c51-8ce4-4abf-99ee-b798dbae574d"
+    },
+    {
+      "id": 35,
+      "subjectId": 9,
+      "startedAt": 1789543800,
+      "elapsedSeconds": 4518,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 18
+        }
+      ],
+      "sourceIdentity": "legacy-session:3e76279d-4dd4-4ec3-9d0e-667465764858"
+    },
+    {
+      "id": 36,
+      "subjectId": 11,
+      "startedAt": 1783569600,
+      "elapsedSeconds": 4699,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 7
+        },
+        {
+          "offsetSeconds": 1687,
+          "durationSeconds": 731
+        },
+        {
+          "offsetSeconds": 3138,
+          "durationSeconds": 961
+        }
+      ],
+      "sourceIdentity": "legacy-session:4035f052-e227-4e8c-8cb6-fcdfaf8b334a"
+    },
+    {
+      "id": 37,
+      "subjectId": 17,
+      "startedAt": 1747985400,
+      "elapsedSeconds": 4500,
+      "note": "Field and potential questions",
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:41ea52a4-a1a7-46b4-915a-e73ba9ffc565"
+    },
+    {
+      "id": 38,
+      "subjectId": 9,
+      "startedAt": 1789927200,
+      "elapsedSeconds": 2100,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 750,
+          "durationSeconds": 600
+        }
+      ],
+      "sourceIdentity": "legacy-session:42e4c4f9-9205-5d88-aa47-79e082065c67"
+    },
+    {
+      "id": 39,
+      "subjectId": 3,
+      "startedAt": 1767572400,
+      "elapsedSeconds": 4515,
+      "note": "Research implementation options",
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 15
+        }
+      ],
+      "sourceIdentity": "legacy-session:4f9f9c63-c54d-40b2-a4d3-e3e4d966265e"
+    },
+    {
+      "id": 40,
+      "subjectId": 1,
+      "startedAt": 1712121000,
+      "elapsedSeconds": 5409,
+      "note": "Practice integration techniques",
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 9
+        }
+      ],
+      "sourceIdentity": "legacy-session:520fce65-9c1a-4654-8931-204d7a12f37e"
+    },
+    {
+      "id": 41,
+      "subjectId": 5,
+      "startedAt": 1790930700,
+      "elapsedSeconds": 3000,
+      "note": "Reviewed solution methods for higher-order and systems of differential equations.\n\n- Practiced solving linear ODEs using characteristic equations.\n- Reviewed variation of parameters and undetermined coefficients.\n- Worked through systems using eigenvalues and eigenvectors.\n- Practiced phase-plane analysis and classifying equilibrium points.\n- Reviewed Laplace-transform methods for initial-value problems.\n- Looked at stability and qualitative behavior of nonlinear systems.\n- Completed timed problems and noted which methods took too long to identify.",
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:53a7c1f9-6b64-51e3-ad14-01a9118778c8"
+    },
+    {
+      "id": 42,
+      "subjectId": 5,
+      "startedAt": 1789854300,
+      "elapsedSeconds": 4504,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 4
+        }
+      ],
+      "sourceIdentity": "legacy-session:53c20360-93f5-4985-87b9-fb7735f577e0"
+    },
+    {
+      "id": 43,
+      "subjectId": 7,
+      "startedAt": 1786696200,
+      "elapsedSeconds": 3616,
+      "note": "Regression exercises",
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 16
+        }
+      ],
+      "sourceIdentity": "legacy-session:5466d12a-639e-43a0-851c-6e7b8eaf9c58"
+    },
+    {
+      "id": 44,
+      "subjectId": 4,
+      "startedAt": 1790272800,
+      "elapsedSeconds": 2100,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 750,
+          "durationSeconds": 600
+        }
+      ],
+      "sourceIdentity": "legacy-session:55163846-4f48-555f-b6bf-c4898e949142"
+    },
+    {
+      "id": 45,
+      "subjectId": 10,
+      "startedAt": 1718607600,
+      "elapsedSeconds": 7216,
+      "note": "Review rotational motion",
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 16
+        }
+      ],
+      "sourceIdentity": "legacy-session:558cc960-0be4-4173-b8af-4fdedcb8e919"
+    },
+    {
+      "id": 46,
+      "subjectId": 9,
+      "startedAt": 1789710300,
+      "elapsedSeconds": 4500,
+      "note": "Compared two approaches and wrote a brief summary of the differences.",
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:56d162b9-8c50-5887-890c-455e3999128c"
+    },
+    {
+      "id": 47,
+      "subjectId": 9,
+      "startedAt": 1784757000,
+      "elapsedSeconds": 5400,
+      "note": "Review wavefunctions",
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:58920fab-4b01-49a9-8895-d5154dd86700"
+    },
+    {
+      "id": 48,
+      "subjectId": 4,
+      "startedAt": 1788756600,
+      "elapsedSeconds": 5961,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 3
+        },
+        {
+          "offsetSeconds": 2403,
+          "durationSeconds": 558
+        }
+      ],
+      "sourceIdentity": "legacy-session:58b2ae62-eae9-4b16-98cc-f3a1e6f85f83"
+    },
+    {
+      "id": 49,
+      "subjectId": 12,
+      "startedAt": 1784970900,
+      "elapsedSeconds": 1500,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:5a73a652-329e-42fe-8ef6-208c659d973d"
+    },
+    {
+      "id": 50,
+      "subjectId": 6,
+      "startedAt": 1758663000,
+      "elapsedSeconds": 1504,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 4
+        }
+      ],
+      "sourceIdentity": "legacy-session:5d1a5569-9e86-4b78-b60f-250f2c855970"
+    },
+    {
+      "id": 51,
+      "subjectId": 2,
+      "startedAt": 1790460000,
+      "elapsedSeconds": 2400,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 900,
+          "durationSeconds": 600
+        }
+      ],
+      "sourceIdentity": "legacy-session:601bac0d-23f8-5841-9e8e-a51f49c2f5c6"
+    },
+    {
+      "id": 52,
+      "subjectId": 13,
+      "startedAt": 1790889600,
+      "elapsedSeconds": 2400,
+      "note": "Short revision block: consolidate the main ideas before the next session.",
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:6335ed79-f099-5306-a46c-96804f4d3cdb"
+    },
+    {
+      "id": 53,
+      "subjectId": 12,
+      "startedAt": 1780199400,
+      "elapsedSeconds": 3199,
+      "note": "Kanji review",
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 15
+        },
+        {
+          "offsetSeconds": 1275,
+          "durationSeconds": 784
+        }
+      ],
+      "sourceIdentity": "legacy-session:66cb4f8b-1d6e-4f39-bc8d-c3e565f94ba2"
+    },
+    {
+      "id": 54,
+      "subjectId": 5,
+      "startedAt": 1787537400,
+      "elapsedSeconds": 3018,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 18
+        }
+      ],
+      "sourceIdentity": "legacy-session:6843d64e-cf40-4c9a-b6ad-cec84fb776e6"
+    },
+    {
+      "id": 55,
+      "subjectId": 14,
+      "startedAt": 1751507100,
+      "elapsedSeconds": 5400,
+      "note": "Spectroscopy review",
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:6ef45be6-c9d7-4691-a6d9-184ca80a61c6"
+    },
+    {
+      "id": 56,
+      "subjectId": 12,
+      "startedAt": 1788489900,
+      "elapsedSeconds": 1500,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:6f69d5f5-f5d1-49ee-b9f6-e944b78e31dc"
+    },
+    {
+      "id": 57,
+      "subjectId": 7,
+      "startedAt": 1790618400,
+      "elapsedSeconds": 2100,
+      "note": "Worked through practice questions and noted the steps to revisit.",
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 750,
+          "durationSeconds": 600
+        }
+      ],
+      "sourceIdentity": "legacy-session:6ffed509-d9e2-54a5-afa3-fb00a1a4d101"
+    },
+    {
+      "id": 58,
+      "subjectId": 13,
+      "startedAt": 1790306100,
+      "elapsedSeconds": 2700,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:71c08281-cd04-5aec-b130-cd7ee608f5b9"
+    },
+    {
+      "id": 59,
+      "subjectId": 1,
+      "startedAt": 1728284400,
+      "elapsedSeconds": 3613,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 13
+        }
+      ],
+      "sourceIdentity": "legacy-session:725de288-ba07-431a-be9f-0b8c91e98dca"
+    },
+    {
+      "id": 60,
+      "subjectId": 5,
+      "startedAt": 1789680000,
+      "elapsedSeconds": 7532,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 13
+        },
+        {
+          "offsetSeconds": 3973,
+          "durationSeconds": 319
+        }
+      ],
+      "sourceIdentity": "legacy-session:7a774a01-00bf-4381-af92-d5e6e599f4cb"
+    },
+    {
+      "id": 61,
+      "subjectId": 4,
+      "startedAt": 1790884800,
+      "elapsedSeconds": 3900,
+      "note": "## Revision\n1. Compare reaction rates\n2. Summarise **activation energy**\n3. Mark two questions for the next session",
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 1800,
+          "durationSeconds": 300
+        }
+      ],
+      "sourceIdentity": "legacy-session:7b70da20-4136-5245-9b22-32da71733627"
+    },
+    {
+      "id": 62,
+      "subjectId": 9,
+      "startedAt": 1786416600,
+      "elapsedSeconds": 3600,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:7fd85cce-27de-4eed-b536-1625dec5eb83"
+    },
+    {
+      "id": 63,
+      "subjectId": 7,
+      "startedAt": 1788934800,
+      "elapsedSeconds": 4501,
+      "note": "Regression exercises",
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 1
+        }
+      ],
+      "sourceIdentity": "legacy-session:86bd4918-b5f1-4668-bad7-da99591e9630"
+    },
+    {
+      "id": 64,
+      "subjectId": 3,
+      "startedAt": 1767771900,
+      "elapsedSeconds": 4540,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 20
+        },
+        {
+          "offsetSeconds": 2900,
+          "durationSeconds": 920
+        }
+      ],
+      "sourceIdentity": "legacy-session:87ae324e-29e3-401a-9316-54a655f9e1d9"
+    },
+    {
+      "id": 65,
+      "subjectId": 12,
+      "startedAt": 1772065800,
+      "elapsedSeconds": 1520,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 20
+        }
+      ],
+      "sourceIdentity": "legacy-session:881a2fed-aebd-4a64-8ce8-5ee70c703bc2"
+    },
+    {
+      "id": 66,
+      "subjectId": 2,
+      "startedAt": 1790239500,
+      "elapsedSeconds": 3000,
+      "note": "Compared two approaches and wrote a brief summary of the differences.",
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:884a34f9-dac9-56da-8c8c-14f701af7f88"
+    },
+    {
+      "id": 67,
+      "subjectId": 4,
+      "startedAt": 1789846200,
+      "elapsedSeconds": 2400,
+      "note": "Short revision block: consolidate the main ideas before the next session.",
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:8abd96b7-6715-56de-803c-0040b34c05c3"
+    },
+    {
+      "id": 68,
+      "subjectId": 9,
+      "startedAt": 1786932900,
+      "elapsedSeconds": 3600,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:8dd63827-50a5-4201-9089-3f66ac9cad36"
+    },
+    {
+      "id": 69,
+      "subjectId": 4,
+      "startedAt": 1788477300,
+      "elapsedSeconds": 4211,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 8
+        },
+        {
+          "offsetSeconds": 1808,
+          "durationSeconds": 603
+        }
+      ],
+      "sourceIdentity": "legacy-session:8efc65a5-1b8b-4cce-8e7d-aaf4028f6698"
+    },
+    {
+      "id": 70,
+      "subjectId": 12,
+      "startedAt": 1788243600,
+      "elapsedSeconds": 4040,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 20
+        },
+        {
+          "offsetSeconds": 1340,
+          "durationSeconds": 420
+        }
+      ],
+      "sourceIdentity": "legacy-session:90a6bbbb-e7ab-46e5-afc4-9f84ffbbf624"
+    },
+    {
+      "id": 71,
+      "subjectId": 9,
+      "startedAt": 1785136800,
+      "elapsedSeconds": 5400,
+      "note": "Problem set 4",
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:90db2241-4371-4b8a-bbb6-262c141bd41c"
+    },
+    {
+      "id": 72,
+      "subjectId": 12,
+      "startedAt": 1789960500,
+      "elapsedSeconds": 2700,
+      "note": "Reviewed yesterday's mistakes and completed a timed practice set.",
+      "manual": true,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:9461b85d-8fb3-5247-9337-de4a268860fc"
+    },
+    {
+      "id": 73,
+      "subjectId": 14,
+      "startedAt": 1753953600,
+      "elapsedSeconds": 4500,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:94b7fa88-323f-4040-950c-c56209979097"
+    },
+    {
+      "id": 74,
+      "subjectId": 11,
+      "startedAt": 1789802100,
+      "elapsedSeconds": 5400,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:964ab455-a651-5dd1-bef0-68d779589139"
+    },
+    {
+      "id": 75,
+      "subjectId": 4,
+      "startedAt": 1787208300,
+      "elapsedSeconds": 3000,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:97c8474e-ea8c-46c2-873c-f2eeb9e8dfda"
+    },
+    {
+      "id": 76,
+      "subjectId": 7,
+      "startedAt": 1789614900,
+      "elapsedSeconds": 2700,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:9dc35933-469f-58db-8740-4b0b2e31d368"
+    },
+    {
+      "id": 77,
+      "subjectId": 9,
+      "startedAt": 1789699200,
+      "elapsedSeconds": 4824,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 10
+        },
+        {
+          "offsetSeconds": 3430,
+          "durationSeconds": 314
+        }
+      ],
+      "sourceIdentity": "legacy-session:9dd5a95b-78b1-44f9-8350-bdc35b2ddc3a"
+    },
+    {
+      "id": 78,
+      "subjectId": 8,
+      "startedAt": 1716950700,
+      "elapsedSeconds": 3600,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:9eaa26e4-0a36-448e-bea5-1cd8e747585e"
+    },
+    {
+      "id": 79,
+      "subjectId": 11,
+      "startedAt": 1790807400,
+      "elapsedSeconds": 2400,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 900,
+          "durationSeconds": 600
+        }
+      ],
+      "sourceIdentity": "legacy-session:9f0250b5-905d-5f8a-8e33-e15e57bb9b89"
+    },
+    {
+      "id": 80,
+      "subjectId": 7,
+      "startedAt": 1787899800,
+      "elapsedSeconds": 4516,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 16
+        }
+      ],
+      "sourceIdentity": "legacy-session:9fd5f291-abe7-491b-bc00-3dcee45fcfe1"
+    },
+    {
+      "id": 81,
+      "subjectId": 6,
+      "startedAt": 1747380000,
+      "elapsedSeconds": 4502,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 2
+        }
+      ],
+      "sourceIdentity": "legacy-session:a06b2c62-d0b8-44ad-b308-d8a93f77bdfe"
+    },
+    {
+      "id": 82,
+      "subjectId": 17,
+      "startedAt": 1760513400,
+      "elapsedSeconds": 5420,
+      "note": "Circuit review",
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 20
+        }
+      ],
+      "sourceIdentity": "legacy-session:a37bd2fc-57a9-4e89-b7ba-0e1bca2d99a2"
+    },
+    {
+      "id": 83,
+      "subjectId": 5,
+      "startedAt": 1789581600,
+      "elapsedSeconds": 1500,
+      "note": "Worked through practice questions and noted the steps to revisit.",
+      "manual": true,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:a6126ddd-b3ce-5510-a866-ae89007b29d6"
+    },
+    {
+      "id": 84,
+      "subjectId": 4,
+      "startedAt": 1789096500,
+      "elapsedSeconds": 3608,
+      "note": "Review kinetics",
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 8
+        }
+      ],
+      "sourceIdentity": "legacy-session:a89fd72c-522a-48ca-978d-c82ce11ed78c"
+    },
+    {
+      "id": 85,
+      "subjectId": 5,
+      "startedAt": 1790579700,
+      "elapsedSeconds": 2405,
+      "note": "Second-order ODE practice",
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 5
+        }
+      ],
+      "sourceIdentity": "legacy-session:a8f07152-651a-44ff-9802-46ad8e1533e1"
+    },
+    {
+      "id": 86,
+      "subjectId": 4,
+      "startedAt": 1787387400,
+      "elapsedSeconds": 4204,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 4
+        }
+      ],
+      "sourceIdentity": "legacy-session:a95bf892-3016-4094-b8aa-e542019b2ed3"
+    },
+    {
+      "id": 87,
+      "subjectId": 11,
+      "startedAt": 1790910000,
+      "elapsedSeconds": 2400,
+      "note": "Perspective study: two-point street scene. Next: repeat with a higher horizon.",
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:aa369a2f-c831-5352-b0c9-6e5015a8bbe7"
+    },
+    {
+      "id": 88,
+      "subjectId": 6,
+      "startedAt": 1753155000,
+      "elapsedSeconds": 4500,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:ab2e2fdb-49e7-4097-a572-ea22e84d34be"
+    },
+    {
+      "id": 89,
+      "subjectId": 13,
+      "startedAt": 1789620600,
+      "elapsedSeconds": 3008,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 8
+        }
+      ],
+      "sourceIdentity": "legacy-session:ab611931-39f7-4a89-94a5-a292261f4a22"
+    },
+    {
+      "id": 90,
+      "subjectId": 10,
+      "startedAt": 1724121000,
+      "elapsedSeconds": 3614,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 14
+        }
+      ],
+      "sourceIdentity": "legacy-session:ab7c7e44-0a79-4504-bbc4-63293ea4c049"
+    },
+    {
+      "id": 91,
+      "subjectId": 7,
+      "startedAt": 1785918600,
+      "elapsedSeconds": 3600,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:abdeb9de-1d96-470a-8a33-9167f36eb189"
+    },
+    {
+      "id": 92,
+      "subjectId": 11,
+      "startedAt": 1790585100,
+      "elapsedSeconds": 3000,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:acb22aac-96c9-5a51-95ec-b9ad9675598c"
+    },
+    {
+      "id": 93,
+      "subjectId": 12,
+      "startedAt": 1787469300,
+      "elapsedSeconds": 3559,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 2
+        },
+        {
+          "offsetSeconds": 2222,
+          "durationSeconds": 557
+        }
+      ],
+      "sourceIdentity": "legacy-session:acfb3671-1420-4eab-af38-9a6043b20ae1"
+    },
+    {
+      "id": 94,
+      "subjectId": 4,
+      "startedAt": 1783915200,
+      "elapsedSeconds": 7459,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 7
+        },
+        {
+          "offsetSeconds": 4927,
+          "durationSeconds": 252
+        }
+      ],
+      "sourceIdentity": "legacy-session:adc54550-a328-4273-b992-517b3f7bd6da"
+    },
+    {
+      "id": 95,
+      "subjectId": 2,
+      "startedAt": 1776840600,
+      "elapsedSeconds": 3000,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:af7ab609-a512-4be2-bfe6-f2a24470498d"
+    },
+    {
+      "id": 96,
+      "subjectId": 16,
+      "startedAt": 1725864300,
+      "elapsedSeconds": 4207,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 6
+        },
+        {
+          "offsetSeconds": 2046,
+          "durationSeconds": 601
+        }
+      ],
+      "sourceIdentity": "legacy-session:affef798-8dd5-4a66-9f3d-fc609b302de9"
+    },
+    {
+      "id": 97,
+      "subjectId": 9,
+      "startedAt": 1789114500,
+      "elapsedSeconds": 7385,
+      "note": "Review wavefunctions",
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 2
+        },
+        {
+          "offsetSeconds": 5942,
+          "durationSeconds": 183
+        }
+      ],
+      "sourceIdentity": "legacy-session:b1bfcf92-82e4-4fbf-a225-d386674610c0"
+    },
+    {
+      "id": 98,
+      "subjectId": 14,
+      "startedAt": 1756353600,
+      "elapsedSeconds": 3600,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:b335c17a-da1f-4d42-8d1d-5b59865b1c79"
+    },
+    {
+      "id": 99,
+      "subjectId": 17,
+      "startedAt": 1752477000,
+      "elapsedSeconds": 5911,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 2
+        },
+        {
+          "offsetSeconds": 2762,
+          "durationSeconds": 436
+        },
+        {
+          "offsetSeconds": 4338,
+          "durationSeconds": 973
+        }
+      ],
+      "sourceIdentity": "legacy-session:b7e70a34-5865-49ff-88fb-4e87b299233e"
+    },
+    {
+      "id": 100,
+      "subjectId": 5,
+      "startedAt": 1790712000,
+      "elapsedSeconds": 4200,
+      "note": "## Tutorial preparation\n- Review **second-order ODEs**\n- Rework the boundary-value example\n\nCheck the [course notes](https://example.com/course-notes) before the next tutorial.",
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 1800,
+          "durationSeconds": 600
+        }
+      ],
+      "sourceIdentity": "legacy-session:b8940192-1390-5ce6-ac2e-9c3331638ee8"
+    },
+    {
+      "id": 101,
+      "subjectId": 13,
+      "startedAt": 1789893900,
+      "elapsedSeconds": 3000,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:b93025f4-4981-573a-b5d2-bb5c756011b1"
+    },
+    {
+      "id": 102,
+      "subjectId": 12,
+      "startedAt": 1790747100,
+      "elapsedSeconds": 4500,
+      "note": "Compared two approaches and wrote a brief summary of the differences.",
+      "manual": true,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:ba692973-26ec-5c7e-bcbc-9d294d9f67cd"
+    },
+    {
+      "id": 103,
+      "subjectId": 15,
+      "startedAt": 1741680600,
+      "elapsedSeconds": 3610,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 10
+        }
+      ],
+      "sourceIdentity": "legacy-session:bb45ebae-22f6-4a3f-901a-763f60026051"
+    },
+    {
+      "id": 104,
+      "subjectId": 9,
+      "startedAt": 1785114600,
+      "elapsedSeconds": 4347,
+      "note": "Particle in a box questions",
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 11
+        },
+        {
+          "offsetSeconds": 1571,
+          "durationSeconds": 494
+        },
+        {
+          "offsetSeconds": 3385,
+          "durationSeconds": 242
+        }
+      ],
+      "sourceIdentity": "legacy-session:c1001293-4500-4d15-a065-32a4356a6d43"
+    },
+    {
+      "id": 105,
+      "subjectId": 5,
+      "startedAt": 1785730200,
+      "elapsedSeconds": 3620,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 20
+        }
+      ],
+      "sourceIdentity": "legacy-session:c24a94a1-0450-45ee-8b85-d78a763d67f3"
+    },
+    {
+      "id": 106,
+      "subjectId": 8,
+      "startedAt": 1718658600,
+      "elapsedSeconds": 1508,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 8
+        }
+      ],
+      "sourceIdentity": "legacy-session:c2657752-f5a8-4999-926a-57ccd116d9c2"
+    },
+    {
+      "id": 107,
+      "subjectId": 1,
+      "startedAt": 1715073300,
+      "elapsedSeconds": 4703,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 20
+        },
+        {
+          "offsetSeconds": 2660,
+          "durationSeconds": 183
+        }
+      ],
+      "sourceIdentity": "legacy-session:c6b571f6-8736-4022-bdcd-ae07afe42442"
+    },
+    {
+      "id": 108,
+      "subjectId": 4,
+      "startedAt": 1790309700,
+      "elapsedSeconds": 3600,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:c8233b57-87bf-42fd-ad5c-1a884de71edd"
+    },
+    {
+      "id": 109,
+      "subjectId": 2,
+      "startedAt": 1790744400,
+      "elapsedSeconds": 1800,
+      "note": "Manual entry: vocabulary practice away from the computer.",
+      "manual": true,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:c8e332bc-9866-57b2-a41a-3b63145c3368"
+    },
+    {
+      "id": 110,
+      "subjectId": 9,
+      "startedAt": 1784514600,
+      "elapsedSeconds": 5418,
+      "note": "Particle in a box questions",
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 18
+        }
+      ],
+      "sourceIdentity": "legacy-session:c90da04b-c1d0-443d-b195-124854b25657"
+    },
+    {
+      "id": 111,
+      "subjectId": 5,
+      "startedAt": 1785392400,
+      "elapsedSeconds": 3616,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 16
+        }
+      ],
+      "sourceIdentity": "legacy-session:cce1ef92-d63b-4745-ace0-d0cf34458a6f"
+    },
+    {
+      "id": 112,
+      "subjectId": 14,
+      "startedAt": 1756797300,
+      "elapsedSeconds": 3606,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 3
+        },
+        {
+          "offsetSeconds": 1383,
+          "durationSeconds": 603
+        }
+      ],
+      "sourceIdentity": "legacy-session:d032cf6d-0b17-4bc2-9c76-10b99822d911"
+    },
+    {
+      "id": 113,
+      "subjectId": 7,
+      "startedAt": 1790191800,
+      "elapsedSeconds": 2400,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:d478413b-cec5-508e-b768-0b9c8e937d1a"
+    },
+    {
+      "id": 114,
+      "subjectId": 4,
+      "startedAt": 1790055900,
+      "elapsedSeconds": 4500,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:d8a7f6d2-5592-5fdc-a980-00506a25e1f6"
+    },
+    {
+      "id": 115,
+      "subjectId": 13,
+      "startedAt": 1748672400,
+      "elapsedSeconds": 2400,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:d8b30a71-2044-45a3-9137-13cd2213d425"
+    },
+    {
+      "id": 116,
+      "subjectId": 2,
+      "startedAt": 1783913400,
+      "elapsedSeconds": 2602,
+      "note": "Listening practice",
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 6
+        },
+        {
+          "offsetSeconds": 1266,
+          "durationSeconds": 196
+        }
+      ],
+      "sourceIdentity": "legacy-session:dbbb0ab3-1f38-47d2-8209-cc6d9da102b9"
+    },
+    {
+      "id": 117,
+      "subjectId": 12,
+      "startedAt": 1789768800,
+      "elapsedSeconds": 2400,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 900,
+          "durationSeconds": 600
+        }
+      ],
+      "sourceIdentity": "legacy-session:dddfe660-88a4-5bc6-b6d6-d7e7d8627bcf"
+    },
+    {
+      "id": 118,
+      "subjectId": 8,
+      "startedAt": 1718251800,
+      "elapsedSeconds": 3600,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:e418070d-56c2-4698-89bd-7dba8d8988d3"
+    },
+    {
+      "id": 119,
+      "subjectId": 3,
+      "startedAt": 1768799400,
+      "elapsedSeconds": 3003,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 3
+        }
+      ],
+      "sourceIdentity": "legacy-session:e5781bca-24fc-4517-b864-3d37111cc921"
+    },
+    {
+      "id": 120,
+      "subjectId": 13,
+      "startedAt": 1790114400,
+      "elapsedSeconds": 2400,
+      "note": "Worked through practice questions and noted the steps to revisit.",
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 900,
+          "durationSeconds": 600
+        }
+      ],
+      "sourceIdentity": "legacy-session:e7eabe51-6097-57d7-8f71-91224b4a74b0"
+    },
+    {
+      "id": 121,
+      "subjectId": 11,
+      "startedAt": 1752704400,
+      "elapsedSeconds": 1806,
+      "note": "Gesture drawing",
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 6
+        }
+      ],
+      "sourceIdentity": "legacy-session:e8aa7830-1532-4d4f-a935-d22c6d2e4e78"
+    },
+    {
+      "id": 122,
+      "subjectId": 12,
+      "startedAt": 1785210300,
+      "elapsedSeconds": 1814,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 14
+        }
+      ],
+      "sourceIdentity": "legacy-session:e95893ca-363c-472a-a5f8-37bf9d0fcdc5"
+    },
+    {
+      "id": 123,
+      "subjectId": 13,
+      "startedAt": 1741741200,
+      "elapsedSeconds": 2420,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 20
+        }
+      ],
+      "sourceIdentity": "legacy-session:e980c573-852f-4eb6-91ea-47573f0b61b0"
+    },
+    {
+      "id": 124,
+      "subjectId": 4,
+      "startedAt": 1788730800,
+      "elapsedSeconds": 5475,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 4
+        },
+        {
+          "offsetSeconds": 1504,
+          "durationSeconds": 971
+        }
+      ],
+      "sourceIdentity": "legacy-session:ea9bb4c6-3bbf-4773-9517-e1e56f5a2ec8"
+    },
+    {
+      "id": 125,
+      "subjectId": 4,
+      "startedAt": 1785464100,
+      "elapsedSeconds": 5107,
+      "note": "Thermodynamics tutorial",
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 4
+        },
+        {
+          "offsetSeconds": 3064,
+          "durationSeconds": 903
+        }
+      ],
+      "sourceIdentity": "legacy-session:ec456c28-6bb5-4189-870e-cc754b6dc875"
+    },
+    {
+      "id": 126,
+      "subjectId": 12,
+      "startedAt": 1782510000,
+      "elapsedSeconds": 3000,
+      "note": "Kanji review",
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:ecf104ee-6ebb-418f-8aee-5232eb638ace"
+    },
+    {
+      "id": 127,
+      "subjectId": 10,
+      "startedAt": 1724037300,
+      "elapsedSeconds": 3020,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 20
+        }
+      ],
+      "sourceIdentity": "legacy-session:ee5d1f47-891d-4cd0-8c89-57389fb079d7"
+    },
+    {
+      "id": 128,
+      "subjectId": 12,
+      "startedAt": 1790851200,
+      "elapsedSeconds": 2700,
+      "note": "Reading practice across midnight; revisit unfamiliar kanji tomorrow.",
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:efe16089-db81-5f09-8c86-3387e5165711"
+    },
+    {
+      "id": 129,
+      "subjectId": 7,
+      "startedAt": 1784515500,
+      "elapsedSeconds": 4200,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:f4cc7cf2-8a6a-4594-af28-2be46266241d"
+    },
+    {
+      "id": 130,
+      "subjectId": 11,
+      "startedAt": 1790022600,
+      "elapsedSeconds": 3600,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:f4dea788-9350-5f1e-b4b9-b186ab243330"
+    },
+    {
+      "id": 131,
+      "subjectId": 12,
+      "startedAt": 1790537400,
+      "elapsedSeconds": 2400,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:f5936951-6eef-5056-897c-ff4baf877970"
+    },
+    {
+      "id": 132,
+      "subjectId": 9,
+      "startedAt": 1790802000,
+      "elapsedSeconds": 4500,
+      "note": "Practise operator identities and check each derivation.",
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:f663db4b-6279-5dd8-8423-416a69c0aba8"
+    },
+    {
+      "id": 133,
+      "subjectId": 17,
+      "startedAt": 1748558700,
+      "elapsedSeconds": 3189,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 9
+        },
+        {
+          "offsetSeconds": 1329,
+          "durationSeconds": 780
+        }
+      ],
+      "sourceIdentity": "legacy-session:f75ac7d9-a36a-4442-8fac-b2a70deeeed9"
+    },
+    {
+      "id": 134,
+      "subjectId": 5,
+      "startedAt": 1789378800,
+      "elapsedSeconds": 4501,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 1
+        }
+      ],
+      "sourceIdentity": "legacy-session:f7e293c0-7912-4e85-b3e7-97c48fc85c54"
+    },
+    {
+      "id": 135,
+      "subjectId": 3,
+      "startedAt": 1766188800,
+      "elapsedSeconds": 3000,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:f88f862a-6ff5-4a09-bede-6994b80db304"
+    },
+    {
+      "id": 136,
+      "subjectId": 9,
+      "startedAt": 1790717100,
+      "elapsedSeconds": 3600,
+      "note": "Reviewed yesterday's mistakes and completed a timed practice set.\n- Reworked errors involving operator methods and commutators.\n- Reviewed normalization and expectation-value calculations.\n- Practiced solving time-independent Schrödinger equation problems under time pressure.\n- Checked mistakes involving angular momentum and eigenstates.\n- Reviewed when to use perturbation theory approximations.\n- Identified algebra and notation errors that caused lost marks.\n- Noted which derivations and standard results still need faster recall.",
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:f94ad775-76c5-5eb2-8f02-c7f9931cf080"
+    },
+    {
+      "id": 137,
+      "subjectId": 16,
+      "startedAt": 1710806400,
+      "elapsedSeconds": 3600,
+      "manual": false,
+      "pauses": [],
+      "sourceIdentity": "legacy-session:fa8c9e2a-6803-4303-822c-c5f3deb77bd3"
+    },
+    {
+      "id": 138,
+      "subjectId": 7,
+      "startedAt": 1787525100,
+      "elapsedSeconds": 3683,
+      "note": "Review hypothesis testing",
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 12
+        },
+        {
+          "offsetSeconds": 2112,
+          "durationSeconds": 671
+        }
+      ],
+      "sourceIdentity": "legacy-session:fd6e9d08-8c9a-4eec-81b2-10f7ab3d5d89"
+    },
+    {
+      "id": 139,
+      "subjectId": 17,
+      "startedAt": 1757558400,
+      "elapsedSeconds": 4506,
+      "manual": false,
+      "pauses": [
+        {
+          "offsetSeconds": 0,
+          "durationSeconds": 6
+        }
+      ],
+      "sourceIdentity": "legacy-session:fe996e82-8516-4cb3-9ec2-5dcfaa65326f"
+    }
+  ],
+  "settings": {
+    "accentColour": "orange",
+    "allowDirectActiveDeletion": "false",
+    "checkForUpdatesOnLaunch": "true",
+    "clockFormat": "system",
+    "completionNotification": "true",
+    "completionSound": "true",
+    "completionSoundChoice": "soft-chime",
+    "completionSoundVolume": "65",
+    "dailyGoalEnabled": "true",
+    "dailyGoalSeconds": "7200",
+    "dateFormat": "standard",
+    "defaultSubjectId": "",
+    "displayName": "",
+    "fixedTimerDurationSeconds": "4500",
+    "historyPageSize": "25",
+    "language": "en",
+    "lastBackupAt": "2026-10-02T21:12:23.572Z",
+    "lastSubjectId": "4",
+    "lastTimerDurationSeconds": "4500",
+    "launchAtStartup": "false",
+    "popoutAlwaysOnTop": "true",
+    "popoutAutoHide": "1000",
+    "popoutAutoHideDelaySeconds": "0.4",
+    "popoutAutoHideEdge": "right",
+    "popoutAutoHideOffset": "0",
+    "popoutAutoHideShowAccent": "true",
+    "popoutAutoHideTabSize": "medium",
+    "popoutAutoOpen": "false",
+    "popoutBorderOpacity": "100",
+    "popoutDockAutoHide": "false",
+    "popoutDockCorner": "top-right",
+    "popoutDockMonitor": "current",
+    "popoutDocked": "true",
+    "popoutDockingEnabled": "true",
+    "popoutFloatingHeight": "285",
+    "popoutFloatingWidth": "493",
+    "popoutHideControls": "true",
+    "popoutLayout": "regular",
+    "popoutPositionX": "192",
+    "popoutPositionY": "192",
+    "popoutRememberPosition": "true",
+    "popoutRevealShortcut": "Ctrl+Alt+KeyF",
+    "popoutRevealShortcutIntent": "default",
+    "popoutRevealTimeoutSeconds": "5",
+    "popoutShortcutEnabled": "true",
+    "popoutShowClock": "true",
+    "popoutShowInTaskbar": "false",
+    "popoutShowSubject": "true",
+    "popoutSize": "medium",
+    "popoutTransparency": "100",
+    "showClock": "true",
+    "showDate": "true",
+    "showWeekday": "true",
+    "sidebarSubtitle": "",
+    "startMaximized": "true",
+    "subjectPickerMode": "remember",
+    "theme": "dark",
+    "timerDurationMode": "remember",
+    "uiScale": "medium",
+    "weekdayStyle": "short",
+    "weeklyGoalEnabled": "true",
+    "weeklyGoalSeconds": "43200"
   }
 }

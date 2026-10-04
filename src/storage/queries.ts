@@ -14,8 +14,8 @@ export async function readStoredSessions(connection: Connection, id?: number): P
       id === undefined ? [] : [id],
     ),
     connection.select(
-      "SELECT session_id,MIN(source_key) AS source_key FROM session_sources" +
-        (id === undefined ? " GROUP BY session_id" : " WHERE session_id=? GROUP BY session_id"),
+      "SELECT session_id,source_key FROM session_sources" +
+        (id === undefined ? " ORDER BY session_id" : " WHERE session_id=?"),
       id === undefined ? [] : [id],
     ),
   ]);

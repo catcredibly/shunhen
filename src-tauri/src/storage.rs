@@ -24,23 +24,55 @@ pub fn install(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::Error>>
     connection.execute_batch(
         "PRAGMA foreign_keys=ON; PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL;",
     )?;
-    let version: i64 = connection.query_row("PRAGMA user_version", [], |row| row.get(0))?;
-    if version > 1 {
-        return Err("Unsupported SQLite schema version".into());
-    }
-    if version == 0 {
-        connection.execute_batch("BEGIN IMMEDIATE")?;
-        if let Err(error) = connection.execute_batch(include_str!("../../src/storage/schema.sql")) {
-            let _ = connection.execute_batch("ROLLBACK");
-            return Err(error.into());
-        }
-        connection.execute_batch("COMMIT")?;
-    }
+    setup_schema(&connection)?;
     app.manage(Storage(Mutex::new(Store {
         connection,
         owner: None,
         dirty: false,
     })));
+    Ok(())
+}
+
+fn setup_schema(connection: &Connection) -> Result<(), Box<dyn std::error::Error>> {
+    let version: i64 = connection.query_row("PRAGMA user_version", [], |row| row.get(0))?;
+    if version > 2 {
+        return Err("Unsupported SQLite schema version".into());
+    }
+    if version == 2 {
+        return Ok(());
+    }
+    if version == 1 {
+        connection.execute_batch(include_str!(
+            "../../src/storage/canonical-source-prepare.sql"
+        ))?;
+    }
+    connection.execute_batch("BEGIN IMMEDIATE")?;
+    let schema = if version == 0 {
+        include_str!("../../src/storage/schema.sql")
+    } else {
+        include_str!("../../src/storage/schema-v2.sql")
+    };
+    let migration = (|| -> Result<(), Box<dyn std::error::Error>> {
+        connection.execute_batch(schema)?;
+        if connection
+            .prepare("PRAGMA foreign_key_check")?
+            .query([])?
+            .next()?
+            .is_some()
+        {
+            return Err("SQLite schema migration foreign key validation failed".into());
+        }
+        let missing: i64 = connection.query_row("SELECT COUNT(*) FROM sessions s LEFT JOIN session_sources i ON i.session_id=s.id WHERE i.session_id IS NULL", [], |row| row.get(0))?;
+        if missing != 0 {
+            return Err("SQLite schema migration identity validation failed".into());
+        }
+        Ok(())
+    })();
+    if let Err(error) = migration {
+        let _ = connection.execute_batch("ROLLBACK");
+        return Err(error);
+    }
+    connection.execute_batch("COMMIT")?;
     Ok(())
 }
 
@@ -210,6 +242,72 @@ mod tests {
             db.query_row("SELECT COUNT(*) FROM session_pauses", [], |r| r
                 .get::<_, i64>(0))
                 .unwrap(),
+            0
+        );
+    }
+    #[test]
+    fn upgrades_aliases_and_missing_identities_deterministically() {
+        let db = Connection::open_in_memory().unwrap();
+        let old_schema = include_str!("../../src/storage/schema.sql")
+            .replace(
+                "session_id INTEGER NOT NULL UNIQUE REFERENCES sessions(id)",
+                "session_id INTEGER NOT NULL REFERENCES sessions(id)",
+            )
+            .replace("PRAGMA user_version = 2", "PRAGMA user_version = 1");
+        db.execute_batch(&old_schema).unwrap();
+        db.execute_batch("INSERT INTO academic_years(id,name) VALUES(1,'Year'); INSERT INTO subjects(id,academic_year_id,name,color_id) VALUES(1,1,'Subject',0);
+            INSERT INTO sessions(id,subject_id,started_at,elapsed_seconds) VALUES(1,1,100,60),(2,1,100,60),(3,1,100,60),(4,1,100,60);
+            INSERT INTO session_sources VALUES('legacy-session:one',1),('session:z',1),('session:a',1),('backup-session:two',2),('legacy-session:two',2),('arbitrary',3),('session:bad' || char(10),3);
+            CREATE TABLE session_sources_v2(block_upgrade INTEGER);").unwrap();
+        // Force the schema phase to fail after durable fallback assignments exist.
+        assert!(setup_schema(&db).is_err());
+        let assigned: Vec<(String, String)> = db.prepare("SELECT key,value FROM storage_metadata WHERE key GLOB 'canonical-source-v2:*' ORDER BY key").unwrap()
+            .query_map([], |r| Ok((r.get(0)?, r.get(1)?))).unwrap().collect::<Result<_,_>>().unwrap();
+        assert_eq!(assigned.len(), 4);
+        assert_eq!(assigned[0].1, "session:a");
+        assert_eq!(assigned[1].1, "backup-session:two");
+        assert!(assigned[2].1.starts_with("session:"));
+        assert!(assigned[2].1.chars().all(|ch| !ch.is_control()));
+        assert!(assigned[3].1.starts_with("session:"));
+        db.execute_batch("DROP TABLE session_sources_v2").unwrap();
+        setup_schema(&db).unwrap();
+        setup_schema(&db).unwrap(); // Idempotent after success.
+        let actual: Vec<String> = db
+            .prepare("SELECT source_key FROM session_sources ORDER BY session_id")
+            .unwrap()
+            .query_map([], |r| r.get(0))
+            .unwrap()
+            .collect::<Result<_, _>>()
+            .unwrap();
+        assert_eq!(
+            actual,
+            assigned.iter().map(|(_, v)| v.clone()).collect::<Vec<_>>()
+        );
+        assert!(db
+            .execute("INSERT INTO session_sources VALUES('session:alias',1)", [])
+            .is_err());
+        db.execute("DELETE FROM sessions WHERE id=1", []).unwrap();
+        assert_eq!(
+            db.query_row(
+                "SELECT COUNT(*) FROM session_sources WHERE session_id=1",
+                [],
+                |r| r.get::<_, i64>(0)
+            )
+            .unwrap(),
+            0
+        );
+        assert_eq!(
+            db.query_row("PRAGMA user_version", [], |r| r.get::<_, i64>(0))
+                .unwrap(),
+            2
+        );
+        assert_eq!(
+            db.query_row(
+                "SELECT COUNT(*) FROM storage_metadata WHERE key GLOB 'canonical-source-v2:*'",
+                [],
+                |r| r.get::<_, i64>(0)
+            )
+            .unwrap(),
             0
         );
     }

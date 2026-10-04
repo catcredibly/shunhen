@@ -2,7 +2,14 @@ import type { FocusDatabase } from "../db";
 import { ACTIVE_TIMER_STORAGE_KEY } from "../timerState";
 import { withStorageLock } from "./connection";
 import { readLegacy, deleteLegacy } from "./legacy";
-import { normalizeLegacy, validateData, type NormalizedData, type StoredYear, type StoredSubject } from "./model";
+import {
+  normalizeLegacy,
+  validateData,
+  type NormalizedData,
+  type StoredYear,
+  type StoredSubject,
+  COLOR_PALETTE,
+} from "./model";
 import { readStoredSessions } from "./queries";
 
 export async function readNormalized(database: FocusDatabase): Promise<NormalizedData> {
@@ -33,39 +40,16 @@ export async function readNormalized(database: FocusDatabase): Promise<Normalize
 
 export async function insertNormalized(database: FocusDatabase, data: NormalizedData) {
   validateData(data);
-  const connection = database.connection;
-  for (const row of data.academicYears)
-    await connection.execute("INSERT INTO academic_years(id,name,start_date,end_date,archived) VALUES(?,?,?,?,?)", [
-      row.id,
-      row.name,
-      row.startDate ?? null,
-      row.endDate ?? null,
-      row.archived,
-    ]);
+  for (const row of data.academicYears) await database.academicYears.add({ ...row, id: String(row.id) });
   for (const row of data.subjects)
-    await connection.execute("INSERT INTO subjects(id,academic_year_id,name,color_id,archived) VALUES(?,?,?,?,?)", [
-      row.id,
-      row.academicYearId,
-      row.name,
-      row.colorId,
-      row.archived,
-    ]);
-  for (const row of data.sessions) {
-    await connection.execute(
-      "INSERT INTO sessions(id,subject_id,started_at,elapsed_seconds,note,manual) VALUES(?,?,?,?,?,?)",
-      [row.id, row.subjectId, row.startedAt, row.elapsedSeconds, row.note ?? null, row.manual],
-    );
-    for (const pause of row.pauses)
-      await connection.execute("INSERT INTO session_pauses(session_id,offset_seconds,duration_seconds) VALUES(?,?,?)", [
-        row.id,
-        pause.offsetSeconds,
-        pause.durationSeconds,
-      ]);
-    await connection.execute("INSERT INTO session_sources(source_key,session_id) VALUES(?,?)", [
-      row.sourceIdentity,
-      row.id,
-    ]);
-  }
+    await database.subjects.add({
+      id: String(row.id),
+      academicYearId: String(row.academicYearId),
+      name: row.name,
+      color: COLOR_PALETTE[row.colorId],
+      archived: row.archived,
+    });
+  for (const row of data.sessions) await database.sessions.putNormalized(row);
   for (const row of data.settings) await database.settings.put(row);
 }
 
