@@ -1,17 +1,11 @@
-import type { AcademicYear, AppSetting, FocusSession, Subject } from "../types";
+import type { FocusSession } from "../types";
 
 export type FocusBackup = {
   format: "focus-backup";
-  formatVersion: 1;
+  formatVersion: 2;
   exportedAt: string;
   appVersion: string;
-  sessionTimingVersion?: 1;
-  data: {
-    academicYears: AcademicYear[];
-    subjects: Subject[];
-    sessions: FocusSession[];
-    settings: AppSetting[];
-  };
+  data: import("../storage/model").NormalizedData;
 };
 
 export type ConflictPolicy = "keep-existing" | "use-imported";

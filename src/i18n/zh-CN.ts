@@ -1,6 +1,9 @@
 import en from "./en";
 
 const zhCN: Record<keyof typeof en, string> = {
+  "Unable to open study data": "无法打开学习数据",
+  "Restart Shunhen to retry. Your study data has not been deleted.":
+    "请重新启动 Shunhen 以重试。您的学习数据未被删除。",
   Total: "总计",
   "Total focus time by weekday": "按星期几统计的总专注时间",
   "Total Sessions by weekday": "按星期几统计的总专注次数",

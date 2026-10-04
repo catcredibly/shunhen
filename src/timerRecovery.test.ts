@@ -1,3 +1,4 @@
+import { createTestDatabase } from "./storage/testDatabase";
 import "fake-indexeddb/auto";
 import { afterEach, expect, it, vi } from "vitest";
 import { FocusDatabase } from "./db";
@@ -36,10 +37,12 @@ it("persists transitions, survives failed saves and recovers a save-before-clean
       values.delete(key);
     },
   };
-  const database = new FocusDatabase(`timer-recovery-${crypto.randomUUID()}`);
+  const database = createTestDatabase(`timer-recovery-${crypto.randomUUID()}`).database;
   const start = new Date(2026, 8, 21, 23).getTime();
-  const subject = { id: "s", name: "S", academicYearId: "y", color: "#fff", archived: false };
-  const year = { id: "y", name: "Y", archived: false };
+  const subject = { id: "1", name: "S", academicYearId: "1", color: "#fff", archived: false };
+  const year = { id: "1", name: "Y", archived: false };
+  await database.academicYears.add(year);
+  await database.subjects.add({ ...subject, color: "#4da3ff" });
   try {
     let state = startStopwatchState(initialTimerState, subject, year, start);
     persistTimerRecovery(state, storage);
@@ -70,8 +73,8 @@ it("persists transitions, survives failed saves and recovers a save-before-clean
 });
 
 const checkpointStart = new Date(2026, 8, 30, 12).getTime();
-const checkpointSubject = { id: "s", name: "S", academicYearId: "y", color: "#fff", archived: false };
-const checkpointYear = { id: "y", name: "Y", archived: false };
+const checkpointSubject = { id: "1", name: "S", academicYearId: "1", color: "#fff", archived: false };
+const checkpointYear = { id: "1", name: "Y", archived: false };
 const runningState = (mode: "timer" | "stopwatch") =>
   mode === "timer"
     ? startTimerState(initialTimerState, 3600, checkpointSubject, checkpointYear, checkpointStart, "same-session")

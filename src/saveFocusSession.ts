@@ -1,3 +1,4 @@
+import { normalizeTiming, focusIntervals } from "./storage/model";
 import { validSessions } from "./sessionValidity";
 import { noteMetrics } from "./notes";
 import { db, type FocusDatabase } from "./db";
@@ -15,9 +16,30 @@ export async function saveFocusSession(
   now = Date.now(),
 ) {
   if (!noteMetrics(session.note ?? "").valid) throw new Error("Note exceeds the allowed limits.");
-  return database.transaction("rw", database.sessions, database.settings, database.academicYears, async () => {
+  return database.transaction("rw", async (database) => {
     const messages: { message: ToastMessage; kind: "daily" | "weekly" }[] = [];
-    if (await database.sessions.get(session.id)) return messages;
+    if (
+      session.sourceIdentity
+        ? await database.sessions.getBySource(session.sourceIdentity)
+        : await database.sessions.get(session.id)
+    )
+      return messages;
+    const subject = await database.subjects.get(session.subjectId);
+    const year = subject ? await database.academicYears.get(subject.academicYearId) : undefined;
+    if (!subject || !year) throw new Error("Session relationship is missing.");
+    const timing = normalizeTiming(session);
+    session = {
+      ...session,
+      subjectName: subject.name,
+      academicYearId: year.id,
+      academicYearName: year.name,
+      archived: subject.archived || year.archived,
+      startTime: timing.startedAt * 1000,
+      endTime: (timing.startedAt + timing.elapsedSeconds) * 1000,
+      focusedDurationSeconds:
+        timing.elapsedSeconds - timing.pauses.reduce((sum, pause) => sum + pause.durationSeconds, 0),
+      focusIntervals: focusIntervals(timing.startedAt, timing.elapsedSeconds, timing.pauses),
+    };
     if (live) {
       const settings = await loadSettings(database, false);
       const years = await database.academicYears.toArray();

@@ -1,3 +1,6 @@
+/** UI read models. String IDs are decimal SQLite row IDs for form controls.
+ * Session names, archive state, end/focus time and intervals are derived.
+ * The normalized persistent model lives in storage/model.ts. */
 export type AcademicYear = {
   id: string;
   name: string;
@@ -7,8 +10,6 @@ export type AcademicYear = {
 };
 
 export type Subject = {
-  /** Independent archive intent saved while the parent forces archival. */
-  archivedBeforeParent?: boolean;
   id: string;
   academicYearId: string;
   name: string;
@@ -17,6 +18,7 @@ export type Subject = {
 };
 
 export type FocusSession = {
+  sourceIdentity?: string;
   id: string;
   subjectId: string;
   startTime: number;

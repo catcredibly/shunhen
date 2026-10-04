@@ -1,3 +1,4 @@
+import { createTestDatabase } from "./storage/testDatabase";
 import "fake-indexeddb/auto";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { FocusDatabase } from "./db";
@@ -5,15 +6,17 @@ import { saveFocusSession } from "./saveFocusSession";
 import type { FocusSession } from "./types";
 
 let database: FocusDatabase;
-beforeEach(() => {
-  database = new FocusDatabase("goal-completion-test");
+beforeEach(async () => {
+  database = createTestDatabase("goal-completion-test").database;
+  await database.academicYears.add({ id: "1", name: "Y", archived: false });
+  await database.subjects.add({ id: "1", academicYearId: "1", name: "S", color: "#4da3ff", archived: false });
 });
 const now = new Date(2026, 8, 24, 12).getTime();
 const session = (id: string, seconds = 60): FocusSession => ({
   id,
-  subjectId: "s",
+  subjectId: "1",
   subjectName: "S",
-  academicYearId: "y",
+  academicYearId: "1",
   academicYearName: "Y",
   startTime: now - seconds * 1000,
   endTime: now,
@@ -42,7 +45,7 @@ it("retains exact retry data after a failed save and stores permanent focus inte
     ],
   };
   const original = structuredClone(source);
-  const add = vi.spyOn(database.sessions, "add").mockRejectedValueOnce(new Error("Storage unavailable"));
+  const add = vi.spyOn(database, "transaction").mockRejectedValueOnce(new Error("Storage unavailable"));
   await expect(saveFocusSession(source, false, database)).rejects.toThrow("Storage unavailable");
   expect(source).toEqual(original);
   expect(await database.sessions.count()).toBe(0);

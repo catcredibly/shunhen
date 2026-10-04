@@ -3,8 +3,6 @@ import { db, type FocusDatabase } from "./db";
 import type { AcademicYear, FocusSession, Subject } from "./types";
 import { localeCode } from "./i18n";
 
-export const makeId = () => crypto.randomUUID();
-
 export function formatDurationForLocale(totalSeconds: number, locale = localeCode()) {
   const total = Math.max(0, Math.round(totalSeconds));
   const hours = Math.floor(total / 3600);
@@ -70,7 +68,7 @@ export async function createSession(
   if (!subject || subject.archived || !year || year.archived || subject.academicYearId !== year.id)
     throw new Error("Choose a Subject in an active Academic Year.");
   const session: FocusSession = {
-    id: makeId(),
+    id: "",
     subjectId: input.subject.id,
     subjectName: input.subject.name,
     academicYearId: input.academicYear.id,
@@ -82,6 +80,6 @@ export async function createSession(
     note: input.note?.trim() ? input.note : undefined,
     archived: false,
   };
-  await database.sessions.add(session);
-  return session;
+  const id = await database.sessions.add(session);
+  return (await database.sessions.get(id))!;
 }

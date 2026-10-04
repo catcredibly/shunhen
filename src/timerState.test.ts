@@ -1,5 +1,5 @@
+import { createTestDatabase } from "./storage/testDatabase";
 import "fake-indexeddb/auto";
-import Dexie from "dexie";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { FocusDatabase } from "./db";
 import { filterSessions } from "./analytics/analytics";
@@ -26,14 +26,14 @@ import {
 import { EXTEND_PRESETS_MINUTES } from "./components/TimerExtendMenu";
 import { normaliseDuration } from "./settings";
 
-const opened: Dexie[] = [];
+const opened: { delete(): Promise<void> }[] = [];
 const database = () => {
-  const value = new FocusDatabase(`focus-timer-test-${crypto.randomUUID()}`);
+  const value = createTestDatabase(`focus-timer-test-${crypto.randomUUID()}`).database;
   opened.push(value);
   return value;
 };
-const year = { id: "year", name: "University Year 1", archived: false };
-const subject = { id: "subject", academicYearId: year.id, name: "Mathematics", color: "#4da3ff", archived: false };
+const year = { id: "1", name: "University Year 1", archived: false };
+const subject = { id: "1", academicYearId: year.id, name: "Mathematics", color: "#4da3ff", archived: false };
 
 afterEach(async () => {
   await Promise.all(opened.splice(0).map((value) => value.delete()));
@@ -82,7 +82,7 @@ describe("timer persistence and summaries", () => {
     const extended = extendTimerState(paused, 1200, 2_000);
     expect(extended).toMatchObject({
       sessionId: "same-session",
-      subjectId: "subject",
+      subjectId: "1",
       note: "Keep this",
       paused: true,
       remainingSeconds: 4200,
@@ -140,6 +140,8 @@ describe("timer persistence and summaries", () => {
 
   it("permanently deletes exactly one Session", async () => {
     const testDb = database();
+    await testDb.academicYears.add(year);
+    await testDb.subjects.add(subject);
     const session = (id: string) => ({
       id,
       subjectId: subject.id,
@@ -151,9 +153,10 @@ describe("timer persistence and summaries", () => {
       focusedDurationSeconds: 1,
       archived: false,
     });
-    await testDb.sessions.bulkAdd([session("one"), session("two")]);
-    await testDb.sessions.delete("one");
-    expect((await testDb.sessions.toArray()).map((row) => row.id)).toEqual(["two"]);
+    const first = await testDb.sessions.add(session("one"));
+    const second = await testDb.sessions.add(session("two"));
+    await testDb.sessions.delete(first);
+    expect((await testDb.sessions.toArray()).map((row) => row.id)).toEqual([second]);
   });
 
   it("round-trips the local edit date without UTC conversion", () => {
@@ -162,7 +165,7 @@ describe("timer persistence and summaries", () => {
     expect(localDateInputValue(new Date(`${localDateInputValue(stamp)}T00:30`).getTime())).toBe("2026-09-22");
   });
 
-  it("keeps the analytics demo entirely outside IndexedDB", async () => {
+  it("keeps the analytics demo entirely outside storage", async () => {
     const testDb = database();
     createDevelopmentAnalyticsDataset(100);
     expect(await testDb.sessions.count()).toBe(0);

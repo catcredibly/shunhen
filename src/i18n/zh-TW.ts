@@ -1,6 +1,9 @@
 import en from "./en";
 
 const zhTW: Record<keyof typeof en, string> = {
+  "Unable to open study data": "無法開啟學習資料",
+  "Restart Shunhen to retry. Your study data has not been deleted.":
+    "請重新啟動 Shunhen 以重試。您的學習資料未被刪除。",
   Total: "總計",
   "Total focus time by weekday": "按星期幾統計的總專注時間",
   "Total Sessions by weekday": "按星期幾統計的總專注次數",

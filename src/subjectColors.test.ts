@@ -1,3 +1,4 @@
+import { createTestDatabase } from "./storage/testDatabase";
 import "fake-indexeddb/auto";
 import { afterEach, beforeEach, expect, it } from "vitest";
 import { FocusDatabase } from "./db";
@@ -5,31 +6,32 @@ import { cycleSubjectColor, nextSubjectColor, SUBJECT_COLORS } from "./subjectCo
 
 let database: FocusDatabase;
 beforeEach(async () => {
-  database = new FocusDatabase(`subject-colors-${crypto.randomUUID()}`);
+  database = createTestDatabase(`subject-colors-${crypto.randomUUID()}`).database;
+  await database.academicYears.add({ id: "1", name: "Year", archived: false });
   await database.subjects.add({
-    id: "subject",
+    id: "1",
     name: "Math",
-    academicYearId: "year",
+    academicYearId: "1",
     archived: true,
     color: SUBJECT_COLORS[0],
   });
 });
 afterEach(() => database.delete());
 it("persists each palette color in order, wraps, and changes only the chosen Subject color", async () => {
-  const original = await database.subjects.get("subject");
-  await database.subjects.add({ ...original!, id: "other" });
+  const original = await database.subjects.get("1");
+  await database.subjects.add({ ...original!, id: "2" });
   for (let click = 1; click <= SUBJECT_COLORS.length; click++) {
-    await cycleSubjectColor("subject", database);
-    expect(await database.subjects.get("subject")).toEqual({
+    await cycleSubjectColor("1", database);
+    expect(await database.subjects.get("1")).toEqual({
       ...original,
       color: SUBJECT_COLORS[click % SUBJECT_COLORS.length],
     });
-    expect(await database.subjects.get("other")).toEqual({ ...original, id: "other" });
+    expect(await database.subjects.get("2")).toEqual({ ...original, id: "2" });
   }
 });
 it("preserves consecutive clicks before the list rerenders", async () => {
-  await Promise.all([cycleSubjectColor("subject", database), cycleSubjectColor("subject", database)]);
-  expect((await database.subjects.get("subject"))?.color).toBe(SUBJECT_COLORS[2]);
+  await Promise.all([cycleSubjectColor("1", database), cycleSubjectColor("1", database)]);
+  expect((await database.subjects.get("1"))?.color).toBe(SUBJECT_COLORS[2]);
 });
 
 it("keeps the original palette prefix and appends the specified six colors", () => {
@@ -52,16 +54,16 @@ it("uses all twelve colors for new Subjects while ignoring archived and other-ye
   const active = SUBJECT_COLORS.slice(0, 11).map((color, id) => ({
     id: String(id),
     name: String(id),
-    academicYearId: "year",
+    academicYearId: "1",
     archived: false,
     color,
   }));
   const input = [
     ...active,
     { ...active[0], id: "archived", color: SUBJECT_COLORS[11], archived: true },
-    { ...active[0], id: "other", color: SUBJECT_COLORS[11], academicYearId: "other" },
+    { ...active[0], id: "2", color: SUBJECT_COLORS[11], academicYearId: "2" },
   ];
   const original = structuredClone(input);
-  expect(nextSubjectColor(input, "year")).toBe(SUBJECT_COLORS[11]);
+  expect(nextSubjectColor(input, "1")).toBe(SUBJECT_COLORS[11]);
   expect(input).toEqual(original);
 });

@@ -1,3 +1,4 @@
+import { readHistorySnapshot, readYearsAlphabetically, readSubjectsAlphabetically } from "../storage/queries";
 import { FilterSelect } from "./FilterSelect";
 import {
   academicYearOptions,
@@ -16,7 +17,7 @@ import { readableNote, noteSearchTerms, noteMetrics } from "../notes";
 import { showToast } from "../toasts";
 import { cycleSubjectColor, nextSubjectColor } from "../subjectColors";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useLiveQuery } from "dexie-react-hooks";
+import { useLiveQuery } from "../hooks/useLiveQuery";
 import {
   FileText,
   TriangleAlert,
@@ -32,7 +33,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { db } from "../db";
-import { createSession, formatDuration, makeId } from "../data";
+import { createSession, formatDuration } from "../data";
 import type { AcademicYear, FocusSession, Subject } from "../types";
 import { localDateInputValue } from "../timerState";
 import {
@@ -200,7 +201,7 @@ function InvalidConfirmation({
 export function AcademicYearsPage() {
   const { t } = useTranslation();
   const { settings } = useSettings();
-  const years = useLiveQuery(() => db.academicYears.orderBy("name").toArray(), []) ?? [];
+  const years = useLiveQuery(() => readYearsAlphabetically(db), []) ?? [];
   const subjects = useLiveQuery(() => db.subjects.toArray(), []) ?? [];
   const sessions = useLiveQuery(() => db.sessions.toArray(), []) ?? [];
   const [archived, setArchivedState] = useState(managementViewState.academicYearsArchived);
@@ -217,7 +218,7 @@ export function AcademicYearsPage() {
     const name = String(form.get("name") ?? "").trim();
     if (!name) return;
     const year: AcademicYear = {
-      id: editing?.id ?? makeId(),
+      id: editing?.id ?? "",
       name,
       startDate: String(form.get("startDate") || "") || undefined,
       endDate: String(form.get("endDate") || "") || undefined,
@@ -411,7 +412,7 @@ export function SubjectsPage() {
   const { t } = useTranslation();
   const { settings } = useSettings();
   const years = useLiveQuery(() => db.academicYears.toArray(), []) ?? [];
-  const subjects = useLiveQuery(() => db.subjects.orderBy("name").toArray(), []) ?? [];
+  const subjects = useLiveQuery(() => readSubjectsAlphabetically(db), []) ?? [];
   const sessions = useLiveQuery(() => db.sessions.toArray(), []) ?? [];
   const [yearIds, setYearIds] = useState<string[]>([]);
   const [archived, setArchivedState] = useState(managementViewState.subjectsArchived);
@@ -435,17 +436,18 @@ export function SubjectsPage() {
     const academicYearId = String(form.get("year"));
     if (!name || !academicYearId) return;
     await saveSubject({
-      id: editing?.id ?? makeId(),
+      id: editing?.id ?? "",
       academicYearId,
       name,
       color: editing?.color ?? nextSubjectColor(subjects, academicYearId),
       archived: editing?.archived ?? false,
-      archivedBeforeParent: editing?.archivedBeforeParent,
     });
     setEditing(undefined);
   };
   const visible = subjects.filter(
-    (s) => s.archived === archived && (!yearIds.length || yearIds.includes(s.academicYearId)),
+    (s) =>
+      (s.archived || Boolean(years.find((year) => year.id === s.academicYearId)?.archived)) === archived &&
+      (!yearIds.length || yearIds.includes(s.academicYearId)),
   );
   const subjectIsActive = (id: string) => activeTimerRelationship()?.subjectId === id;
   return (
@@ -516,10 +518,12 @@ export function SubjectsPage() {
                   <Pencil />
                 </button>
                 <button
-                  title={t(subject.archived ? "Restore" : "Archive")}
-                  disabled={
-                    subject.archived && Boolean(years.find((year) => year.id === subject.academicYearId)?.archived)
-                  }
+                  title={t(
+                    subject.archived || Boolean(years.find((year) => year.id === subject.academicYearId)?.archived)
+                      ? "Restore"
+                      : "Archive",
+                  )}
+                  disabled={Boolean(years.find((year) => year.id === subject.academicYearId)?.archived)}
                   onClick={() =>
                     active && !subject.archived
                       ? setWarning(
@@ -530,9 +534,16 @@ export function SubjectsPage() {
                       : void setSubjectArchived(subject.id, !subject.archived)
                   }
                 >
-                  {subject.archived ? <RotateCcw /> : <Archive />}
+                  {subject.archived || Boolean(years.find((year) => year.id === subject.academicYearId)?.archived) ? (
+                    <RotateCcw />
+                  ) : (
+                    <Archive />
+                  )}
                 </button>
-                {canDeleteManagedRecord(subject.archived, settings.allowDirectActiveDeletion) && (
+                {canDeleteManagedRecord(
+                  subject.archived || Boolean(years.find((year) => year.id === subject.academicYearId)?.archived),
+                  settings.allowDirectActiveDeletion,
+                ) && (
                   <button
                     className="danger-icon"
                     title={t("Delete permanently")}
@@ -971,14 +982,7 @@ export function HistoryPage({ initialInvalid = false }: { initialInvalid?: boole
   const { settings, loaded: settingsLoaded, setSetting } = useSettings();
   const snapshot = useLiveQuery(async () => {
     if (!settingsLoaded) return;
-    return db.transaction("r", [db.academicYears, db.subjects, db.sessions], async () => {
-      const [years, subjects, sessions] = await Promise.all([
-        db.academicYears.toArray(),
-        db.subjects.toArray(),
-        db.sessions.orderBy("startTime").reverse().toArray(),
-      ]);
-      return { years, subjects, sessions };
-    });
+    return readHistorySnapshot(db);
   }, [settingsLoaded]);
   const loadedYears = snapshot?.years,
     loadedSubjects = snapshot?.subjects,

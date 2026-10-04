@@ -32,9 +32,9 @@ export async function resetPreferences() {
       };
       if (persisted) {
         await rollback(async () => {
-          await db.transaction("rw", db.settings, async () => {
+          await db.transaction("rw", async (db) => {
             for (const key of Object.keys(DEFAULT_SETTINGS) as (keyof FocusSettings)[]) {
-              if (key !== "lastBackupAt") await saveSetting(key, previous[key]);
+              if (key !== "lastBackupAt") await saveSetting(key, previous[key], db);
             }
           });
         });

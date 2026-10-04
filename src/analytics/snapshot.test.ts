@@ -1,5 +1,6 @@
+import { createTestDatabase } from "../storage/testDatabase";
+import { readAnalyticsSnapshot } from "../storage/queries";
 import "fake-indexeddb/auto";
-import { liveQuery } from "dexie";
 import { expect, it, vi } from "vitest";
 import * as allocation from "../sessionAllocation";
 import { FocusDatabase } from "../db";
@@ -73,45 +74,21 @@ it("performs one daily allocation pass for the 20,000-Session development snapsh
     spy.mockRestore();
   }
 });
-it("observes add/edit/delete/import/recovery/reassignment immediately through the live IndexedDB snapshot", async () => {
-  const database = new FocusDatabase(`analytics-snapshot-${crypto.randomUUID()}`);
-  type Result = ReturnType<typeof prepareSubjectAnalytics> & { daily: ReturnType<typeof dailyTotals> };
-  let latest: Result | undefined;
-  const waiting: { predicate: (data: Result) => boolean; resolve: () => void }[] = [];
-  const until = (predicate: (data: Result) => boolean) =>
-    latest && predicate(latest)
-      ? Promise.resolve()
-      : new Promise<void>((resolve) => waiting.push({ predicate, resolve }));
-  const subscription = liveQuery(() => database.sessions.toArray()).subscribe((sessions) => {
-    const valid = filterSessions(sessions);
-    const snapshot = createAnalyticsSnapshot(valid);
-    latest = {
-      ...prepareSubjectAnalytics(valid, valid, subjects, years, period, "en-US", snapshot.getDays),
-      daily: snapshot.getDailyTotals(valid),
-    };
-    for (const waiter of [...waiting])
-      if (waiter.predicate(latest)) {
-        waiting.splice(waiting.indexOf(waiter), 1);
-        waiter.resolve();
-      }
+it("invalidates Analytics snapshots after SQLite edits and deletion", async () => {
+  const { database, sqlite } = createTestDatabase();
+  await database.academicYears.add({ id: "1", name: "Year", archived: false });
+  await database.subjects.add({ id: "1", academicYearId: "1", name: "Subject", color: "#4da3ff", archived: false });
+  const id = await database.sessions.add({ ...row(), subjectId: "1" });
+  const first = await readAnalyticsSnapshot(database);
+  expect(createAnalyticsSnapshot(first.sessions).getDailyTotals(first.sessions)[0].seconds).toBe(3600);
+  await database.sessions.update(id, {
+    endTime: row().startTime + 1800000,
+    focusedDurationSeconds: 1800,
+    focusIntervals: [{ startTime: row().startTime, endTime: row().startTime + 1800000 }],
   });
-  try {
-    await until((data) => data.total === 0);
-    await database.sessions.put(row()); // add
-    await until((data) => data.total === 3600);
-    await database.sessions.update("one", { focusedDurationSeconds: 1800 }); // edit, same ID
-    await until((data) => data.total === 1800);
-    await database.sessions.bulkPut([row("imported", 900), row("recovered", 600)]); // imported/recovered commits
-    await until((data) => data.total === 3300);
-    await database.sessions.update("recovered", { focusIntervals: [{ startTime: at(2), endTime: at(2) + 600_000 }] });
-    // Same ID and total, but newly recovered interval timing changes the daily Analytics.
-    await until((data) => data.daily.find((day) => day.start === at(2))?.seconds === 600);
-    await database.sessions.update("one", { subjectId: "new", subjectName: "New Subject", academicYearId: "new-year" });
-    await until((data) => data.rows.some((r) => r.subjectId === "new" && r.academicYearId === "new-year"));
-    await database.sessions.delete("one");
-    await until((data) => data.total === 1500 && !data.rows.some((r) => r.subjectId === "new"));
-  } finally {
-    subscription.unsubscribe();
-    await database.delete();
-  }
+  const second = await readAnalyticsSnapshot(database);
+  expect(createAnalyticsSnapshot(second.sessions).getDailyTotals(second.sessions)[0].seconds).toBe(1800);
+  await database.sessions.delete(id);
+  expect((await readAnalyticsSnapshot(database)).sessions).toEqual([]);
+  sqlite.close();
 });

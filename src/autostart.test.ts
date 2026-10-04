@@ -1,3 +1,4 @@
+import { createTestDatabase } from "./storage/testDatabase";
 import "fake-indexeddb/auto";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { FocusDatabase } from "./db";
@@ -14,7 +15,7 @@ vi.mock("@tauri-apps/plugin-autostart", () => ({
 }));
 let database: FocusDatabase;
 beforeEach(() => {
-  database = new FocusDatabase(`autostart-${crypto.randomUUID()}`);
+  database = createTestDatabase(`autostart-${crypto.randomUUID()}`).database;
   native.enabled = false;
   native.enable.mockReset().mockImplementation(async () => {
     native.enabled = true;

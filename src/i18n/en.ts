@@ -1,4 +1,7 @@
 const en = {
+  "Unable to open study data": "Unable to open study data",
+  "Restart Shunhen to retry. Your study data has not been deleted.":
+    "Restart Shunhen to retry. Your study data has not been deleted.",
   Total: "Total",
   "Total focus time by weekday": "Total focus time by weekday",
   "Total Sessions by weekday": "Total Sessions by weekday",

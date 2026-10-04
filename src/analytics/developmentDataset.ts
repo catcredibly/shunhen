@@ -46,7 +46,7 @@ function random(seed: number) {
   };
 }
 
-/** Development-only, deterministic fixture. It returns plain objects and never touches IndexedDB. */
+/** Development-only, deterministic fixture. It returns plain objects and never touches storage. */
 export function createDevelopmentAnalyticsDataset(sessionTarget = 12_000): DevelopmentAnalyticsDataset {
   const academicYears: AcademicYear[] = [
     { id: "demo-ib", name: "IB (2023-2025)", startDate: "2023-01-01", endDate: "2025-12-31", archived: true },

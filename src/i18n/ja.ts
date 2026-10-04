@@ -1,6 +1,9 @@
 import en from "./en";
 
 const ja: Record<keyof typeof en, string> = {
+  "Unable to open study data": "学習データを開けません",
+  "Restart Shunhen to retry. Your study data has not been deleted.":
+    "Shunhen を再起動して再試行してください。学習データは削除されていません。",
   Total: "合計",
   "Total focus time by weekday": "曜日別の合計集中時間",
   "Total Sessions by weekday": "曜日別の合計セッション数",

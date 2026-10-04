@@ -348,7 +348,8 @@ export function normalizeLegacyRevealShortcut(value: string): string {
 
 /** Defaults may belong to any non-archived Academic Year; history is untouched. */
 export async function reconcileDefaultSubject(database: FocusDatabase = db) {
-  await database.transaction("rw", database.settings, database.subjects, database.academicYears, async () => {
+  await database.transaction("rw", async (database) => {
+    await database.settings.clearMissingSubjectReferences();
     const configured = (await database.settings.get(SETTINGS_KEYS.defaultSubjectId))?.value;
     if (!configured) return;
     const subject = await database.subjects.get(configured);
@@ -365,7 +366,7 @@ export async function reconcileDefaultSubject(database: FocusDatabase = db) {
 export async function loadSettings(database: FocusDatabase = db, migrate = true): Promise<FocusSettings> {
   if (migrate) await reconcileDefaultSubject(database);
   if (migrate)
-    await database.transaction("rw", database.settings, async () => {
+    await database.transaction("rw", async (database) => {
       const row = await database.settings.get(SETTINGS_KEYS.popoutRevealShortcut);
       const intent = await database.settings.get(SETTINGS_KEYS.popoutRevealShortcutIntent);
       const normalized = row ? normalizeLegacyRevealShortcut(row.value) : DEFAULT_SETTINGS.popoutRevealShortcut;
@@ -417,7 +418,7 @@ export async function saveSetting<K extends keyof FocusSettings>(
 
 export async function restoreSettingDefaults(keys: (keyof FocusSettings)[], database: FocusDatabase = db) {
   if (keys.includes("launchAtStartup")) await synchronizeStartup(database, DEFAULT_SETTINGS.launchAtStartup);
-  await database.transaction("rw", database.settings, async () => {
+  await database.transaction("rw", async (database) => {
     await database.settings.bulkDelete(keys.map((key) => SETTINGS_KEYS[key]));
     if (keys.includes("popoutRevealShortcut")) await database.settings.delete(SETTINGS_KEYS.popoutRevealShortcutIntent);
   });
@@ -454,21 +455,10 @@ export async function clearAllFocusData(
   storage: Pick<Storage, "getItem" | "removeItem"> = localStorage,
 ) {
   if (hasActiveTimer(storage)) throw new Error("Finish or stop the current timer before clearing app data.");
-  await database.transaction(
-    "rw",
-    database.sessions,
-    database.subjects,
-    database.academicYears,
-    database.settings,
-    async () => {
-      await Promise.all([
-        database.sessions.clear(),
-        database.subjects.clear(),
-        database.academicYears.clear(),
-        database.settings.clear(),
-      ]);
-    },
-  );
+  await database.transaction("rw", async (database) => {
+    await database.academicYears.clear();
+    await database.settings.clear();
+  });
   storage.removeItem(ACTIVE_TIMER_STORAGE_KEY);
 }
 

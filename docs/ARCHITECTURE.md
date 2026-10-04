@@ -5,7 +5,7 @@
 - Shunhen runs as a single-instance application. A second launch focuses the existing main window.
 - The main window and compact popout share one authoritative active Timer through persisted state and cross-window updates.
 - Running, Paused, Finished, recovery, checkpoint, note, and save-failure state remains in the active Timer record until it is finalized or explicitly discarded.
-- Completed Sessions may include focus intervals so daily and weekly goals allocate focused time correctly across local-day and Monday-based week boundaries.
+- Completed Sessions store pauses; derived focus intervals let daily and weekly goals allocate focused time correctly across local-day and Monday-based week boundaries.
 - The popout can target either the current monitor or an explicitly selected display. Native Windows work-area coordinates keep docking clear of the taskbar and support negative coordinates in multi-monitor layouts.
 - English, Simplified Chinese, Traditional Chinese, and Japanese are available as persisted locales. User-created names and notes are not translated.
 
@@ -15,7 +15,7 @@
 - **React 19 and TypeScript** implement the application UI and domain logic.
 - **Vite** builds and serves the frontend.
 - **Tailwind CSS 4** is available through the Vite integration alongside the application's shared CSS.
-- **Dexie 4 and IndexedDB** provide local-first persistence and reactive queries.
+- **SQLite and bundled rusqlite** provide authoritative local persistence on Windows and Linux. Tauri owns one pinned native connection; TypeScript owns repositories, query models and domain behavior.
 - **Recharts** renders standard analytics charts, while custom React/CSS views handle heatmaps and other specialized visualizations.
 - **Vitest** covers data, timer, analytics, settings, and import/export behavior.
 
@@ -34,22 +34,39 @@ Application and domain behavior resides primarily in TypeScript. Native desktop 
 
 ## Persistence
 
-Shunhen uses a single local IndexedDB database through Dexie. Its primary stores are:
+SQLite is the only authoritative study store. `shunhen.sqlite3` lives in Tauri’s platform-resolved application data directory; no Windows path or system SQLite installation is required. [rusqlite](https://github.com/rusqlite/rusqlite) compiles bundled SQLite on Windows and Linux. The narrow native bridge pins transactions to one connection instead of issuing transaction control through a connection pool.
 
-- `academicYears`
-- `subjects`
-- `sessions`
-- `settings`
+`storage/model.ts` defines normalized records with numeric row IDs. Four focused write repositories own Academic Years, Subjects, Sessions (including pauses), and Settings. `storage/queries.ts` provides joined History and Analytics snapshots. React consumes these query models through a read-only hook that refreshes on committed native storage events across windows. Decimal string IDs at form/selector boundaries represent SQLite integers; UUIDs are external source/recovery identities, never primary or foreign keys.
 
-Dexie schema versions define indexes and migrate older Sessions to the current backwards-compatible shape. Settings are stored as string key/value records and exposed through typed TypeScript helpers.
+The normalized schema is:
 
-The active in-progress timer is treated as transient recovery state rather than study history. It is stored separately in `localStorage` until cleared or completed. Completed Sessions are written to IndexedDB.
+- `academic_years`: integer primary key, name, optional ISO `YYYY-MM-DD` civil start/end dates, independent 0/1 archive flag; date order is checked.
+- `subjects`: integer primary key, cascading Academic Year foreign key, name, stable palette integer `color_id`, independent 0/1 archive flag.
+- `sessions`: integer primary key, cascading Subject foreign key, UTC Unix `started_at` seconds, positive `elapsed_seconds`, nullable note and 0/1 `manual` flag.
+- `session_pauses`: cascading Session foreign key, non-negative relative `offset_seconds`, positive `duration_seconds`, composite `(session_id, offset_seconds)` primary key. Triggers reject overlap and out-of-bounds pauses.
+- `settings`: typed application helpers over string key/value rows, including preferences, goals and completion claims.
+- `session_sources`: unique external source identities related to local Session IDs for backup/CSV duplicate checks and timer-save retries.
+- `storage_metadata`: schema/upgrade and cleanup state, separate from user settings and backups.
 
-The production Dexie database is named `focus`. A fresh installation creates an empty study schema and uses application-defined default settings. No development database is bundled.
+Primary keys use ordinary `INTEGER PRIMARY KEY`, without `AUTOINCREMENT`. Useful indexes cover Subjects by parent, Sessions by start and by Subject/start, and source identities by Session. Foreign keys are enabled on the native connection. Web Locks coordinate every WebView; transaction callbacks receive an explicit scoped database. Transaction tokens and native owner checks prevent unrelated operations from entering another window’s transaction. Destroying the owning window rolls back unfinished work. WAL and full synchronous durability are configured centrally. SQLite schema upgrades use `user_version` and transactional DDL.
+
+Permanent timing has whole-second precision. End is `started_at + elapsed_seconds`; Focus Time is elapsed minus pause durations. A continuous Session has no pause rows. Analytics reconstructs focus ranges as the complement of the ordered pause ranges, including overnight Sessions. End, Focus Time, focus intervals, names, parent-year relationship and effective archive state are derived read-model values, never Session columns. Active timers retain their existing precise timestamps and recovery behavior in `localStorage`. Notes retain the existing 1200 visible-character/40-line behavior.
+
+### One-time IndexedDB upgrade
+
+Before rendering either window, `db.open()` checks SQLite migration metadata under the shared storage lock. A fresh install uses SQLite directly and never creates a legacy database. `storage/legacy.ts` reads an existing `focus` IndexedDB database through a readonly native IndexedDB transaction, without Dexie upgrades or source writes. This is the only runtime IndexedDB access.
+
+Legacy records are validated and assigned in-memory old-to-integer maps. All relationships follow Session → Subject → Academic Year; stale Session name/year snapshots are discarded. The fixed twelve-color palette maps exactly to IDs 0–11 and may only be extended by appending colors. The old parent-archive marker is interpreted once to recover independent Subject intent, then removed. Subject-default settings are remapped; unknown settings and goal claims are preserved. Missing required relationships, unsupported colors or malformed precise interval data stop the upgrade without deleting source data.
+
+Meaningful absolute boundaries are rounded by `floor(milliseconds / 1000 + 0.5)` (half-second ties toward positive infinity). Elapsed time and pause offsets/durations are derived from those boundaries. Zero-second gaps disappear; adjacent pauses around collapsed focus ranges coalesce. Continuous legacy Sessions retain their recorded continuous focus span, following the former versioned legacy rule; unavailable pause locations are never guessed.
+
+One native SQLite transaction inserts the normalized records and source identities, checks foreign keys, all values and counts, note/settings references, archive intent and pause/timing invariants, then commits migration completion atomically. Failure rolls back the imported data and metadata; IndexedDB stays untouched and the next launch retries. After success, the old unfinished `focus.activeTimer` recovery record is discarded once, as an explicit upgrade policy; recovery remains enabled for new timers. The readonly legacy connection closes before obsolete IndexedDB deletion. Cleanup failures retain a separate pending marker. Later launches skip import and retry only deletion; they do not discard newly started timers.
+
+Dexie is not a production dependency. It remains a development dependency solely for constructing legacy upgrade test fixtures. There is no second runtime persistence layer. Database development uses `npm run tauri dev`; standalone browser previews do not create a browser study database.
 
 ## Academic Year and Subject selectors
 
-Academic Years remain the parents of Subjects. There is no Current Academic Year setting or selection. Legacy `currentAcademicYearId` rows in existing settings/backups are ignored and preserved for backwards compatibility; no historical records are migrated or rewritten.
+Academic Years remain the parents of Subjects. There is no Current Academic Year setting or selection. Legacy `currentAcademicYearId` settings are remapped on upgrade/import and ignored by normal selectors.
 
 New Timer and manual Sessions can use any non-archived Subject whose Academic Year is non-archived, regardless of the year's dates. Date-range validity for historical Analytics remains unchanged. Subject defaults are eligible across all such Academic Years.
 
@@ -67,9 +84,9 @@ Academic Year
        -> Sessions
 ```
 
-A Subject stores its parent `academicYearId`. A Session stores its `subjectId` together with Academic Year ID and display-name snapshots used for history and backwards compatibility.
+A Subject stores only its parent Academic Year ID. A Session stores only its Subject ID; current names and the Academic Year are resolved through joins. Renaming or moving a parent updates historical display without rewriting Sessions.
 
-Archiving retains records. Academic Year archival transactionally archives its Subjects, saving independent intent in `archivedBeforeParent`; restoration restores that intent and clears the marker. Subjects cannot be restored while their parent is archived. Database version 6 applies this rule to existing archived parents, preserving each currently stored Subject state and leaving Sessions untouched. Permanent deletion follows the application's current relational rules and is performed using Dexie transactions. Deleting a Subject also removes its Sessions, while deleting an Academic Year removes its Subjects and their Sessions. This prevents orphaned dependent records.
+Archiving retains records. Academic Year archival changes only its own flag; Subject archival means independent intent. Effective Subject and Session archival is Subject archived OR parent Year archived. Restoring a Year reveals Subjects that were not independently archived. Moving a Session changes only its Subject foreign key; moving a Subject changes only its Academic Year foreign key. Database cascades delete dependent Subjects, Sessions, pauses and source identities. Invalid-Session checks continue to use the resolved Academic Year’s civil date boundaries.
 
 ## Timer architecture
 
@@ -91,14 +108,14 @@ Running-session recovery offers two explicit choices, including after a countdow
 ## Analytics
 
 ```text
-IndexedDB Sessions
+SQLite joined Sessions
   -> effective Subject/Academic Year archive status and filters
   -> pure TypeScript aggregation utilities
   -> React Analytics pages
   -> Recharts and custom heatmaps
 ```
 
-The Analytics UI reads Dexie stores through live queries, allowing persisted changes to flow directly into the dashboard without a separate analytics database or cache.
+History and Analytics read consistent joined SQLite snapshots through dedicated query modules. Committed changes in either window refresh subscribed UI queries without a separate analytics database or persistent cache.
 
 Aggregation utilities group completed focus time by date, Subject, Academic Year, session length, and other dimensions displayed by the analytics interface.
 
@@ -108,8 +125,8 @@ Settings initialization shares one promise per webview, avoiding repeated migrat
 
 ## Import / Export
 
-- **JSON full backup and restore** covers Academic Years, Subjects, Sessions, and Settings. Restore data is validated and applied transactionally using either merge or replace behavior.
-- **CSV Session import and export** supports Shunhen's native CSV format as well as mapped generic CSV data, with checks for duplicate and invalid rows.
+- **JSON full backup and restore** version 2 emits normalized integer-ID records, palette IDs and Session+Pause timing, plus external Session source identities and Settings. Version 1 backups remain importable through the same legacy normalizer. Merge/replace validates first, allocates local IDs, remaps relationships/defaults, then applies and validates one SQLite transaction. Local numeric IDs are not global identities. Parent entities are resolved by names within their scope; source identities determine Session duplicates/conflicts.
+- **CSV Session import and export** emits source identity, display labels, Unix start seconds, elapsed seconds and pauses. Older Shunhen CSVs (including precise Focus intervals) and mapped generic CSVs remain importable. Explicit source identities take precedence over timing fingerprints, preserving distinct Sessions at identical second-level timing. Fingerprints are a fallback only for identity-free rows; multiplicity is preserved within a file. Preview IDs are temporary and never become SQLite row IDs.
 
 In the desktop application, Tauri file dialogs and filesystem APIs handle file access. Browser development mode uses download and file-input fallbacks.
 
@@ -134,10 +151,11 @@ Custom window commands and lifecycle handling reside in `src-tauri/src/lib.rs`. 
 - Legacy installation identifiers: retained for upgrade compatibility; see [Windows installer compatibility](../src-tauri/windows/README.md)
 - Canonical version source: root `package.json`
 - Tauri application identifier: `com.focus.timer`
-- Dexie database name: `focus`
+- SQLite database filename: `shunhen.sqlite3`
+- Legacy IndexedDB upgrade source: `focus` (deleted after successful upgrade)
 - Windows installer format: NSIS
 
-The application identifier and database name are stable V1 identities. They remain unchanged across future installers so upgrades continue to use the existing application identity and local data store.
+The application identifier remains stable across installers. The versioned storage migration replaces the legacy IndexedDB identity with the SQLite file without changing the application version or installer identity.
 
 The Orange leaf is the permanent Windows application icon. In-app leaf artwork follows the selected accent using approved packaged variants.
 
@@ -151,8 +169,9 @@ src/
   hooks/            Shared React hooks for timer and settings state
   importExport/     JSON backup/restore and CSV import/export
   App.tsx           Main-window routing and popout entry selection
-  db.ts             Dexie database and schema versions
-  types.ts          Persistent data model types
+  db.ts             SQLite connection/transaction facade
+  storage/          Normalized schema, four repositories, queries and upgrade bridge
+  types.ts          Derived UI/domain model types
   settings.ts       Typed settings defaults and persistence helpers
   timerState.ts     Pure timer state calculations
   timerCompletion.ts Completion sound, notification, and popout effects

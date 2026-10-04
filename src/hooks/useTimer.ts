@@ -1,5 +1,5 @@
 import { noteMetrics } from "../notes";
-import { useLiveQuery } from "dexie-react-hooks";
+import { useLiveQuery } from "./useLiveQuery";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { db } from "../db";
 import type { AcademicYear, Subject } from "../types";

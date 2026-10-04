@@ -27,6 +27,7 @@ import { getVersion } from "@tauri-apps/api/app";
 import { exportFullBackup } from "../importExport/exportBackup";
 import { useSettings } from "../hooks/useSettings";
 import {
+  saveSetting,
   clearAllFocusData,
   formatLastBackup,
   hasActiveTimer,
@@ -41,7 +42,7 @@ import {
 } from "../settings";
 import { previewCompletionSound, testCompletionNotification } from "../timerCompletion";
 import { FocusLeaf } from "./FocusLeaf";
-import { useLiveQuery } from "dexie-react-hooks";
+import { useLiveQuery } from "../hooks/useLiveQuery";
 import { db } from "../db";
 import packageMetadata from "../../package.json";
 import { useTranslation } from "react-i18next";
@@ -833,9 +834,9 @@ function Popout({ settings, setSetting }: SettingsProps) {
           value={docked ? settings.popoutAutoHideEdge : "automatic"}
           onChange={async (event) => {
             const edge = event.target.value as FocusSettings["popoutAutoHideEdge"];
-            await db.transaction("rw", db.settings, async () => {
-              await setSetting("popoutAutoHideOffset", dockEdgeOffset(settings.popoutDockCorner, edge));
-              await setSetting("popoutAutoHideEdge", edge);
+            await db.transaction("rw", async (db) => {
+              await saveSetting("popoutAutoHideOffset", dockEdgeOffset(settings.popoutDockCorner, edge), db);
+              await saveSetting("popoutAutoHideEdge", edge, db);
             });
           }}
         >

@@ -31,8 +31,6 @@
     "@tauri-apps/plugin-notification": "^2.5.0",
     "@tauri-apps/plugin-process": "^2.4.0",
     "@tauri-apps/plugin-updater": "^2.13.0",
-    "dexie": "^4.0.10",
-    "dexie-react-hooks": "^4.4.0",
     "i18next": "^26.4.2",
     "lucide-react": "^1.48.0",
     "react": "^19.0.0",
@@ -53,6 +51,7 @@
     "tailwindcss": "^4.0.0",
     "typescript": "~7.0.2",
     "vite": "^8.3.1",
-    "vitest": "^5.0.2"
+    "vitest": "^5.0.2",
+    "dexie": "^4.0.10"
   }
 }

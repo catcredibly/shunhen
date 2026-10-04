@@ -16,6 +16,7 @@ tauri-build = { version = "2", features = [] }
 tauri = { version = "2", features = [] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+rusqlite = { version = "0.40.2", features = ["bundled"] }
 # The updater enables rustls-no-provider. Our diagnostic client also needs the
 # normal provider-enabled path before the updater has created any client.
 reqwest = { version = "0.13", default-features = false, features = ["rustls"] }

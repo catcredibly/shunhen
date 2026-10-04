@@ -1,3 +1,4 @@
+import { readAnalyticsSnapshot } from "../storage/queries";
 import { useSubjectAnalyticsData } from "../hooks/useSubjectAnalyticsData";
 import { prepareSubjectAnalytics } from "../analytics/subjectData";
 import { createAnalyticsSnapshot } from "../analytics/snapshot";
@@ -25,7 +26,7 @@ import { academicYearOptions, subjectOptions, pruneSubjectSelection } from "../s
 import { FilterSelect } from "./FilterSelect";
 import { dailyActivityScope } from "../analytics/dailyActivity";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
-import { useLiveQuery } from "dexie-react-hooks";
+import { useLiveQuery } from "../hooks/useLiveQuery";
 import {
   Area,
   AreaChart,
@@ -125,14 +126,7 @@ export function AnalyticsPage() {
   const { settings, loaded: settingsLoaded } = useSettings();
   const snapshot = useLiveQuery(async () => {
     if (!settingsLoaded) return;
-    return db.transaction("r", [db.academicYears, db.subjects, db.sessions], async () => {
-      const [years, subjects, sessions] = await Promise.all([
-        db.academicYears.toArray(),
-        db.subjects.toArray(),
-        db.sessions.orderBy("startTime").toArray(),
-      ]);
-      return { years, subjects, sessions };
-    });
+    return readAnalyticsSnapshot(db);
   }, [settingsLoaded]);
   const demoEnabled = import.meta.env.DEV && new URLSearchParams(window.location.search).get("analyticsDemo") === "1";
   const demo = useMemo(() => (demoEnabled ? createDevelopmentAnalyticsDataset(20_000) : undefined), [demoEnabled]);

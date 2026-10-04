@@ -39,8 +39,8 @@ export function withPopoutGeometry<T>(operation: () => Promise<T>): Promise<T> {
   return navigator.locks.request("focus.popout.geometry", operation);
 }
 async function persist(values: Partial<FocusSettings>) {
-  await db.transaction("rw", db.settings, async () => {
-    for (const [key, value] of Object.entries(values)) await saveSetting(key as keyof FocusSettings, value);
+  await db.transaction("rw", async (db) => {
+    for (const [key, value] of Object.entries(values)) await saveSetting(key as keyof FocusSettings, value, db);
   });
 }
 async function placeDocked(settings: FocusSettings) {

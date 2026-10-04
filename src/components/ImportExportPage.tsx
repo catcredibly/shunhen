@@ -1,8 +1,9 @@
+import { readAnalyticsSnapshot } from "../storage/queries";
 import { FilterSelect } from "./FilterSelect";
 import { academicYearOptions } from "../selectorOptions";
 import { showToast } from "../toasts";
 import { useState } from "react";
-import { useLiveQuery } from "dexie-react-hooks";
+import { useLiveQuery } from "../hooks/useLiveQuery";
 import {
   AlertTriangle,
   ArrowLeft,
@@ -83,7 +84,7 @@ export function ImportExportPage({
     setBusy(true);
     setError("");
     try {
-      const sessions = await db.sessions.orderBy("startTime").toArray();
+      const sessions = (await readAnalyticsSnapshot(db)).sessions;
       const date = backupFilename().replace("shunhen-backup-", "").replace(".json", "");
       if (await saveTextFile(`shunhen-sessions-${date}.csv`, exportSessionsCsv(sessions), "csv"))
         showToast("CSV exported successfully");

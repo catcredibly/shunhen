@@ -1,3 +1,4 @@
+mod storage;
 use serde::Serialize;
 use tauri::{Emitter, Manager};
 #[cfg(target_os = "linux")]
@@ -569,6 +570,7 @@ pub fn run() {
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_opener::init())
         .setup(|app| {
+            storage::install(app.handle())?;
             #[cfg(target_os = "linux")]
             linux_desktop::install(app.handle())?;
             window_constraints::install(app.handle())?;
@@ -596,6 +598,7 @@ pub fn run() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_dialog::init())
         .invoke_handler(tauri::generate_handler![
+            storage::storage_request,
             supports_window_positioning,
             window_constraints::set_main_minimum_width,
             reveal_shortcut::set_reveal_shortcut,
@@ -633,6 +636,7 @@ pub fn run() {
             is_main_fullscreen
         ])
         .on_window_event(|window, event| {
+            if matches!(event, tauri::WindowEvent::Destroyed) { storage::release_window(window.app_handle(), window.label()); }
             if window.label() == "timer" && matches!(event, tauri::WindowEvent::Moved(_) | tauri::WindowEvent::Resized(_) | tauri::WindowEvent::ScaleFactorChanged { .. }) {
                 let _ = window.emit("focus://display-geometry-changed", "timer-geometry-change");
             }

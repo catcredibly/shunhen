@@ -1,11 +1,11 @@
 import { initializeSettings } from "../settingsInitialization";
 import { startupState, synchronizeStartup } from "../autostart";
 import { db } from "../db";
-import { useLiveQuery } from "dexie-react-hooks";
+import { useLiveQuery } from "./useLiveQuery";
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import { DEFAULT_SETTINGS, reconcileDefaultSubject, loadSettings, saveSetting, type FocusSettings } from "../settings";
 
-// Match the early HTML paint while IndexedDB loads; this is only a theme hint,
+// Match the early HTML paint while SQLite loads; this is only a theme hint,
 // never a replacement for persisted settings or a reason to delay rendering.
 const initialSettings: FocusSettings = {
   ...DEFAULT_SETTINGS,
@@ -14,7 +14,7 @@ const initialSettings: FocusSettings = {
 
 export function useSettings() {
   const [migrated, setMigrated] = useState(false);
-  // Dexie live queries are read-only; complete compatibility writes outside them.
+  // SQLite live queries are read-only; complete compatibility writes outside them.
   useEffect(() => {
     let active = true;
     void initializeSettings()

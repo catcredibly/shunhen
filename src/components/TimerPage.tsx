@@ -1,3 +1,4 @@
+import { readHistorySessions } from "../storage/queries";
 import { validSessions } from "../sessionValidity";
 import { NoteEditor } from "./NoteEditor";
 import { FilterSelect } from "./FilterSelect";
@@ -6,7 +7,7 @@ import { TimerSetup } from "./TimerSetup";
 import { defaultSessionSubject } from "../subjectDefaults";
 import { Check, ExternalLink, Maximize2, Minimize2, Pause, Play, Plus, Square } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useLiveQuery } from "dexie-react-hooks";
+import { useLiveQuery } from "../hooks/useLiveQuery";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { invoke, isTauri } from "@tauri-apps/api/core";
 import { useTranslation } from "react-i18next";
@@ -57,7 +58,7 @@ export function TimerPage({ onNavigate }: { onNavigate: (page: string) => void }
   const [now, setNow] = useState(() => new Date());
   const [fullscreen, setFullscreen] = useState(false);
   const [fullscreenReveal, setFullscreenReveal] = useState(false);
-  const sessions = useLiveQuery(() => db.sessions.orderBy("startTime").reverse().toArray(), []) ?? [];
+  const sessions = useLiveQuery(() => readHistorySessions(db), []) ?? [];
   const allYears = useLiveQuery(() => db.academicYears.toArray(), []) ?? [];
   const allSubjects = useLiveQuery(() => db.subjects.toArray(), []) ?? [];
   const subjects = selectableSubjects(allYears, allSubjects);

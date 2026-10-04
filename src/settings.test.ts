@@ -1,5 +1,5 @@
+import { createTestDatabase } from "./storage/testDatabase";
 import "fake-indexeddb/auto";
-import Dexie from "dexie";
 import { afterEach, describe, expect, it } from "vitest";
 import { FocusDatabase } from "./db";
 import { ACTIVE_TIMER_STORAGE_KEY } from "./timerState";
@@ -20,9 +20,9 @@ import {
   timerDefaultDuration,
 } from "./settings";
 
-const opened: Dexie[] = [];
+const opened: { delete(): Promise<void> }[] = [];
 const database = () => {
-  const value = new FocusDatabase(`focus-settings-test-${crypto.randomUUID()}`);
+  const value = createTestDatabase(`focus-settings-test-${crypto.randomUUID()}`).database;
   opened.push(value);
   return value;
 };
@@ -90,22 +90,22 @@ describe("application settings", () => {
 
   it("blocks clear-all during a timer and otherwise removes every persistent table", async () => {
     const testDb = database();
-    await testDb.academicYears.add({ id: "year", name: "IB", archived: false });
+    await testDb.academicYears.add({ id: "1", name: "IB", archived: false });
     await testDb.subjects.add({
-      id: "subject",
-      academicYearId: "year",
+      id: "1",
+      academicYearId: "1",
       name: "Physics",
-      color: "#ff922b",
+      color: "#ffad3b",
       archived: false,
     });
     await testDb.sessions.add({
       id: "session",
-      subjectId: "subject",
+      subjectId: "1",
       subjectName: "Physics",
-      academicYearId: "year",
+      academicYearId: "1",
       academicYearName: "IB",
-      startTime: 1,
-      endTime: 2,
+      startTime: 1000,
+      endTime: 2000,
       focusedDurationSeconds: 1,
       archived: false,
     });
@@ -221,12 +221,12 @@ it.each(["", "Ctrl+KeyF", "Alt+Slash"])("preserves supported or cleared shortcut
 });
 it("resets only preferences and preserves backup metadata and study/runtime records", async () => {
   const testDb = database();
-  await testDb.academicYears.put({ id: "year", name: "Year", archived: false });
+  await testDb.academicYears.put({ id: "1", name: "Year", archived: false });
   await testDb.subjects.put({
-    id: "subject",
+    id: "1",
     name: "Subject",
-    academicYearId: "year",
-    color: "orange",
+    academicYearId: "1",
+    color: "#ffad3b",
     archived: false,
   });
   await testDb.settings.bulkPut([
@@ -238,9 +238,9 @@ it("resets only preferences and preserves backup metadata and study/runtime reco
   ]);
   await testDb.sessions.put({
     id: "session",
-    subjectId: "subject",
+    subjectId: "1",
     subjectName: "Subject",
-    academicYearId: "year",
+    academicYearId: "1",
     academicYearName: "Year",
     startTime: 1000,
     endTime: 61000,
@@ -263,7 +263,7 @@ it("supports read-only settings consumption after migration", async () => {
   const testDb = database();
   await testDb.settings.put({ key: "popoutRevealShortcut", value: "F12" });
   await loadSettings(testDb);
-  const settings = await testDb.transaction("r", testDb.settings, () => loadSettings(testDb, false));
+  const settings = await testDb.transaction("r", (testDb) => loadSettings(testDb, false));
   expect(settings.popoutRevealShortcut).toBe("Ctrl+Alt+KeyF");
 });
 
@@ -280,24 +280,24 @@ it("preserves deliberate old-default choices after migration and cleared intent"
 
 it("clears invalid defaults without changing history or a valid disabled selection", async () => {
   const testDb = database();
-  await testDb.academicYears.put({ id: "year", name: "Year", archived: false });
-  await testDb.subjects.put({ id: "subject", academicYearId: "year", name: "Subject", color: "blue", archived: false });
+  await testDb.academicYears.put({ id: "1", name: "Year", archived: false });
+  await testDb.subjects.put({ id: "1", academicYearId: "1", name: "Subject", color: "#4da3ff", archived: false });
   await testDb.settings.bulkPut([
-    { key: "currentAcademicYearId", value: "year" },
-    { key: "defaultSubjectId", value: "subject" },
+    { key: "currentAcademicYearId", value: "1" },
+    { key: "defaultSubjectId", value: "1" },
     { key: "subjectPickerMode", value: "remember" },
   ]);
-  expect((await loadSettings(testDb)).defaultSubjectId).toBe("subject");
-  await testDb.subjects.update("subject", { archived: true });
+  expect((await loadSettings(testDb)).defaultSubjectId).toBe("1");
+  await testDb.subjects.update("1", { archived: true });
   expect(await loadSettings(testDb)).toMatchObject({ subjectPickerMode: "remember", defaultSubjectId: "" });
-  await testDb.subjects.update("subject", { archived: false });
+  await testDb.subjects.update("1", { archived: false });
   await testDb.settings.bulkPut([
-    { key: "defaultSubjectId", value: "subject" },
+    { key: "defaultSubjectId", value: "1" },
     { key: "subjectPickerMode", value: "fixed" },
     { key: "currentAcademicYearId", value: "other" },
   ]);
-  expect(await loadSettings(testDb)).toMatchObject({ subjectPickerMode: "fixed", defaultSubjectId: "subject" });
-  await testDb.academicYears.update("year", { archived: true });
+  expect(await loadSettings(testDb)).toMatchObject({ subjectPickerMode: "fixed", defaultSubjectId: "1" });
+  await testDb.academicYears.update("1", { archived: true });
   expect(await loadSettings(testDb)).toMatchObject({ subjectPickerMode: "remember", defaultSubjectId: "" });
 });
 

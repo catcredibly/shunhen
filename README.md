@@ -50,11 +50,11 @@ Use the compact always-on-top Popout to keep track of a Session without leaving 
 
 ## Privacy
 
-Shunhen is local-first. Academic Years, Subjects, Sessions, settings, and notes are stored locally in IndexedDB on the device where Shunhen runs.
+Shunhen is local-first. Academic Years, Subjects, Sessions, settings, and notes are stored locally in SQLite on the device where Shunhen runs.
 
 Shunhen does not upload study data to an account or bundled cloud service.
 
-Export regular backups if your data matters to you. Removing Shunhen or its WebView storage may remove locally stored data.
+Export regular backups if your data matters to you. Removing Shunhen’s application data may remove locally stored data. Existing study data is migrated automatically when you update.
 
 ## Availability
 
@@ -114,7 +114,7 @@ Generated installers and executables should not be committed to source control.
 - Tauri 2 and Rust
 - React and TypeScript
 - Vite
-- Dexie and IndexedDB
+- SQLite with cross-platform native storage
 - Recharts
 
 See [Architecture](docs/ARCHITECTURE.md) for implementation details and [release packaging](docs/ARCHITECTURE.md#release-notes-and-updater-metadata) for the release workflow.

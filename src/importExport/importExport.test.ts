@@ -1,391 +1,182 @@
-import { dailyFocusAllocations } from "../sessionAllocation";
-import metadata from "../../package.json";
-import "fake-indexeddb/auto";
-import Dexie from "dexie";
-import { afterEach, describe, expect, it } from "vitest";
-import { FocusDatabase } from "../db";
-import { DEFAULT_SETTINGS, loadSettings, SETTINGS_KEYS, type FocusSettings } from "../settings";
-import type { FocusSession } from "../types";
-import { analyzeBackup, createBackup, restoreBackup, validateBackup } from "./backup";
-import { escapeCsv, exportSessionsCsv, importCsvPreview, parseCsv, previewCsv } from "./csv";
-
-const opened: Dexie[] = [];
-const database = () => {
-  const value = new FocusDatabase(`focus-v03-${crypto.randomUUID()}`);
-  opened.push(value);
-  return value;
-};
-afterEach(async () => {
-  await Promise.all(opened.splice(0).map((value) => value.delete()));
-});
-
+import { expect, it } from "vitest";
+import { createTestDatabase } from "../storage/testDatabase";
+import { createSession } from "../data";
+import { createBackup, validateBackup, restoreBackup } from "./backup";
+import { exportSessionsCsv, previewCsv, importCsvPreview, parseCsv, escapeCsv } from "./csv";
+import { readNormalized } from "../storage/migration";
 async function seeded() {
-  const value = database();
-  await value.academicYears.add({ id: "year", name: "IB", archived: false });
-  await value.subjects.add({
-    id: "subject",
-    academicYearId: "year",
-    name: "Japanese, Intermediate",
-    color: "#ff922b",
-    archived: false,
-  });
-  await value.sessions.add({
-    id: "session",
-    academicYearId: "year",
-    academicYearName: "IB",
-    subjectId: "subject",
-    subjectName: "Japanese, Intermediate",
-    startTime: new Date(2026, 8, 21, 23, 45).getTime(),
-    endTime: new Date(2026, 8, 22, 0, 30).getTime(),
-    focusedDurationSeconds: 2700,
-    note: 'Review "Section A", then Section B',
-    archived: true,
-  });
-  await value.settings.bulkPut([
-    { key: "currentAcademicYearId", value: "year" },
-    { key: "theme", value: "dark" },
-  ]);
-  return value;
+  const test = createTestDatabase();
+  const year = { id: "", name: "Year", archived: false };
+  await test.database.academicYears.add(year);
+  const subject = { id: "", name: "Subject", academicYearId: year.id, color: "#ff7eb6", archived: false };
+  await test.database.subjects.add(subject);
+  const session = await createSession(
+    { academicYear: year, subject, startTime: 1000, endTime: 6000, note: 'A "quoted", note\nSecond line' },
+    test.database,
+  );
+  await test.database.settings.put({ key: "defaultSubjectId", value: subject.id });
+  return { ...test, year, subject, session };
 }
-
-describe("Shunhen JSON backups", () => {
-  it("serializes and restores all persistent data losslessly", async () => {
-    const source = await seeded();
-    const backup = validateBackup(JSON.parse(JSON.stringify(await createBackup(source))));
-    const target = database();
-    await restoreBackup(backup, "replace", "use-imported", target);
-    expect(await target.academicYears.toArray()).toEqual(await source.academicYears.toArray());
-    expect(await target.subjects.toArray()).toEqual(await source.subjects.toArray());
-    expect(await target.sessions.toArray()).toEqual(await source.sessions.toArray());
-    expect(await loadSettings(target)).toEqual(await loadSettings(source));
-    expect((await target.settings.get("currentAcademicYearId"))?.value).toBe("year");
+it("exports normalized backups and remaps all IDs/defaults into an existing database", async () => {
+  const source = await seeded(),
+    target = await seeded();
+  await target.database.academicYears.update(target.year.id, { name: "Unrelated" });
+  const backup = await createBackup(source.database);
+  expect(backup.formatVersion).toBe(2);
+  expect(backup.data.subjects[0]).toMatchObject({ id: 1, academicYearId: 1, colorId: 5 });
+  expect(backup.data.sessions[0]).toMatchObject({ id: 1, subjectId: 1, startedAt: 1, elapsedSeconds: 5, pauses: [] });
+  for (const key of [
+    "endTime",
+    "focusedDurationSeconds",
+    "subjectName",
+    "academicYearId",
+    "archived",
+    "focusIntervals",
+  ])
+    expect(backup.data.sessions[0]).not.toHaveProperty(key);
+  await restoreBackup(backup, "merge", "use-imported", target.database);
+  const data = await readNormalized(target.database);
+  expect(data.academicYears).toHaveLength(2);
+  expect(data.sessions).toHaveLength(2);
+  const imported = data.sessions.find((row) => row.sourceIdentity === backup.data.sessions[0].sourceIdentity)!;
+  expect(imported.subjectId).not.toBe(1);
+  expect((await target.database.settings.get("defaultSubjectId"))?.value).toBe(String(imported.subjectId));
+  const repeat = await restoreBackup(backup, "merge", "keep-existing", target.database);
+  expect(repeat.sessionsImported).toBe(0);
+  expect(await target.database.sessions.count()).toBe(2);
+  source.sqlite.close();
+  target.sqlite.close();
+});
+it("imports legacy backup relationships, palette colors, archive intent and precise intervals", async () => {
+  const backup = validateBackup({
+    format: "focus-backup",
+    formatVersion: 1,
+    exportedAt: "2026-01-01",
+    appVersion: "old",
+    data: {
+      academicYears: [{ id: "y", name: "Year", archived: true }],
+      subjects: [
+        {
+          id: "s",
+          name: "Subject",
+          academicYearId: "y",
+          color: "#ff7eb6",
+          archived: true,
+          archivedBeforeParent: false,
+        },
+      ],
+      sessions: [
+        {
+          id: "f",
+          subjectId: "s",
+          startTime: 1000,
+          endTime: 6000,
+          focusedDurationSeconds: 3,
+          focusIntervals: [
+            { startTime: 1000, endTime: 2000 },
+            { startTime: 4000, endTime: 6000 },
+          ],
+          note: "Note",
+        },
+      ],
+      settings: [{ key: "defaultSubjectId", value: "s" }],
+    },
   });
-  it("includes every canonical setting and restores representative values", async () => {
-    const source = await seeded();
-    const expected: FocusSettings = {
-      ...DEFAULT_SETTINGS,
-      displayName: "Alex & Sam",
-      sidebarSubtitle: "Keep going!",
-      language: "ja",
-      theme: "light",
-      startMaximized: false,
-      launchAtStartup: true,
-      fixedTimerDurationSeconds: 5430,
-      dailyGoalEnabled: true,
-      dailyGoalSeconds: 7200,
-      completionSoundChoice: "bright",
-      completionSoundVolume: 37,
-      popoutSize: "large",
-      popoutTransparency: 73,
-      popoutDocked: true,
-      popoutDockCorner: "bottom-left",
-      popoutAutoHideEdge: "left",
-      popoutDockAutoHide: true,
-      popoutAutoHideDelaySeconds: 1.25,
-      popoutAutoHideTabSize: "large",
-      popoutAutoHideShowAccent: false,
-      popoutAlwaysOnTop: false,
-      accentColour: "miku",
-      uiScale: "large",
-      allowDirectActiveDeletion: true,
-    };
-    await source.settings.bulkPut(
-      (Object.keys(SETTINGS_KEYS) as (keyof FocusSettings)[]).map((key) => ({
-        key: SETTINGS_KEYS[key],
-        value: String(expected[key]),
-      })),
-    );
-    const backup = await createBackup(source);
-    const backupKeys = new Set(backup.data.settings.map((setting) => setting.key));
-    expect(Object.values(SETTINGS_KEYS).every((key) => backupKeys.has(key))).toBe(true);
-    const target = database();
-    await restoreBackup(backup, "replace", "use-imported", target);
-    expect(await loadSettings(target)).toEqual(expected);
-    expect((await target.settings.get("currentAcademicYearId"))?.value).toBe("year");
-  });
-  it("rejects unsupported versions and corrupt references", async () => {
-    const backup = await createBackup(await seeded());
-    expect(() => validateBackup({ ...backup, formatVersion: 99 })).toThrow(/Unsupported/);
-    expect(() =>
-      validateBackup({
-        ...backup,
-        data: { ...backup.data, subjects: [{ ...backup.data.subjects[0], academicYearId: "missing" }] },
-      }),
-    ).toThrow(/missing Academic Year/);
-  });
-  it("detects merge duplicates and conflicts without silently overwriting", async () => {
-    const source = await seeded();
-    const backup = await createBackup(source);
-    const target = database();
-    await restoreBackup(backup, "merge", "keep-existing", target);
-    const expectedDuplicates =
-      backup.data.academicYears.length +
-      backup.data.subjects.length +
-      backup.data.sessions.length +
-      backup.data.settings.length;
-    expect((await analyzeBackup(backup, target)).duplicates).toBe(expectedDuplicates);
-    await target.subjects.update("subject", { name: "Local name" });
-    const analysis = await analyzeBackup(backup, target);
-    expect(analysis.conflicts).toBe(1);
-    await restoreBackup(backup, "merge", "keep-existing", target);
-    expect((await target.subjects.get("subject"))?.name).toBe("Local name");
-  });
+  const { database, sqlite } = createTestDatabase();
+  await restoreBackup(backup, "replace", "use-imported", database);
+  const data = await readNormalized(database);
+  expect(data.subjects[0]).toMatchObject({ archived: false, colorId: 5 });
+  expect(data.sessions[0].pauses).toEqual([{ offsetSeconds: 1, durationSeconds: 2 }]);
+  expect((await database.sessions.toArray())[0].archived).toBe(true);
+  sqlite.close();
+});
+it("rejects corrupt backups and rolls back a failed replace", async () => {
+  const source = await seeded(),
+    backup = await createBackup(source.database);
+  expect(() => validateBackup({ ...backup, formatVersion: 99 })).toThrow("Unsupported");
+  expect(() =>
+    validateBackup({ ...backup, data: { ...backup.data, sessions: [{ ...backup.data.sessions[0], subjectId: 999 }] } }),
+  ).toThrow("relationship");
+  source.sqlite.exec("CREATE TRIGGER fail_subject BEFORE INSERT ON subjects BEGIN SELECT RAISE(ABORT,'failed'); END");
+  await expect(restoreBackup(backup, "replace", "use-imported", source.database)).rejects.toThrow("failed");
+  expect(await source.database.sessions.count()).toBe(1);
+  source.sqlite.close();
+});
+it("round-trips normalized CSV, including notes, and uses source identities for duplicate detection", async () => {
+  const source = await seeded(),
+    { database, sqlite } = createTestDatabase();
+  const csv = exportSessionsCsv(await source.database.sessions.toArray());
+  const preview = await previewCsv(csv, undefined, undefined, database);
+  expect(preview.recognizedFocusCsv).toBe(true);
+  expect(preview.rows[0].errors).toEqual([]);
+  expect((await importCsvPreview(preview, database)).sessionsImported).toBe(1);
+  expect((await database.sessions.toArray())[0].note).toBe(source.session.note);
+  expect(
+    (await importCsvPreview(await previewCsv(csv, undefined, undefined, database), database)).duplicatesSkipped,
+  ).toBe(1);
+  source.sqlite.close();
+  sqlite.close();
+});
+it("retains distinct source sessions at identical second-level timing", async () => {
+  const source = await seeded(),
+    { database, sqlite } = createTestDatabase();
+  const row = (await source.database.sessions.toArray())[0];
+  const csv = exportSessionsCsv([row, { ...row, id: "2", sourceIdentity: "different-source:2" }]);
+  expect(
+    (await importCsvPreview(await previewCsv(csv, undefined, undefined, database), database)).sessionsImported,
+  ).toBe(2);
+  expect(await database.sessions.count()).toBe(2);
+  source.sqlite.close();
+  sqlite.close();
+});
+it("keeps legacy Shunhen CSV and mapped generic CSV importable", async () => {
+  const { database, sqlite } = createTestDatabase();
+  const csv =
+    "Session ID,Academic Year,Subject,Start Date,Start Time,End Date,End Time,Focused Minutes,Archived,Note\nf_old,Year,Subject,2026-01-01,23:30,2026-01-02,01:30,60,false,Old";
+  const preview = await previewCsv(csv, undefined, undefined, database);
+  expect(preview.rows[0].errors).toEqual([]);
+  await importCsvPreview(preview, database);
+  expect((await database.sessions.toArray())[0].focusedDurationSeconds).toBe(3600);
+  const generic = "Year,Subject,Start,End,Notes\nYear,Subject,2026-01-02T12:00:00,2026-01-02T12:01:00,Generic";
+  expect(
+    (await importCsvPreview(await previewCsv(generic, undefined, undefined, database), database)).sessionsImported,
+  ).toBe(1);
+  expect(parseCsv('A,B\n"quoted, value",B').records[0].A).toBe("quoted, value");
+  expect(escapeCsv('a"b')).toBe('"a""b"');
+  sqlite.close();
 });
 
-describe("Shunhen CSV", () => {
-  it("escapes commas, quotes, and newlines", () => {
-    expect(escapeCsv('Review "A",\nthen B')).toBe('"Review ""A"",\nthen B"');
-    expect(parseCsv(`Name,Note\r\nSubject,${escapeCsv('Review "A",\nthen B')}`)).toMatchObject({
-      records: [{ Name: "Subject", Note: 'Review "A",\nthen B' }],
-    });
-  });
-  it("round-trips Shunhen CSV IDs, archived state, and midnight crossing", async () => {
-    const source = await seeded();
-    const session = (await source.sessions.toArray())[0];
-    const csv = exportSessionsCsv([session]);
-    const target = database();
-    const preview = await previewCsv(csv, undefined, undefined, target);
-    expect(preview.recognizedFocusCsv).toBe(true);
-    expect(preview.rows[0].session).toMatchObject({ id: "session", archived: true, focusedDurationSeconds: 2700 });
-    expect(new Date(preview.rows[0].session!.endTime).getDate()).not.toBe(
-      new Date(preview.rows[0].session!.startTime).getDate(),
-    );
-    const result = await importCsvPreview(preview, target);
-    expect(result).toMatchObject({ academicYearsCreated: 1, subjectsCreated: 1, sessionsImported: 1 });
-  });
-  it("maps generic duration CSV and reports invalid rows", async () => {
-    const target = database();
-    await target.academicYears.add({ id: "year", name: "University Year 1", archived: false });
-    const csv =
-      "Year,Course,Date,Time,Minutes\nUniversity Year 1,ELECTENG 101,2026-09-21,09:00,60\nUniversity Year 1,ELECTENG 101,bad,09:00,-5";
-    const preview = await previewCsv(
-      csv,
-      { academicYear: "Year", subject: "Course", startDate: "Date", startTime: "Time", focusedMinutes: "Minutes" },
-      undefined,
-      target,
-    );
-    expect(preview.subjectsToCreate).toEqual([{ academicYearName: "University Year 1", subjectName: "ELECTENG 101" }]);
-    expect(preview.rows.filter((row) => row.errors.length)).toHaveLength(1);
-    const result = await importCsvPreview(preview, target);
-    expect(result).toMatchObject({ sessionsImported: 1, invalidRowsSkipped: 1 });
-  });
-  it("skips fingerprint duplicates when generic CSV has no ID", async () => {
-    const target = await seeded();
-    const session = (await target.sessions.toArray())[0] as FocusSession;
-    const start = new Date(session.startTime),
-      end = new Date(session.endTime);
-    const pad = (n: number) => String(n).padStart(2, "0");
-    const date = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`,
-      time = (d: Date) => `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-    const csv = `Year,Subject,Start Date,Start Time,End Date,End Time\nIB,"Japanese, Intermediate",${date(start)},${time(start)},${date(end)},${time(end)}`;
-    const preview = await previewCsv(
-      csv,
-      {
-        academicYear: "Year",
-        subject: "Subject",
-        startDate: "Start Date",
-        startTime: "Start Time",
-        endDate: "End Date",
-        endTime: "End Time",
-      },
-      undefined,
-      target,
-    );
-    expect(preview.rows[0].duplicate).toBe(true);
-  });
+it("preserves distinct parents with identical names and explicit numeric source identities", async () => {
+  const source = await seeded(),
+    backup = await createBackup(source.database),
+    { database, sqlite } = createTestDatabase();
+  backup.data.academicYears.push({ ...backup.data.academicYears[0], id: 2 });
+  backup.data.subjects.push({ ...backup.data.subjects[0], id: 2, academicYearId: 2 });
+  backup.data.sessions.push({ ...backup.data.sessions[0], id: 2, subjectId: 2, sourceIdentity: "123" });
+  const summary = await restoreBackup(backup, "replace", "use-imported", database);
+  expect(summary.academicYearsCreated).toBe(2);
+  expect(summary.subjectsCreated).toBe(2);
+  expect(await database.sessions.count()).toBe(2);
+  const first = await database.sessions.getBySource("123");
+  expect(first).toBeDefined();
+  await restoreBackup(backup, "merge", "keep-existing", database);
+  expect(await database.sessions.count()).toBe(2);
+  source.sqlite.close();
+  sqlite.close();
 });
-
-it("uses the release version without changing schema or rejecting older backup producers", async () => {
-  const source = await seeded();
-  await source.settings.put({ key: "dateFormat", value: "standard" });
-  await source.settings.put({ key: "language", value: "ja" });
-  const backup = await createBackup(source);
-  expect(backup.appVersion).toBe(metadata.version);
-  expect(backup.formatVersion).toBe(1);
-  for (const mode of ["replace", "merge"] as const) {
-    const target = database();
-    await restoreBackup(validateBackup({ ...backup, appVersion: "1.2.0" }), mode, "use-imported", target);
-    expect((await loadSettings(target)).dateFormat).toBe("standard");
-    await target.settings.put({ key: "language", value: "en" });
-    expect((await loadSettings(target)).dateFormat).toBe("standard");
-    await target.settings.put({ key: "dateFormat", value: "compact" });
-    expect((await loadSettings(target)).dateFormat).toBe("compact");
-  }
-});
-
-it.each(["replace", "merge"] as const)(
-  "normalizes imported F-key shortcuts during %s without changing conflict policy",
-  async (mode) => {
-    const source = await seeded(),
-      target = database();
-    const backup = await createBackup(source);
-    backup.appVersion = "2.0.0";
-    backup.data.settings = backup.data.settings.filter((row) => row.key !== "popoutRevealShortcut");
-    backup.data.settings.push({ key: "popoutRevealShortcut", value: "Ctrl+F8" });
-    await restoreBackup(validateBackup(backup), mode, "use-imported", target);
-    expect((await target.settings.get("popoutRevealShortcut"))?.value).toBe("Ctrl+Alt+KeyF");
-    await target.settings.put({ key: "popoutRevealShortcut", value: "Ctrl+KeyF" });
-    await restoreBackup(backup, "merge", "keep-existing", target);
-    expect((await target.settings.get("popoutRevealShortcut"))?.value).toBe("Ctrl+KeyF");
-  },
-);
-
-it("normalizes incoming legacy notes without modifying the backup", async () => {
-  const source = await seeded();
-  const backup = await createBackup(source);
-  backup.data.sessions[0].note = "😀".repeat(1201);
-  const target = database();
-  await restoreBackup(backup, "replace", "use-imported", target);
-  expect(Array.from((await target.sessions.get("session"))!.note!)).toHaveLength(1200);
-  expect(Array.from(backup.data.sessions[0].note)).toHaveLength(1201);
-});
-it("normalizes oversized notes once when upgrading an older database", async () => {
-  const name = `note-migration-${crypto.randomUUID()}`;
-  const old = new Dexie(name);
-  old.version(2).stores({ academicYears: "id", subjects: "id", sessions: "id", settings: "key" });
-  await old.table("sessions").put({ id: "legacy", note: "line\n".repeat(45) });
-  await old.table("sessions").put({ id: "valid", note: "\n**Keep**\n" });
-  old.close();
-  const migrated = new FocusDatabase(name);
-  opened.push(migrated);
-  expect((await migrated.sessions.get("legacy"))!.note!.split("\n")).toHaveLength(40);
-  expect((await migrated.sessions.get("valid"))!.note).toBe("\n**Keep**\n");
-});
-
-it("normalizes oversized CSV notes without rejecting their Sessions", async () => {
-  const source = await seeded();
-  const rows = await source.sessions.toArray();
-  rows[0].note = "text\n".repeat(45);
-  const target = database();
-  const preview = await previewCsv(exportSessionsCsv(rows), undefined, undefined, target);
-  await importCsvPreview(preview, target);
-  expect((await target.sessions.get("session"))!.note!.split("\n")).toHaveLength(40);
-});
-
-it("preserves imported out-of-year sessions and reports only applied invalid imports", async () => {
-  const source = await seeded();
-  await source.academicYears.update("year", { startDate: "2026-09-01", endDate: "2026-09-21" });
-  const backup = await createBackup(source),
-    target = database();
-  const result = await restoreBackup(backup, "merge", "keep-existing", target);
-  expect(result.invalidSessionsImported).toBe(1);
-  expect(await target.sessions.count()).toBe(1);
-  const duplicate = await restoreBackup(backup, "merge", "keep-existing", target);
-  expect(duplicate.invalidSessionsImported ?? 0).toBe(0);
-  const csvTarget = database();
-  await csvTarget.academicYears.bulkAdd(await source.academicYears.toArray());
-  await csvTarget.subjects.bulkAdd(await source.subjects.toArray());
-  const preview = await previewCsv(exportSessionsCsv(await source.sessions.toArray()), undefined, undefined, csvTarget);
-  expect((await importCsvPreview(preview, csvTarget)).invalidSessionsImported).toBe(1);
-});
-
-it("imports malformed optional intervals without crashing Analytics and preserves valid intervals", async () => {
-  const source = await seeded();
-  for (const intervals of [
-    [null],
-    {},
-    [{ startTime: new Date(2026, 8, 21, 23, 45).getTime(), endTime: new Date(2026, 8, 22, 0, 30).getTime() }],
-  ]) {
-    const raw = await createBackup(source);
-    (raw.data.sessions[0] as unknown as { focusIntervals: unknown }).focusIntervals = intervals;
-    const backup = validateBackup(JSON.parse(JSON.stringify(raw)));
-    const target = database();
-    await restoreBackup(backup, "replace", "use-imported", target);
-    const imported = (await target.sessions.toArray())[0];
-    expect(dailyFocusAllocations(imported).reduce((sum, part) => sum + part.seconds, 0)).toBe(2700);
-    expect(imported.focusIntervals).toEqual(intervals);
-  }
-});
-
-it("round-trips permanent timer intervals and manual markers in CSV and JSON", async () => {
-  const source = await seeded();
-  await source.sessions.update("session", {
-    startTime: new Date(2026, 8, 21, 23, 45, 0, 123).getTime(),
-    endTime: new Date(2026, 8, 22, 0, 30, 0, 789).getTime(),
-  });
-  const row = (await source.sessions.get("session"))!;
-  const focusIntervals = [
-    { startTime: row.startTime, endTime: row.startTime + 600000 },
-    { startTime: row.endTime - 600000, endTime: row.endTime },
-  ];
-  await source.sessions.update("session", { focusedDurationSeconds: 1200, focusIntervals });
-  await source.sessions.add({ ...row, id: "manual", manual: true });
-  for (const csv of [false, true]) {
-    const target = database();
-    if (csv)
-      await importCsvPreview(
-        await previewCsv(exportSessionsCsv(await source.sessions.toArray()), undefined, undefined, target),
-        target,
-      );
-    else await restoreBackup(await createBackup(source), "replace", "use-imported", target);
-    expect((await target.sessions.get("session"))?.focusIntervals).toEqual(focusIntervals);
-    expect((await target.sessions.get("session"))?.focusedDurationSeconds).toBe(1200);
-    expect((await target.sessions.get("session"))?.manual).toBeUndefined();
-    expect((await target.sessions.get("session"))?.startTime).toBe(row.startTime);
-    expect((await target.sessions.get("session"))?.endTime).toBe(row.endTime);
-    expect((await target.sessions.get("manual"))?.manual).toBe(true);
-  }
-});
-
-it("migrates legacy database End once without fabricating intervals or touching current records", async () => {
-  const name = `legacy-end-${crypto.randomUUID()}`;
-  const old = new Dexie(name);
-  old.version(4).stores({ academicYears: "id", subjects: "id", sessions: "id", settings: "key" });
-  const start = new Date(2026, 8, 21, 23).getTime();
-  const legacy: FocusSession = {
-    id: "legacy",
-    subjectId: "s",
-    subjectName: "S",
-    academicYearId: "y",
-    academicYearName: "Y",
-    startTime: start,
-    endTime: start + 4 * 86400000,
-    focusedDurationSeconds: 25 * 3600,
-    archived: false,
-  };
-  const exact = { ...legacy, id: "exact", focusIntervals: [{ startTime: start, endTime: start + 25 * 3600000 }] };
-  await old.table("sessions").bulkAdd([legacy, exact, { ...legacy, id: "manual", manual: true }]);
-  old.close();
-  const upgraded = new FocusDatabase(name);
-  opened.push(upgraded);
-  expect(await upgraded.sessions.get("legacy")).toMatchObject({
-    endTime: start + 25 * 3600000,
-    legacyContinuous: true,
-  });
-  expect((await upgraded.sessions.get("legacy"))?.focusIntervals).toBeUndefined();
-  expect(await upgraded.sessions.get("exact")).toEqual(exact);
-  expect((await upgraded.sessions.get("manual"))?.endTime).toBe(legacy.endTime);
-  await upgraded.sessions.add({ ...legacy, id: "current" });
-  upgraded.close();
-  await upgraded.open();
-  expect((await upgraded.sessions.get("current"))?.endTime).toBe(legacy.endTime);
-  expect((await upgraded.sessions.get("current"))?.legacyContinuous).toBeUndefined();
-  expect((await upgraded.sessions.get("legacy"))?.endTime).toBe(start + 25 * 3600000);
-});
-it("applies End migration only to old-format backups and CSV exports", async () => {
-  const source = await seeded();
-  await source.sessions.update("session", { focusedDurationSeconds: 600 });
-  const current = await createBackup(source);
-  const old = { ...current, sessionTimingVersion: undefined };
-  for (const backup of [old, current]) {
-    const target = database();
-    await restoreBackup(backup, "replace", "use-imported", target);
-    const saved = (await target.sessions.get("session"))!;
-    expect(saved.endTime).toBe(backup === old ? saved.startTime + 600000 : current.data.sessions[0].endTime);
-    expect(saved.legacyContinuous).toBe(backup === old ? true : undefined);
-    const roundtrip = await createBackup(target);
-    await restoreBackup(roundtrip, "replace", "use-imported", target);
-    expect(await target.sessions.get("session")).toEqual(saved);
-  }
-  const csv = parseCsv(exportSessionsCsv(current.data.sessions));
-  const headers = csv.headers.slice(0, 10);
-  const text = [
-    headers.join(","),
-    ...csv.records.map((row) => headers.map((key) => escapeCsv(row[key])).join(",")),
-  ].join("\n");
-  const target = database();
-  await importCsvPreview(await previewCsv(text, undefined, undefined, target), target);
-  const saved = (await target.sessions.get("session"))!;
-  expect(saved.endTime).toBe(saved.startTime + 600000);
-  expect(saved.legacyContinuous).toBe(true);
+it("retains pause timing on normalized manual imports and clears deleted Subject defaults", async () => {
+  const source = await seeded(),
+    backup = await createBackup(source.database),
+    { database, sqlite } = createTestDatabase();
+  backup.data.sessions[0].pauses = [{ offsetSeconds: 1, durationSeconds: 2 }];
+  await restoreBackup(backup, "replace", "use-imported", database);
+  const data = await readNormalized(database);
+  expect(data.sessions[0].pauses).toEqual([{ offsetSeconds: 1, durationSeconds: 2 }]);
+  await database.settings.put({ key: "lastSubjectId", value: String(data.subjects[0].id) });
+  await database.subjects.delete(String(data.subjects[0].id));
+  expect((await database.settings.get("defaultSubjectId"))?.value).toBe("");
+  expect((await database.settings.get("lastSubjectId"))?.value).toBe("");
+  expect((await createBackup(database)).data.sessions).toEqual([]);
+  source.sqlite.close();
+  sqlite.close();
 });

@@ -46,7 +46,12 @@ export function sessionDayOffset(start: number, end: number) {
 }
 export function sessionEditTiming(session: FocusSession, startTime: number, manualEnd: number) {
   if (session.manual === true)
-    return { startTime, endTime: manualEnd, focusedDurationSeconds: (manualEnd - startTime) / 1000 };
+    return {
+      startTime,
+      endTime: manualEnd,
+      focusedDurationSeconds: (manualEnd - startTime) / 1000,
+      focusIntervals: undefined,
+    };
   const delta = startTime - session.startTime;
   return {
     startTime,
