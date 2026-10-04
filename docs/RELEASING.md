@@ -24,7 +24,7 @@ npm run version:check
 
 Replace `2.4.2` with the new release version before running the commands.
 
-`package.json` is the authoritative version source. `version:set` synchronizes the required npm and Cargo metadata, and Tauri reads the resulting package version.
+`package.json` is the authoritative version source. `version:set` synchronizes the required npm and Cargo metadata and `appVersion` in the demo backup. Tauri reads the resulting package version. `version:check` also checks the demo backup for version drift.
 
 Run all commands in this guide from the repository root unless stated otherwise.
 

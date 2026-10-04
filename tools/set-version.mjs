@@ -24,6 +24,9 @@ if (requested !== "--check") {
     { cwd: root, stdio: "inherit" },
   );
   const version = json("package.json").version;
+  const demo = json("docs/demo/shunhen-demo.json");
+  demo.appVersion = version;
+  writeFileSync(new URL("../docs/demo/shunhen-demo.json", import.meta.url), `${JSON.stringify(demo, null, 2)}\n`);
   const cargo = read("src-tauri/Cargo.toml");
   const updated = cargo.replace(/(\[package\][\s\S]*?^version\s*=\s*)"[^"]+"/m, `$1"${version}"`);
   if (cargo === updated && !cargo.includes(`version = "${version}"`))
@@ -42,7 +45,13 @@ const cargoLockVersion = read("src-tauri/Cargo.lock").match(
   /\[\[package\]\]\s+name = "focus"\s+version = "([^"]+)"/,
 )?.[1];
 if (
-  [lock.version, lock.packages[""].version, cargoVersion, cargoLockVersion].some((value) => value !== version) ||
+  [
+    lock.version,
+    lock.packages[""].version,
+    cargoVersion,
+    cargoLockVersion,
+    json("docs/demo/shunhen-demo.json").appVersion,
+  ].some((value) => value !== version) ||
   json("src-tauri/tauri.conf.json").version !== "../package.json"
 )
   throw new Error("Application version drift: run npm run version:set -- <version>.");
