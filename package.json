@@ -1,7 +1,7 @@
 {
   "name": "focus",
   "private": true,
-  "version": "2.4.2",
+  "version": "2.5.0",
   "description": "A local-first Windows focus timer and study analytics app.",
   "license": "MIT",
   "repository": {
