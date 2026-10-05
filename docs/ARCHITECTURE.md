@@ -77,6 +77,8 @@ Archiving retains records. Academic Year archival changes only its own flag; Sub
 
 ## Timer architecture
 
+The Timer page waits for its initial Academic Year, Subject and Session queries before evaluating setup or rendering timer content. It shows an idle Timer skeleton while those queries are unresolved; confirmed empty data still triggers setup. Live-query refreshes retain the loaded view until updated results arrive.
+
 The user-facing timer states are:
 
 - Idle

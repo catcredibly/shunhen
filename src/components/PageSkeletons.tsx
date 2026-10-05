@@ -5,6 +5,27 @@ export function Skeleton({ className = "" }: { className?: string }) {
   return <span className={`loading-skeleton ${className}`} aria-hidden="true" />;
 }
 
+export function TimerLoading() {
+  return (
+    <main className="timer-shell timer-shell--idle timer-loading" aria-busy="true">
+      <section className="timer-card" aria-hidden="true">
+        <Skeleton className="loading-timer-date" />
+        <div className="loading-timer-time">
+          {[0, 1, 2].map((part) => (
+            <div key={part}>
+              <Skeleton className="loading-timer-digit" />
+              <Skeleton className="loading-timer-label" />
+            </div>
+          ))}
+        </div>
+        <Skeleton className="loading-control loading-timer-field" />
+        <Skeleton className="loading-control loading-timer-field" />
+        <Skeleton className="loading-timer-start" />
+      </section>
+    </main>
+  );
+}
+
 export function HistoryLoading({ searchOpen = false }: { searchOpen?: boolean }) {
   const { t } = useTranslation();
   return (

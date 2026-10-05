@@ -4,6 +4,7 @@ import { NoteEditor } from "./NoteEditor";
 import { FilterSelect } from "./FilterSelect";
 import { selectableSubjects, subjectOptions } from "../selectorOptions";
 import { TimerSetup } from "./TimerSetup";
+import { TimerLoading } from "./PageSkeletons";
 import { defaultSessionSubject } from "../subjectDefaults";
 import { Check, ExternalLink, Maximize2, Minimize2, Pause, Play, Plus, Square } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -21,7 +22,7 @@ import { currentStreak, todaySummary } from "../timerState";
 import { useSettings } from "../hooks/useSettings";
 import { normaliseDuration, saveSetting, timerDefaultDuration } from "../settings";
 import type { FocusSettings } from "../settings";
-import type { FocusSession } from "../types";
+import type { AcademicYear, FocusSession, Subject } from "../types";
 import { openTimerPopout } from "../native";
 import { IconButton } from "./IconButton";
 import { TimerExtendMenu } from "./TimerExtendMenu";
@@ -29,6 +30,24 @@ import { TimerExtendMenu } from "./TimerExtendMenu";
 const pad = (value: number | string) => String(value || 0).padStart(2, "0");
 
 export function TimerPage({ onNavigate }: { onNavigate: (page: string) => void }) {
+  const sessions = useLiveQuery(() => readHistorySessions(db), []);
+  const allYears = useLiveQuery(() => db.academicYears.toArray(), []);
+  const allSubjects = useLiveQuery(() => db.subjects.toArray(), []);
+  if (sessions === undefined || allYears === undefined || allSubjects === undefined) return <TimerLoading />;
+  return <LoadedTimerPage onNavigate={onNavigate} sessions={sessions} allYears={allYears} allSubjects={allSubjects} />;
+}
+
+function LoadedTimerPage({
+  onNavigate,
+  sessions,
+  allYears,
+  allSubjects,
+}: {
+  onNavigate: (page: string) => void;
+  sessions: FocusSession[];
+  allYears: AcademicYear[];
+  allSubjects: Subject[];
+}) {
   const { t } = useTranslation();
   const timer = useTimer();
   const { settings } = useSettings();
@@ -58,9 +77,6 @@ export function TimerPage({ onNavigate }: { onNavigate: (page: string) => void }
   const [now, setNow] = useState(() => new Date());
   const [fullscreen, setFullscreen] = useState(false);
   const [fullscreenReveal, setFullscreenReveal] = useState(false);
-  const sessions = useLiveQuery(() => readHistorySessions(db), []) ?? [];
-  const allYears = useLiveQuery(() => db.academicYears.toArray(), []) ?? [];
-  const allSubjects = useLiveQuery(() => db.subjects.toArray(), []) ?? [];
   const subjects = selectableSubjects(allYears, allSubjects);
   const availableYears = allYears.filter((year) => !year.archived);
   const setupStep = !allYears.length ? 1 : !availableYears.length ? 3 : !subjects.length ? 4 : undefined;
