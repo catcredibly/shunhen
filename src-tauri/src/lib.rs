@@ -556,6 +556,14 @@ pub fn run() {
     // Register this plugin with the builder so its state exists before any window loads.
     #[cfg(not(target_os = "linux"))]
     let builder = builder.plugin(tauri_plugin_global_shortcut::Builder::new().build());
+    #[cfg(desktop)]
+    let builder = builder
+        .plugin(tauri_plugin_autostart::Builder::new()
+            // Preserve the existing Run key / autostart file across the display rename.
+            .app_name("Focus")
+            .build())
+        .plugin(tauri_plugin_updater::Builder::new().build())
+        .plugin(tauri_plugin_process::init());
     builder
         .manage(popout_lifecycle::PopoutLifecycle::default())
         .manage(reveal_shortcut::RevealShortcut::default())
@@ -567,24 +575,19 @@ pub fn run() {
                 let _ = window.emit("focus://second-instance", ());
             }
         }))
+        // Plugin setup runs before configured webviews are created.
+        .plugin(tauri::plugin::Builder::<tauri::Wry>::new("storage")
+            .setup(|app, _| storage::install(app))
+            .build())
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_opener::init())
         .setup(|app| {
-            storage::install(app.handle())?;
             #[cfg(target_os = "linux")]
             linux_desktop::install(app.handle())?;
             window_constraints::install(app.handle())?;
             display_geometry::install(app.handle())?;
             #[cfg(desktop)]
-            app.handle().plugin(tauri_plugin_autostart::Builder::new()
-                // Preserve the existing Run key / autostart file across the display rename.
-                .app_name("Focus")
-                .build())?;
-            #[cfg(desktop)]
             {
-                // Signature verification uses only the public key embedded in tauri.conf.json.
-                app.handle().plugin(tauri_plugin_updater::Builder::new().build())?;
-                app.handle().plugin(tauri_plugin_process::init())?;
                 #[cfg(target_os = "linux")]
                 if supports_window_positioning() {
                     // Missing X11 hotkey support must not prevent normal app use.
@@ -636,7 +639,12 @@ pub fn run() {
             is_main_fullscreen
         ])
         .on_window_event(|window, event| {
-            if matches!(event, tauri::WindowEvent::Destroyed) { storage::release_window(window.app_handle(), window.label()); }
+            if matches!(event, tauri::WindowEvent::Destroyed) {
+                storage::release_window(window.app_handle(), window.label());
+                // Startup failure UI has no React close handler. Hidden auxiliary
+                // windows must not keep an instance with no main window alive.
+                if window.label() == "main" { window.app_handle().exit(0); }
+            }
             if window.label() == "timer" && matches!(event, tauri::WindowEvent::Moved(_) | tauri::WindowEvent::Resized(_) | tauri::WindowEvent::ScaleFactorChanged { .. }) {
                 let _ = window.emit("focus://display-geometry-changed", "timer-geometry-change");
             }
