@@ -1,5 +1,4 @@
 import { createTestDatabase } from "./storage/testDatabase";
-import "fake-indexeddb/auto";
 import { afterEach, expect, it, vi } from "vitest";
 import { FocusDatabase } from "./db";
 import {

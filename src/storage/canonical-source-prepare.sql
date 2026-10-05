@@ -1,3 +1,8 @@
+-- SQLite v1 retry assignments are durable until the schema upgrade commits.
+CREATE TABLE IF NOT EXISTS canonical_source_assignments (session_id INTEGER PRIMARY KEY, source_key TEXT NOT NULL);
+-- Preserve assignments made by an interrupted older SQLite v2 upgrader.
+INSERT OR IGNORE INTO canonical_source_assignments(session_id,source_key)
+SELECT s.id,m.value FROM sessions s JOIN storage_metadata m ON m.key='canonical-source-v2:' || s.id;
 -- Persist random fallback assignments before the schema transaction. Failed
 -- upgrades retain these assignments, so retries choose exactly the same identity.
 WITH RECURSIVE control_codes(code) AS (
@@ -7,8 +12,8 @@ WITH RECURSIVE control_codes(code) AS (
   WHERE NOT EXISTS(SELECT 1 FROM control_codes WHERE instr(source_key,char(code))>0)
     AND instr(source_key,char(127))=0
 )
-INSERT OR IGNORE INTO storage_metadata(key,value)
-SELECT 'canonical-source-v2:' || s.id,
+INSERT OR IGNORE INTO canonical_source_assignments(session_id,source_key)
+SELECT s.id,
   COALESCE(
     (SELECT source_key FROM recognized WHERE session_id=s.id AND source_key GLOB 'session:?*' ORDER BY source_key COLLATE BINARY LIMIT 1),
     (SELECT source_key FROM recognized WHERE session_id=s.id AND

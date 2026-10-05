@@ -1,5 +1,4 @@
 import { createTestDatabase } from "./storage/testDatabase";
-import "fake-indexeddb/auto";
 import { afterEach, beforeEach, expect, it } from "vitest";
 import { FocusDatabase } from "./db";
 import { cycleSubjectColor, nextSubjectColor, SUBJECT_COLORS } from "./subjectColors";

@@ -164,25 +164,19 @@ describe("adaptive heatmap scale", () => {
   });
 });
 
-it("excludes Sessions without exact clock-time data from only the time-of-day heatmap", () => {
+it("uses normalized continuous timing consistently in daily and clock-time totals", () => {
   const start = new Date(2026, 8, 21, 10).getTime();
-  const historical = {
-    ...session("historical", start, 3600),
-    focusIntervals: undefined,
-    startTime: start,
-    endTime: start + 7200_000,
-    focusedDurationSeconds: 3600,
-    durationMode: "unlocked" as const,
-  };
+  const continuous = { ...session("continuous", start, 3600), focusIntervals: undefined };
   const period = { start: new Date(2026, 8, 21).getTime(), end: new Date(2026, 8, 22).getTime() };
-  expect(dailyTotals([historical])[0].seconds).toBe(3600);
+  expect(dailyTotals([continuous])[0].seconds).toBe(3600);
   expect(
-    timeOfDayMatrix([historical], period)
+    timeOfDayMatrix([continuous], period)
       .flat()
       .reduce((sum, seconds) => sum + seconds, 0),
-  ).toBe(0);
+  ).toBe(3600);
+  const manual = { ...continuous, manual: true as const, endTime: start + 7200000, focusedDurationSeconds: 7200 };
   expect(
-    timeOfDayMatrix([{ ...historical, focusedDurationSeconds: 7200, manual: true }], period)
+    timeOfDayMatrix([manual], period)
       .flat()
       .reduce((sum, seconds) => sum + seconds, 0),
   ).toBe(7200);

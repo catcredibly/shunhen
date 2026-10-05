@@ -5,7 +5,7 @@ import { readFileSync } from "node:fs";
 import { FocusDatabase } from "../db";
 import type { Request } from "./connection";
 
-export function createTestDatabase(name = "test", upgrade = false) {
+export function createTestDatabase(name = "test") {
   const sqlite = new DatabaseSync(":memory:");
   sqlite.exec(readFileSync(new URL("./schema.sql", import.meta.url), "utf8"));
   let owner: string | undefined;
@@ -28,6 +28,6 @@ export function createTestDatabase(name = "test", upgrade = false) {
     const result = statement.run(...values);
     return { id: Number(result.lastInsertRowid), affected: Number(result.changes) };
   };
-  const database = new FocusDatabase(name, request, undefined, upgrade);
+  const database = new FocusDatabase(name, request);
   return { database, sqlite, request };
 }

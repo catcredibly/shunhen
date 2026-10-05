@@ -1,6 +1,6 @@
 import { expect, it } from "vitest";
 import { createTestDatabase } from "../storage/testDatabase";
-import { readNormalized } from "../storage/migration";
+import { readNormalized } from "../storage/snapshot";
 import { createBackup, validateBackup, restoreBackup, analyzeBackup } from "./backup";
 import { exportSessionsCsv, previewCsv, importCsvPreview } from "./csv";
 import { planParents, canonicalSession } from "./duplicates";

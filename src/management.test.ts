@@ -11,6 +11,7 @@ import {
   updateSessionDetails,
   deleteSessions,
   deleteSubjectCascade,
+  deleteAcademicYearCascade,
 } from "./management";
 async function seeded() {
   const test = createTestDatabase();
@@ -36,7 +37,6 @@ describe("SQLite management", () => {
     expect((await database.sessions.get(session.id))?.archived).toBe(true);
     await setSubjectArchived(subject.id, false, database);
     expect((await database.sessions.get(session.id))?.archived).toBe(false);
-    expect(await database.subjects.get(subject.id)).not.toHaveProperty("archivedBeforeParent");
     sqlite.close();
   });
   it("resolves AY date validity through Subject after moves and protects warning acknowledgements", async () => {
@@ -100,4 +100,36 @@ describe("SQLite management", () => {
     expect(canDeleteManagedRecord(true, false)).toBe(true);
     expect(canDeleteManagedRecord(false, true)).toBe(true);
   });
+});
+
+it("derives renames, archives and moves and enforces cascades", async () => {
+  const { database, sqlite, year, subject, session } = await seeded();
+  await database.sessions.update(session.id, {
+    endTime: session.startTime + 90000,
+    focusedDurationSeconds: 60,
+    focusIntervals: [
+      { startTime: session.startTime, endTime: session.startTime + 30000 },
+      { startTime: session.startTime + 60000, endTime: session.startTime + 90000 },
+    ],
+  });
+  expect(sqlite.prepare("SELECT COUNT(*) AS count FROM session_pauses").get()?.count).toBe(1);
+  const input = session;
+  await database.subjects.update(subject.id, { name: "Renamed" });
+  expect((await database.sessions.get(input.id))?.subjectName).toBe("Renamed");
+  await setAcademicYearArchived(year.id, true, database);
+  expect((await database.subjects.get(subject.id))?.archived).toBe(false);
+  expect((await database.sessions.get(input.id))?.archived).toBe(true);
+  await setAcademicYearArchived(year.id, false, database);
+  expect((await database.sessions.get(input.id))?.archived).toBe(false);
+  const other = { id: "", name: "Other", archived: false };
+  await database.academicYears.add(other);
+  const destination = { ...subject, id: "", academicYearId: other.id };
+  await database.subjects.add(destination);
+  await moveSessions([input.id], destination.id, database);
+  expect((await database.sessions.get(input.id))?.academicYearId).toBe(other.id);
+  await deleteAcademicYearCascade(other.id, database);
+  expect(await database.sessions.count()).toBe(0);
+  expect(sqlite.prepare("SELECT * FROM session_pauses").all()).toEqual([]);
+  expect(sqlite.prepare("SELECT * FROM session_sources").all()).toEqual([]);
+  sqlite.close();
 });

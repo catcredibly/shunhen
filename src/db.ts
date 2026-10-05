@@ -12,25 +12,16 @@ export class FocusDatabase {
   readonly subjects = new SubjectRepository(this);
   readonly sessions = new SessionRepository(this);
   readonly settings = new SettingsRepository(this);
-  private initialization?: Promise<void>;
   readonly connection: Connection;
   constructor(
     readonly name = "focus",
     request?: Request,
     token?: string,
-    private readonly upgrade = request === undefined,
   ) {
     this.connection = new Connection(request, token);
   }
   async open() {
-    if (this.connection.token || !this.upgrade) return;
-    this.initialization ??= import("./storage/migration")
-      .then(({ initializeStorage }) => initializeStorage(this))
-      .catch((error) => {
-        this.initialization = undefined;
-        throw error;
-      });
-    return this.initialization;
+    await this.access((connection) => connection.select("SELECT 1"));
   }
   close() {
     /* The native application owns the connection. */
@@ -43,7 +34,6 @@ export class FocusDatabase {
   }
   async access<T>(callback: (connection: Connection) => Promise<T>): Promise<T> {
     if (this.connection.token) return callback(this.connection);
-    await this.open();
     return withStorageLock(() => callback(this.connection));
   }
   repository<T extends { id?: string; key?: string }>(table: string): Repository<T> {
@@ -60,13 +50,12 @@ export class FocusDatabase {
   /** Nested calls share the explicit scoped connection, never ambient context. */
   async transaction<T>(_mode: "r" | "rw", callback: (database: FocusDatabase) => Promise<T> | T): Promise<T> {
     if (this.connection.token) return callback(this);
-    await this.open();
     return withStorageLock(() => this.runTransaction(callback));
   }
   async runTransaction<T>(callback: (database: FocusDatabase) => Promise<T> | T): Promise<T> {
     const token = crypto.randomUUID();
     await this.connection.request("begin", token);
-    const scoped = new FocusDatabase(this.name, this.connection.request, token, false);
+    const scoped = new FocusDatabase(this.name, this.connection.request, token);
     try {
       const value = await callback(scoped);
       await this.connection.request("commit", token);
