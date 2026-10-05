@@ -57,8 +57,6 @@ Do **not** manually copy the release notes into `latest.json`.
 
 Use the release-version process above before building. Root `package.json` is authoritative; `npm run version:set -- <version>` synchronizes the required npm/Cargo metadata and Tauri reads that package file. Do not edit historical release notes or compatibility fixtures.
 
-Before publishing the renamed installer, complete the disposable Windows upgrade verification in `src-tauri/windows/README.md`.
-
 ---
 
 ## 2. Load the updater signing key
