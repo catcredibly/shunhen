@@ -1,6 +1,8 @@
 import en from "./en";
 
 const zhCN: Record<keyof typeof en, string> = {
+  "Error details": "错误详情",
+  "Include these details when reporting this problem.": "报告此问题时，请附上这些详情。",
   "Unable to open study data": "无法打开学习数据",
   "Restart Shunhen to retry. Your study data has not been deleted.":
     "请重新启动 Shunhen 以重试。您的学习数据未被删除。",

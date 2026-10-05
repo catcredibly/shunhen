@@ -1,4 +1,6 @@
 const en = {
+  "Error details": "Error details",
+  "Include these details when reporting this problem.": "Include these details when reporting this problem.",
   "Unable to open study data": "Unable to open study data",
   "Restart Shunhen to retry. Your study data has not been deleted.":
     "Restart Shunhen to retry. Your study data has not been deleted.",

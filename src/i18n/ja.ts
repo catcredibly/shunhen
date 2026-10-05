@@ -1,6 +1,8 @@
 import en from "./en";
 
 const ja: Record<keyof typeof en, string> = {
+  "Error details": "エラーの詳細",
+  "Include these details when reporting this problem.": "この問題を報告する際は、この詳細を添えてください。",
   "Unable to open study data": "学習データを開けません",
   "Restart Shunhen to retry. Your study data has not been deleted.":
     "Shunhen を再起動して再試行してください。学習データは削除されていません。",
