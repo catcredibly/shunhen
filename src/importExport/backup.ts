@@ -4,7 +4,8 @@ import packageMetadata from "../../package.json";
 import { db, type FocusDatabase } from "../db";
 import { loadSettings, normalizeLegacyRevealShortcut, SETTINGS_KEYS, type FocusSettings } from "../settings";
 import { validateData, COLOR_PALETTE, focusIntervals, type NormalizedData, type StoredSession } from "../storage/model";
-import { readNormalized, validateDatabase } from "../storage/migration";
+import { readNormalized } from "../storage/snapshot";
+import { validateDatabase } from "../storage/validation";
 import type { AcademicYear, Subject, FocusSession } from "../types";
 import type {
   BackupAnalysis,

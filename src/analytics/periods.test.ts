@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import type { FocusSession } from "../types";
-import { migrateLegacySession } from "../sessionDuration";
 import {
   addDays,
   analyticsPeriod,
@@ -168,7 +167,7 @@ describe("calendar periods", () => {
     expect(records.bestWeek?.seconds).toBe(230);
   });
   it("averages weekday buckets over all occurrences, including zero-study weekdays", () => {
-    const matrix = averageStudyPattern([migrateLegacySession(row(7, 3600))], { start: at(9, 7), end: at(9, 21) });
+    const matrix = averageStudyPattern([row(7, 3600)], { start: at(9, 7), end: at(9, 21) });
     expect(matrix[0][4]).toBe(1800);
     expect(matrix.flat().reduce((a, b) => a + b, 0)).toBe(1800);
   });

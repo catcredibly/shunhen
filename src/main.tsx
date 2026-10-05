@@ -6,7 +6,7 @@ import i18n from "./i18n";
 import "./styles.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root")!);
-// No component can write data or read the old recovery timer before upgrade.
+// Verify the native SQLite connection before rendering either window.
 void db
   .open()
   .then(() => {

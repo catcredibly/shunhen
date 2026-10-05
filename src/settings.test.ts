@@ -1,5 +1,4 @@
 import { createTestDatabase } from "./storage/testDatabase";
-import "fake-indexeddb/auto";
 import { afterEach, describe, expect, it } from "vitest";
 import { FocusDatabase } from "./db";
 import { ACTIVE_TIMER_STORAGE_KEY } from "./timerState";
@@ -259,7 +258,7 @@ it("resets only preferences and preserves backup metadata and study/runtime reco
   expect(DEFAULT_SETTINGS.popoutDockAutoHide).toBe(false);
 });
 
-it("supports read-only settings consumption after migration", async () => {
+it("supports read-only settings consumption without normalization writes", async () => {
   const testDb = database();
   await testDb.settings.put({ key: "popoutRevealShortcut", value: "F12" });
   await loadSettings(testDb);
@@ -267,7 +266,7 @@ it("supports read-only settings consumption after migration", async () => {
   expect(settings.popoutRevealShortcut).toBe("Ctrl+Alt+KeyF");
 });
 
-it("preserves deliberate old-default choices after migration and cleared intent", async () => {
+it("preserves deliberate shortcut choices after normalization and cleared intent", async () => {
   const testDb = database();
   await saveSetting("popoutRevealShortcut", "Alt+Backquote", testDb);
   expect(await loadSettings(testDb)).toMatchObject({

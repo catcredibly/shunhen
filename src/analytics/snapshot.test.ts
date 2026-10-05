@@ -1,6 +1,5 @@
 import { createTestDatabase } from "../storage/testDatabase";
 import { readAnalyticsSnapshot } from "../storage/queries";
-import "fake-indexeddb/auto";
 import { expect, it, vi } from "vitest";
 import * as allocation from "../sessionAllocation";
 import { FocusDatabase } from "../db";
@@ -21,17 +20,17 @@ const row = (id = "one", seconds = 3600): FocusSession => ({
   academicYearName: "Year",
   archived: false,
   startTime: at(1, 23),
-  endTime: at(2, 1),
+  endTime: at(1, 23) + seconds * 1000,
   focusedDurationSeconds: seconds,
 });
 const years = [{ id: "y", name: "Year", archived: false }];
 const subjects = [{ id: "s", name: "Subject", academicYearId: "y", archived: false, color: "#4da3ff" }];
 const period = { start: at(1), end: at(3) };
 it("reuses allocations only within a snapshot, retaining the original scope and metric semantics", () => {
-  const legacy = row();
+  const continuous = row();
   const exact = { ...row("two", 7200), focusIntervals: [{ startTime: at(1, 23), endTime: at(2, 1) }] };
   const manual = { ...row("manual", 7200), manual: true as const };
-  const sessions = [legacy, exact, manual];
+  const sessions = [continuous, exact, manual];
   const spy = vi.spyOn(allocation, "dailyFocusAllocations");
   try {
     const snapshot = createAnalyticsSnapshot(sessions);
@@ -51,7 +50,7 @@ it("reuses allocations only within a snapshot, retaining the original scope and 
     expect(
       goalAchievement(sessions, period, "daily", "daily", 7200, at(2, 12), "start", snapshot.getDailyTotals),
     ).toEqual(goalAchievement(sessions, period, "daily", "daily", 7200, at(2, 12)));
-    const changed = { ...legacy, focusedDurationSeconds: 1800 };
+    const changed = { ...continuous, endTime: continuous.startTime + 1800000, focusedDurationSeconds: 1800 };
     expect(snapshot.getDays(changed)[0].seconds).toBe(1800); // same ID is never used as a cache key
     const fresh = createAnalyticsSnapshot([changed]);
     expect(fresh.getDailyTotals([changed])[0].seconds).toBe(1800);

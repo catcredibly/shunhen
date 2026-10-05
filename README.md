@@ -54,7 +54,7 @@ Shunhen is local-first. Academic Years, Subjects, Sessions, settings, and notes 
 
 Shunhen does not upload study data to an account or bundled cloud service.
 
-Export regular backups if your data matters to you. Removing Shunhen’s application data may remove locally stored data. Existing study data is migrated automatically when you update.
+Export regular backups if your data matters to you. Removing Shunhen’s application data may remove locally stored data. Existing SQLite data is retained when you update. Older exported JSON backups and CSV files remain importable.
 
 ## Availability
 

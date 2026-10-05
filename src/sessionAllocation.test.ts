@@ -1,6 +1,5 @@
 import { timeOfDayMatrix, filterSessions } from "./analytics/analytics";
 import { validSessions } from "./sessionValidity";
-import { migrateLegacySession } from "./sessionDuration";
 import { expect, it } from "vitest";
 import { dailyFocusAllocations, exactFocusInRange, allocatedFocusInRange } from "./sessionAllocation";
 import type { FocusSession } from "./types";
@@ -30,8 +29,8 @@ it("allocates exact pauses across any number of dates without duplicating focus"
   expect(exactFocusInRange(s, start + 7200000, start + 2 * 86400000)).toBe(0);
   expect(allocatedFocusInRange(s, start, s.endTime)).toBe(10800);
 });
-it("leaves historical totals on their original date without inventing intervals", () => {
-  expect(dailyFocusAllocations(row).map((day) => day.seconds)).toEqual([7200]);
+it("ignores inconsistent timing without inventing intervals", () => {
+  expect(dailyFocusAllocations(row)).toEqual([]);
   expect(exactFocusInRange(row, start, row.endTime)).toBe(0);
   expect(row.focusIntervals).toBeUndefined();
 });
@@ -71,25 +70,30 @@ it.each([{}, [null], [{ startTime: start + 1000, endTime: start }]])(
   "does not crash or fabricate timing for malformed intervals",
   (focusIntervals) => {
     const s = { ...row, focusIntervals } as unknown as FocusSession;
-    expect(dailyFocusAllocations(s)[0].seconds).toBe(7200);
+    expect(dailyFocusAllocations(s)).toEqual([]);
     expect(exactFocusInRange(s, start, row.endTime)).toBe(0);
   },
 );
 
-it("includes migrated legacy timing in weekday/time buckets and respects validity and range filters", () => {
-  const legacy = migrateLegacySession({ ...row, focusedDurationSeconds: 25 * 3600, endTime: start + 3 * 86400000 });
-  expect(legacy.endTime).toBe(start + 25 * 3600000);
-  expect(legacy.focusIntervals).toBeUndefined();
+it("includes normalized continuous timing in weekday/time buckets and respects validity and range filters", () => {
+  const continuous = {
+    ...row,
+    focusedDurationSeconds: 25 * 3600,
+    endTime: start + 25 * 3600000,
+    focusIntervals: [{ startTime: start, endTime: start + 25 * 3600000 }],
+  };
+  expect(continuous.endTime).toBe(start + 25 * 3600000);
+  expect(continuous.focusIntervals).toHaveLength(1);
   expect(
-    timeOfDayMatrix([legacy])
+    timeOfDayMatrix([continuous])
       .flat()
       .reduce((a, b) => a + b, 0),
   ).toBe(25 * 3600);
   expect(
-    timeOfDayMatrix([legacy], { start: start + 3600000, end: start + 7200000 })
+    timeOfDayMatrix([continuous], { start: start + 3600000, end: start + 7200000 })
       .flat()
       .reduce((a, b) => a + b, 0),
   ).toBe(3600);
-  expect(filterSessions([legacy], { subjectId: "other" })).toEqual([]);
-  expect(validSessions([legacy], [{ id: "y", name: "Y", archived: false, endDate: "2026-09-20" }])).toEqual([]);
+  expect(filterSessions([continuous], { subjectId: "other" })).toEqual([]);
+  expect(validSessions([continuous], [{ id: "y", name: "Y", archived: false, endDate: "2026-09-20" }])).toEqual([]);
 });

@@ -31,8 +31,6 @@ export type FocusSession = {
   note?: string;
   archived: boolean;
   manual?: true;
-  /** Set only by the legacy data migration; never inferred during ordinary reads. */
-  legacyContinuous?: true;
   focusIntervals?: { startTime: number; endTime: number }[];
 };
 

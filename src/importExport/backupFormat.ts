@@ -1,4 +1,5 @@
-import { normalizeLegacy, validateData, type LegacyData, type NormalizedData } from "../storage/model";
+import { validateData, type NormalizedData } from "../storage/model";
+import { parseBackupV1 } from "./backupV1";
 import { newSourceIdentity, requireSourceIdentity, isSourceIdentity } from "../storage/identity";
 import { uniqueImportSessions } from "./duplicates";
 import type { FocusBackup, NormalizedBackup } from "./types";
@@ -102,32 +103,6 @@ function parseV2(value: Record<string, unknown>, unidentified: number[]): Normal
   return data;
 }
 
-function parseV1(value: Record<string, unknown>): NormalizedData {
-  if (!object(value.data)) throw new Error("The legacy backup data structure is incomplete.");
-  const { data } = value;
-  for (const table of ["academicYears", "subjects", "sessions", "settings"]) rows(data[table]);
-  if (value.sessionTimingVersion !== undefined && value.sessionTimingVersion !== 1)
-    throw new Error("Unsupported legacy Session timing version.");
-  for (const row of rows(data.sessions)) {
-    if (
-      typeof row.startTime !== "number" ||
-      !Number.isFinite(row.startTime) ||
-      typeof row.endTime !== "number" ||
-      !Number.isFinite(row.endTime) ||
-      row.endTime <= row.startTime ||
-      typeof row.focusedDurationSeconds !== "number" ||
-      !Number.isFinite(row.focusedDurationSeconds) ||
-      row.focusedDurationSeconds <= 0 ||
-      (row.manual !== undefined && typeof row.manual !== "boolean") ||
-      (row.legacyContinuous !== undefined && row.legacyContinuous !== true)
-    )
-      throw new Error("Invalid legacy Session timing.");
-  }
-  // The migration normalizer resolves Subject -> Year before discarding snapshots;
-  // precise intervals win, while absent intervals retain the legacy continuous rule.
-  return normalizeLegacy(data as unknown as LegacyData).data;
-}
-
 export function parseBackup(value: unknown): NormalizedBackup {
   if (!object(value) || !["shunhen-backup", "focus-backup"].includes(String(value.format)))
     throw new Error("This is not a Shunhen backup.");
@@ -137,7 +112,7 @@ export function parseBackup(value: unknown): NormalizedBackup {
     throw new Error("The backup header is incomplete.");
   let data: NormalizedData;
   const unidentifiedSessionIds: number[] = [];
-  if (value.formatVersion === 1) data = parseV1(value);
+  if (value.formatVersion === 1) data = parseBackupV1(value);
   else if (value.format === "shunhen-backup") data = parseV2(value, unidentifiedSessionIds);
   else {
     // Explicit compatibility adapter for SQLite backups emitted before the logical

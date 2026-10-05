@@ -1,5 +1,4 @@
 PRAGMA foreign_keys = ON;
-CREATE TABLE IF NOT EXISTS storage_metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL) WITHOUT ROWID;
 CREATE TABLE IF NOT EXISTS academic_years (
   id INTEGER PRIMARY KEY,
   name TEXT NOT NULL,
@@ -53,4 +52,4 @@ CREATE TRIGGER IF NOT EXISTS session_update_bounds BEFORE UPDATE OF elapsed_seco
     AND offset_seconds + duration_seconds > NEW.elapsed_seconds)
     THEN RAISE(ABORT, 'Session ends before its pauses') END;
 END;
-PRAGMA user_version = 2;
+PRAGMA user_version = 3;

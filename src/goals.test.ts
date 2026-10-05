@@ -18,14 +18,19 @@ const session = (startTime: number, endTime: number, intervals?: FocusSession["f
 });
 
 describe("study goal allocation", () => {
-  it("uses edited duration and dates instead of stale recorded intervals", () => {
+  it("uses edited normalized focus intervals and dates", () => {
     const start = new Date(2026, 8, 22, 9).getTime(),
       end = start + 3 * 3600_000;
     const row = session(start, end, [{ startTime: start, endTime: start + 8820_000 }]);
     row.focusedDurationSeconds = 9000;
+    row.focusIntervals = [{ startTime: start, endTime: start + 9000_000 }];
     expect(goalProgress([row], start)).toEqual({ dailySeconds: 9000, weeklySeconds: 9000 });
     row.startTime += 7 * 86400_000;
     row.endTime += 7 * 86400_000;
+    row.focusIntervals = row.focusIntervals.map((interval) => ({
+      startTime: interval.startTime + 7 * 86400_000,
+      endTime: interval.endTime + 7 * 86400_000,
+    }));
     expect(goalProgress([row], start)).toEqual({ dailySeconds: 0, weeklySeconds: 0 });
     expect(goalProgress([row], row.startTime)).toEqual({ dailySeconds: 9000, weeklySeconds: 9000 });
   });

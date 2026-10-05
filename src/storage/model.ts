@@ -1,6 +1,6 @@
-import type { AcademicYear, FocusSession, Subject, AppSetting } from "../types";
+import type { FocusSession, AppSetting } from "../types";
 import { isSourceIdentity } from "./identity";
-import { normalizeNote, noteMetrics } from "../notes";
+import { noteMetrics } from "../notes";
 
 // Append new palette entries; never reorder or reuse these persisted IDs.
 export const COLOR_PALETTE = [
@@ -36,13 +36,6 @@ export type NormalizedData = {
   sessions: StoredSession[];
   settings: AppSetting[];
 };
-export type LegacyData = {
-  academicYears: AcademicYear[];
-  subjects: (Subject & { archivedBeforeParent?: boolean })[];
-  sessions: FocusSession[];
-  settings: AppSetting[];
-};
-
 export function colorId(color: string) {
   const id = COLOR_PALETTE.indexOf(color.toLowerCase() as (typeof COLOR_PALETTE)[number]);
   if (id < 0) throw new Error(`Unsupported Subject color: ${color}`);
@@ -82,22 +75,18 @@ export function validateTiming(startedAt: number, elapsedSeconds: number, pauses
     throw new Error("Session has no Focus Time.");
 }
 
-/** Both the upgrade bridge and legacy imports use this boundary conversion. */
+/** Round absolute boundaries before deriving permanent Session and Pause timing. */
 export function normalizeTiming(
-  session: Pick<
-    FocusSession,
-    "startTime" | "endTime" | "focusedDurationSeconds" | "focusIntervals" | "manual" | "legacyContinuous"
-  >,
+  session: Pick<FocusSession, "startTime" | "endTime" | "focusedDurationSeconds" | "focusIntervals">,
 ) {
-  let endTime = session.endTime;
+  const endTime = session.endTime;
   const intervals = session.focusIntervals;
-  if (!intervals && !session.manual && !session.legacyContinuous) {
-    // The old versioned continuous-session migration: absent interval information
-    // means a continuous span of recorded focus, never fabricated pause positions.
-    if (!Number.isFinite(session.focusedDurationSeconds) || session.focusedDurationSeconds <= 0)
-      throw new Error("Invalid legacy Focus Time.");
-    endTime = session.startTime + session.focusedDurationSeconds * 1000;
-  }
+  if (
+    intervals === undefined &&
+    (!Number.isFinite(session.focusedDurationSeconds) ||
+      Math.abs((endTime - session.startTime) / 1000 - session.focusedDurationSeconds) > 1e-6)
+  )
+    throw new Error("Focus Time does not match the continuous Session span.");
   const startedAt = nearestSecond(session.startTime);
   const elapsedSeconds = nearestSecond(endTime) - startedAt;
   const pauses: Pause[] = [];
@@ -224,58 +213,4 @@ export function validateData(data: NormalizedData) {
     if (setting.key === "currentAcademicYearId" && setting.value && !years.has(Number(setting.value)))
       throw new Error("Setting references missing Academic Year.");
   }
-}
-
-export function normalizeLegacy(data: LegacyData) {
-  const yearMap = new Map<string, number>(),
-    subjectMap = new Map<string, number>();
-  const mapIds = (rows: { id: string }[], map: Map<string, number>) =>
-    rows.forEach((row, index) => {
-      if (typeof row.id !== "string" || !row.id || map.has(row.id)) throw new Error("Invalid legacy IDs.");
-      map.set(row.id, index + 1);
-    });
-  mapIds(data.academicYears, yearMap);
-  mapIds(data.subjects, subjectMap);
-  const sessionIds = new Set<string>();
-  const academicYears = data.academicYears.map((row) => ({
-    id: yearMap.get(row.id)!,
-    name: row.name,
-    startDate: row.startDate || undefined,
-    endDate: row.endDate || undefined,
-    archived: row.archived ?? false,
-  }));
-  const subjects = data.subjects.map((row) => ({
-    id: subjectMap.get(row.id)!,
-    academicYearId: yearMap.get(row.academicYearId)!,
-    name: row.name,
-    colorId: colorId(row.color),
-    archived: row.archivedBeforeParent ?? row.archived ?? false,
-  }));
-  const sessions = data.sessions.map((row, index) => {
-    if (typeof row.id !== "string" || !row.id || sessionIds.has(row.id)) throw new Error("Invalid legacy Session ID.");
-    sessionIds.add(row.id);
-    if (row.note !== undefined && typeof row.note !== "string") throw new Error("Invalid legacy note.");
-    const timing = normalizeTiming({
-      ...row,
-      focusedDurationSeconds: row.focusedDurationSeconds ?? (row.endTime - row.startTime) / 1000,
-    });
-    return {
-      id: index + 1,
-      subjectId: subjectMap.get(row.subjectId)!,
-      ...timing,
-      note: row.note === undefined ? undefined : normalizeNote(row.note),
-      manual: row.manual === true,
-      sourceIdentity: isSourceIdentity(row.sourceIdentity) ? row.sourceIdentity : `legacy-session:${row.id}`,
-    };
-  });
-  const settings = data.settings.map((row) => {
-    if (["defaultSubjectId", "lastSubjectId"].includes(row.key))
-      return { ...row, value: row.value ? String(subjectMap.get(row.value) ?? "") : "" };
-    if (row.key === "currentAcademicYearId")
-      return { ...row, value: row.value ? String(yearMap.get(row.value) ?? "") : "" };
-    return { ...row };
-  });
-  const normalized = { academicYears, subjects, sessions, settings };
-  validateData(normalized);
-  return { data: normalized, yearMap, subjectMap };
 }

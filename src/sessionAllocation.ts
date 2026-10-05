@@ -24,12 +24,17 @@ export function exactFocusIntervals(session: FocusSession) {
 }
 
 export function allocationIntervals(session: FocusSession) {
-  return (
-    exactFocusIntervals(session) ??
-    (session.manual === true || session.legacyContinuous === true
-      ? [{ startTime: session.startTime, endTime: session.endTime }]
-      : undefined)
-  );
+  const exact = exactFocusIntervals(session);
+  if (exact) return exact;
+  if (
+    session.focusIntervals === undefined &&
+    Number.isFinite(session.startTime) &&
+    Number.isFinite(session.endTime) &&
+    session.endTime > session.startTime &&
+    Math.abs((session.endTime - session.startTime) / 1000 - session.focusedDurationSeconds) < 1e-7
+  )
+    return [{ startTime: session.startTime, endTime: session.endTime }];
+  return undefined;
 }
 export function exactFocusInRange(session: FocusSession, start: number, end: number) {
   if (end <= start) return 0;
@@ -39,9 +44,7 @@ export function exactFocusInRange(session: FocusSession, start: number, end: num
   );
 }
 export function allocatedFocusInRange(session: FocusSession, start: number, end: number) {
-  if (allocationIntervals(session)) return exactFocusInRange(session, start, end);
-  // Legacy Sessions keep their stored total on their original date, without invented timing.
-  return session.startTime >= start && session.startTime < end ? session.focusedDurationSeconds : 0;
+  return exactFocusInRange(session, start, end);
 }
 /** Split every usable focus interval at local midnights, shared by date and time buckets. */
 export function dailyFocusIntervals(session: FocusSession) {
@@ -64,19 +67,11 @@ export function dailyFocusIntervals(session: FocusSession) {
   return segments;
 }
 export function dailyFocusAllocations(session: FocusSession) {
-  const intervals = allocationIntervals(session);
   const days = new Map<number, { start: number; end: number; seconds: number }>();
   for (const segment of dailyFocusIntervals(session)) {
     const part = days.get(segment.dayStart) ?? { start: segment.dayStart, end: segment.dayEnd, seconds: 0 };
     part.seconds += (segment.endTime - segment.startTime) / 1000;
     days.set(segment.dayStart, part);
-  }
-  if (!intervals && Number.isFinite(session.startTime) && session.focusedDurationSeconds > 0) {
-    const date = new Date(session.startTime);
-    date.setHours(0, 0, 0, 0);
-    const start = date.getTime();
-    date.setDate(date.getDate() + 1);
-    days.set(start, { start, end: date.getTime(), seconds: session.focusedDurationSeconds });
   }
   return [...days.values()].sort((a, b) => a.start - b.start);
 }

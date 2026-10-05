@@ -21,7 +21,7 @@
       }
     </style>
     <script>
-      // A paint-only cache avoids awaiting IndexedDB or network work before rendering.
+      // A paint-only cache avoids awaiting database or network work before rendering.
       try {
         document.documentElement.dataset.theme = localStorage.getItem("focus.theme") === "light" ? "light" : "dark";
       } catch {}

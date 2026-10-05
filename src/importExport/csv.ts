@@ -3,6 +3,7 @@ import { sessionInvalidReason } from "../sessionValidity";
 import { db, type FocusDatabase } from "../db";
 import type { AcademicYear, FocusSession, Subject } from "../types";
 import { focusIntervals, normalizeTiming, validateTiming, type Pause } from "../storage/model";
+import { convertLegacyFileTiming } from "./legacyTiming";
 import { requireSourceIdentity } from "../storage/identity";
 import { canonicalSession, classifySession, fallbackFingerprint, normalizedName, matchOne } from "./duplicates";
 import type { ConflictPolicy, CsvMapping, CsvPreview, CsvPreviewRow, ImportSummary } from "./types";
@@ -285,9 +286,13 @@ export async function previewCsv(
             elapsedSeconds - pauses.reduce((sum, pause) => sum + pause.durationSeconds, 0);
         } else {
           if (record["Focus Intervals"]?.trim()) session.focusIntervals = JSON.parse(record["Focus Intervals"]);
-          if (record["Legacy Continuous"] === "true") session.legacyContinuous = true;
         }
-        const timing = normalizeTiming(session);
+        const timing = normalizedCsv
+          ? normalizeTiming(session)
+          : convertLegacyFileTiming({
+              ...session,
+              legacyContinuous: record["Legacy Continuous"] === "true" ? true : undefined,
+            });
         session.startTime = timing.startedAt * 1000;
         session.endTime = (timing.startedAt + timing.elapsedSeconds) * 1000;
         session.focusIntervals = focusIntervals(timing.startedAt, timing.elapsedSeconds, timing.pauses);

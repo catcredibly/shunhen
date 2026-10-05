@@ -35,10 +35,10 @@ pub fn install(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::Error>>
 
 fn setup_schema(connection: &Connection) -> Result<(), Box<dyn std::error::Error>> {
     let version: i64 = connection.query_row("PRAGMA user_version", [], |row| row.get(0))?;
-    if version > 2 {
+    if version > 3 {
         return Err("Unsupported SQLite schema version".into());
     }
-    if version == 2 {
+    if version == 3 {
         return Ok(());
     }
     if version == 1 {
@@ -47,13 +47,15 @@ fn setup_schema(connection: &Connection) -> Result<(), Box<dyn std::error::Error
         ))?;
     }
     connection.execute_batch("BEGIN IMMEDIATE")?;
-    let schema = if version == 0 {
-        include_str!("../../src/storage/schema.sql")
-    } else {
-        include_str!("../../src/storage/schema-v2.sql")
-    };
     let migration = (|| -> Result<(), Box<dyn std::error::Error>> {
-        connection.execute_batch(schema)?;
+        if version == 0 {
+            connection.execute_batch(include_str!("../../src/storage/schema.sql"))?;
+        } else {
+            if version == 1 {
+                connection.execute_batch(include_str!("../../src/storage/schema-v2.sql"))?;
+            }
+            connection.execute_batch(include_str!("../../src/storage/schema-v3.sql"))?;
+        }
         if connection
             .prepare("PRAGMA foreign_key_check")?
             .query([])?
@@ -246,6 +248,79 @@ mod tests {
         );
     }
     #[test]
+    fn upgrades_sqlite_v2_transactionally_without_changing_records() {
+        let db = Connection::open_in_memory().unwrap();
+        db.execute_batch(include_str!("../../src/storage/schema.sql"))
+            .unwrap();
+        db.execute_batch(
+            "PRAGMA user_version=2;
+            CREATE TABLE storage_metadata(key TEXT PRIMARY KEY,value TEXT NOT NULL) WITHOUT ROWID;
+            INSERT INTO storage_metadata VALUES('old-transition-state','complete');
+            INSERT INTO academic_years VALUES(5,'Year','2026-01-01','2026-12-31',1);
+            INSERT INTO subjects VALUES(9,5,'Subject',7,0);
+            INSERT INTO sessions VALUES(42,9,100,60,'Saved note',1);
+            INSERT INTO session_pauses VALUES(42,10,5);
+            INSERT INTO settings VALUES('defaultSubjectId','9');",
+        )
+        .unwrap();
+        // Missing canonical identity must roll back the entire schema upgrade.
+        assert!(setup_schema(&db).is_err());
+        assert_eq!(
+            db.query_row("PRAGMA user_version", [], |r| r.get::<_, i64>(0))
+                .unwrap(),
+            2
+        );
+        assert_eq!(
+            db.query_row("SELECT value FROM storage_metadata", [], |r| r
+                .get::<_, String>(0))
+                .unwrap(),
+            "complete"
+        );
+        db.execute(
+            "INSERT INTO session_sources VALUES('session:stable',42)",
+            [],
+        )
+        .unwrap();
+        setup_schema(&db).unwrap();
+        setup_schema(&db).unwrap();
+        assert_eq!(
+            db.query_row("PRAGMA user_version", [], |r| r.get::<_, i64>(0))
+                .unwrap(),
+            3
+        );
+        assert_eq!(
+            db.query_row(
+                "SELECT count(*) FROM sqlite_master WHERE name='storage_metadata'",
+                [],
+                |r| r.get::<_, i64>(0)
+            )
+            .unwrap(),
+            0
+        );
+        let stored: (i64,i64,i64,String,i64) = db.query_row("SELECT subject_id,started_at,elapsed_seconds,note,manual FROM sessions WHERE id=42", [], |r| Ok((r.get(0)?,r.get(1)?,r.get(2)?,r.get(3)?,r.get(4)?))).unwrap();
+        assert_eq!(stored, (9, 100, 60, "Saved note".into(), 1));
+        assert_eq!(
+            db.query_row(
+                "SELECT source_key FROM session_sources WHERE session_id=42",
+                [],
+                |r| r.get::<_, String>(0)
+            )
+            .unwrap(),
+            "session:stable"
+        );
+        assert_eq!(
+            db.query_row(
+                "SELECT value FROM settings WHERE key='defaultSubjectId'",
+                [],
+                |r| r.get::<_, String>(0)
+            )
+            .unwrap(),
+            "9"
+        );
+        assert_eq!(db.query_row("SELECT duration_seconds FROM session_pauses WHERE session_id=42 AND offset_seconds=10", [], |r| r.get::<_,i64>(0)).unwrap(), 5);
+        assert_eq!(db.query_row("SELECT s.academic_year_id FROM subjects s JOIN academic_years y ON y.id=s.academic_year_id WHERE s.id=9 AND y.archived=1 AND s.archived=0 AND s.color_id=7", [], |r| r.get::<_,i64>(0)).unwrap(), 5);
+    }
+    #[test]
     fn upgrades_aliases_and_missing_identities_deterministically() {
         let db = Connection::open_in_memory().unwrap();
         let old_schema = include_str!("../../src/storage/schema.sql")
@@ -253,22 +328,23 @@ mod tests {
                 "session_id INTEGER NOT NULL UNIQUE REFERENCES sessions(id)",
                 "session_id INTEGER NOT NULL REFERENCES sessions(id)",
             )
-            .replace("PRAGMA user_version = 2", "PRAGMA user_version = 1");
+            .replace("PRAGMA user_version = 3", "PRAGMA user_version = 1");
         db.execute_batch(&old_schema).unwrap();
+        db.execute_batch("CREATE TABLE storage_metadata(key TEXT PRIMARY KEY, value TEXT NOT NULL) WITHOUT ROWID; INSERT INTO storage_metadata VALUES('canonical-source-v2:4','session:previously-assigned');").unwrap();
         db.execute_batch("INSERT INTO academic_years(id,name) VALUES(1,'Year'); INSERT INTO subjects(id,academic_year_id,name,color_id) VALUES(1,1,'Subject',0);
             INSERT INTO sessions(id,subject_id,started_at,elapsed_seconds) VALUES(1,1,100,60),(2,1,100,60),(3,1,100,60),(4,1,100,60);
             INSERT INTO session_sources VALUES('legacy-session:one',1),('session:z',1),('session:a',1),('backup-session:two',2),('legacy-session:two',2),('arbitrary',3),('session:bad' || char(10),3);
             CREATE TABLE session_sources_v2(block_upgrade INTEGER);").unwrap();
         // Force the schema phase to fail after durable fallback assignments exist.
         assert!(setup_schema(&db).is_err());
-        let assigned: Vec<(String, String)> = db.prepare("SELECT key,value FROM storage_metadata WHERE key GLOB 'canonical-source-v2:*' ORDER BY key").unwrap()
+        let assigned: Vec<(i64, String)> = db.prepare("SELECT session_id,source_key FROM canonical_source_assignments ORDER BY session_id").unwrap()
             .query_map([], |r| Ok((r.get(0)?, r.get(1)?))).unwrap().collect::<Result<_,_>>().unwrap();
         assert_eq!(assigned.len(), 4);
         assert_eq!(assigned[0].1, "session:a");
         assert_eq!(assigned[1].1, "backup-session:two");
         assert!(assigned[2].1.starts_with("session:"));
         assert!(assigned[2].1.chars().all(|ch| !ch.is_control()));
-        assert!(assigned[3].1.starts_with("session:"));
+        assert_eq!(assigned[3].1, "session:previously-assigned");
         db.execute_batch("DROP TABLE session_sources_v2").unwrap();
         setup_schema(&db).unwrap();
         setup_schema(&db).unwrap(); // Idempotent after success.
@@ -299,11 +375,11 @@ mod tests {
         assert_eq!(
             db.query_row("PRAGMA user_version", [], |r| r.get::<_, i64>(0))
                 .unwrap(),
-            2
+            3
         );
         assert_eq!(
             db.query_row(
-                "SELECT COUNT(*) FROM storage_metadata WHERE key GLOB 'canonical-source-v2:*'",
+                "SELECT COUNT(*) FROM sqlite_master WHERE name IN ('storage_metadata','canonical_source_assignments')",
                 [],
                 |r| r.get::<_, i64>(0)
             )

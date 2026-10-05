@@ -1,5 +1,4 @@
 import { createTestDatabase } from "./storage/testDatabase";
-import "fake-indexeddb/auto";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { FocusDatabase } from "./db";
 import { saveFocusSession } from "./saveFocusSession";
@@ -80,4 +79,10 @@ describe("live goal completion", () => {
     const next = { ...session("next", 120), startTime: tomorrow - 120000, endTime: tomorrow };
     expect((await saveFocusSession(next, true, database, tomorrow)).map((value) => value.kind)).toEqual(["daily"]);
   });
+});
+
+it("claims a live timer save once across concurrent callers", async () => {
+  const input = session("timer-token");
+  await Promise.all([saveFocusSession({ ...input }, false, database), saveFocusSession({ ...input }, false, database)]);
+  expect(await database.sessions.count()).toBe(1);
 });

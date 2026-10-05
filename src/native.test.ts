@@ -1,4 +1,3 @@
-import "fake-indexeddb/auto";
 import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { db } from "./db";
 import { createTestDatabase } from "./storage/testDatabase";

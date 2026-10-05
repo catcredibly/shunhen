@@ -4,7 +4,7 @@ import { createSession } from "../data";
 import { createBackup, validateBackup, restoreBackup } from "./backup";
 import { exportSessionsCsv, previewCsv, importCsvPreview, parseCsv, escapeCsv } from "./csv";
 import { logicalBackup } from "./backupFormat";
-import { readNormalized } from "../storage/migration";
+import { readNormalized } from "../storage/snapshot";
 async function seeded() {
   const test = createTestDatabase();
   const year = { id: "", name: "Year", archived: false };

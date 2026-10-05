@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { expect, it } from "vitest";
 import { createTestDatabase } from "../storage/testDatabase";
-import { readNormalized } from "../storage/migration";
+import { readNormalized } from "../storage/snapshot";
 import { createBackup, validateBackup, restoreBackup, APP_VERSION } from "./backup";
 import type { FocusBackup } from "./types";
 
