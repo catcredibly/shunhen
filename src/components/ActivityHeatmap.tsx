@@ -66,17 +66,26 @@ export function ActivityHeatmap({
       return !previous || date.getMonth() !== previous.getMonth()
         ? {
             index,
-            label:
-              date.getMonth() === 0 || !previous
-                ? date.toLocaleDateString(localeCode(), {
-                    month: "short",
-                    year: "numeric",
-                  })
-                : date.toLocaleDateString(localeCode(), { month: "short" }),
+            label: date.toLocaleDateString(localeCode(), { month: "short" }),
           }
         : undefined;
     })
     .filter(Boolean) as { index: number; label: string }[];
+  const yearColumns = new Map<number, number>();
+  weeks.forEach((days, index) => {
+    for (const day of days) {
+      if (day.date.getTime() < trackingStart || day.date.getTime() > (calendarEnd ?? Date.now())) continue;
+      const year = day.date.getFullYear();
+      if (!yearColumns.has(year)) yearColumns.set(year, index);
+    }
+  });
+  // Two visible years can begin in the same week column; share its label rather than overlap.
+  const yearMarkers = new Map<number, number[]>();
+  for (const [year, index] of yearColumns) {
+    const years = yearMarkers.get(index) ?? [];
+    years.push(year);
+    yearMarkers.set(index, years);
+  }
   const selectedSessions = selected
       ? sessions.flatMap((session) => {
           const day = getDays(session).find((part) => localDayKey(part.start) === selected.key);
@@ -100,6 +109,13 @@ export function ActivityHeatmap({
           <span>{t("Sun")}</span>
         </div>
         <div className="heatmap-scroll" ref={scrollRef}>
+          <div className="heatmap-years" style={{ width: weeks.length * 14 }}>
+            {[...yearMarkers].map(([index, years]) => (
+              <span key={index} style={{ left: index * 14 }}>
+                {years.join(" / ")}
+              </span>
+            ))}
+          </div>
           <div className="heatmap-months" style={{ width: weeks.length * 14 }}>
             {markers.map((marker) => (
               <span key={`${marker.index}-${marker.label}`} style={{ left: marker.index * 14 }}>

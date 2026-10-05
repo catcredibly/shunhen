@@ -2849,7 +2849,7 @@ input {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  margin-top: 20px;
+  margin-top: 38px;
   padding: 2px 0;
   color: #7890a4;
   font-size: 9px;
@@ -2858,6 +2858,7 @@ input {
   overflow-x: auto;
   padding-bottom: 8px;
 }
+.heatmap-years,
 .heatmap-months {
   position: relative;
   height: 18px;
@@ -2865,6 +2866,10 @@ input {
   font-size: 9px;
   white-space: nowrap;
 }
+.heatmap-years {
+  opacity: 0.75;
+}
+.heatmap-years span,
 .heatmap-months span {
   position: absolute;
 }
@@ -5568,6 +5573,7 @@ html[data-utility-window] #root {
 [data-theme="light"] .heatmap-legend .heat-4 {
   background: var(--accent) !important;
 }
+[data-theme="light"] .heatmap-years,
 [data-theme="light"] .heatmap-months,
 [data-theme="light"] .weekday-labels,
 [data-theme="light"] .heatmap-legend,
