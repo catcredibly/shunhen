@@ -99,7 +99,7 @@ jobs:
           done
 
       - name: Upload AppImage artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: linux-amd64-appimage
           path: |
@@ -109,7 +109,7 @@ jobs:
           compression-level: 0
 
       - name: Upload Debian artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: linux-amd64-deb
           path: |
