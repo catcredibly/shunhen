@@ -316,6 +316,7 @@ const en = {
   "1-year average": "1-year average",
   "Focus time by Academic Year": "Focus time by Academic Year",
   "Focus time by Subject": "Focus time by Subject",
+  "Periods without study data are omitted.": "Periods without study data are omitted.",
   "Subject share over time": "Subject share over time",
   "Session length distribution": "Session length distribution",
   "Study time by day of week": "Study time by day of week",

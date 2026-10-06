@@ -1,5 +1,5 @@
-//! A pinned SQLite connection. Frontend Web Locks serialize windows; tokens keep
-//! unrelated requests out of a transaction even if a caller bypasses the lock.
+//! A pinned SQLite connection with native asynchronous transaction arbitration.
+//! Frontend locks reduce contention; tokens preserve ownership inside transactions.
 use rusqlite::{
     params_from_iter,
     types::{Value as SqlValue, ValueRef},
@@ -9,11 +9,94 @@ use serde_json::{json, Map, Value};
 use std::sync::Mutex;
 use tauri::{Emitter, Manager};
 
-pub struct Storage(pub Mutex<Store>);
+pub struct Storage {
+    store: Mutex<Store>,
+    available: tokio::sync::Notify,
+}
+
+impl Storage {
+    async fn with_access<T>(
+        &self,
+        action: &str,
+        token: Option<&str>,
+        window: &str,
+        operation: impl FnOnce(&mut Store) -> Result<T, String>,
+    ) -> Result<T, String> {
+        let mut operation = Some(operation);
+        loop {
+            // Register before checking ownership so a concurrent commit cannot lose the wakeup.
+            let notification = self.available.notified();
+            let mut notification = std::pin::pin!(notification);
+            notification.as_mut().enable();
+            let result = {
+                let mut store = self.store.lock().map_err(|error| error.to_string())?;
+                if store.admit(action, token, window)? {
+                    let had_owner = store.owner.is_some();
+                    let result =
+                        operation.take().expect("Storage operation runs only once")(&mut store);
+                    if had_owner && store.owner.is_none() {
+                        self.available.notify_waiters();
+                    }
+                    Some(result)
+                } else {
+                    None
+                }
+            };
+            if let Some(result) = result {
+                return result;
+            }
+            notification.await;
+        }
+    }
+
+    fn release_window(&self, label: &str) {
+        if let Ok(mut store) = self.store.lock() {
+            if store
+                .owner
+                .as_ref()
+                .is_some_and(|(_, owner)| owner == label)
+            {
+                let _ = store.connection.execute_batch("ROLLBACK");
+                store.owner = None;
+                self.available.notify_waiters();
+            }
+        }
+    }
+}
+
 pub struct Store {
     connection: Connection,
     owner: Option<(String, String)>,
     dirty: bool,
+}
+
+impl Store {
+    // true = admitted, false = wait for the current owner, Err = invalid scoped request.
+    fn admit(&self, action: &str, token: Option<&str>, window: &str) -> Result<bool, String> {
+        if action == "begin" {
+            let token = token.ok_or("Missing transaction token")?;
+            if self
+                .owner
+                .as_ref()
+                .is_some_and(|(key, owner)| key == token && owner == window)
+            {
+                return Err("SQLite transaction already active".into());
+            }
+            return Ok(self.owner.is_none());
+        }
+        if token.is_none() && self.owner.is_some() && matches!(action, "select" | "execute") {
+            return Ok(false);
+        }
+        if self
+            .owner
+            .as_ref()
+            .map(|(key, owner)| (key.as_str(), owner.as_str()))
+            != token.map(|key| (key, window))
+        {
+            return Err("SQLite transaction owner mismatch".into());
+        }
+        Ok(true)
+    }
 }
 
 pub fn install(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::Error>> {
@@ -25,11 +108,14 @@ pub fn install(app: &tauri::AppHandle) -> Result<(), Box<dyn std::error::Error>>
         "PRAGMA foreign_keys=ON; PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL;",
     )?;
     setup_schema(&connection)?;
-    app.manage(Storage(Mutex::new(Store {
-        connection,
-        owner: None,
-        dirty: false,
-    })));
+    app.manage(Storage {
+        store: Mutex::new(Store {
+            connection,
+            owner: None,
+            dirty: false,
+        }),
+        available: tokio::sync::Notify::new(),
+    });
     Ok(())
 }
 
@@ -79,21 +165,11 @@ fn setup_schema(connection: &Connection) -> Result<(), Box<dyn std::error::Error
 }
 
 pub fn release_window(app: &tauri::AppHandle, label: &str) {
-    let storage = app.state::<Storage>();
-    if let Ok(mut store) = storage.0.lock() {
-        if store
-            .owner
-            .as_ref()
-            .is_some_and(|(_, owner)| owner == label)
-        {
-            let _ = store.connection.execute_batch("ROLLBACK");
-            store.owner = None;
-        }
-    };
+    app.state::<Storage>().release_window(label);
 }
 
 #[tauri::command]
-pub fn storage_request(
+pub async fn storage_request(
     app: tauri::AppHandle,
     window: tauri::WebviewWindow,
     storage: tauri::State<'_, Storage>,
@@ -102,115 +178,296 @@ pub fn storage_request(
     sql: Option<String>,
     parameters: Option<Vec<Value>>,
 ) -> Result<Value, String> {
-    let mut store = storage.0.lock().map_err(|e| e.to_string())?;
-    let result = (|| -> Result<Value, Box<dyn std::error::Error>> {
-        if action == "begin" {
-            if store.owner.is_some() {
-                return Err("SQLite transaction already active".into());
-            }
-            let token = token.ok_or("Missing transaction token")?;
-            store.connection.execute_batch("BEGIN IMMEDIATE")?;
-            store.owner = Some((token, window.label().to_owned()));
-            store.dirty = false;
-            return Ok(Value::Null);
-        }
-        if store
-            .owner
-            .as_ref()
-            .map(|(key, owner)| (key.as_str(), owner.as_str()))
-            != token.as_deref().map(|key| (key, window.label()))
-        {
-            return Err("SQLite transaction owner mismatch".into());
-        }
-        if action == "commit" || action == "rollback" {
-            store.connection.execute_batch(if action == "commit" {
-                "COMMIT"
-            } else {
-                "ROLLBACK"
-            })?;
-            store.owner = None;
-            if action == "commit" && store.dirty {
-                let _ = app.emit("storage-changed", ());
-            }
-            return Ok(Value::Null);
-        }
-        let values = parameters
-            .unwrap_or_default()
-            .into_iter()
-            .map(|value| -> Result<SqlValue, String> {
-                Ok(match value {
-                    Value::Null => SqlValue::Null,
-                    Value::Bool(value) => SqlValue::Integer(i64::from(value)),
-                    Value::Number(value) => {
-                        if let Some(value) = value.as_i64() {
-                            SqlValue::Integer(value)
-                        } else {
-                            SqlValue::Real(value.as_f64().ok_or("Invalid SQL number")?)
+    let action_for_access = action.clone();
+    let token_for_access = token.clone();
+    let window_label = window.label().to_owned();
+    storage
+        .with_access(
+            &action_for_access,
+            token_for_access.as_deref(),
+            &window_label,
+            |store| {
+                let result = (|| -> Result<Value, Box<dyn std::error::Error>> {
+                    if action == "begin" {
+                        if store.owner.is_some() {
+                            return Err("SQLite transaction already active".into());
                         }
+                        let token = token.ok_or("Missing transaction token")?;
+                        store.connection.execute_batch("BEGIN IMMEDIATE")?;
+                        store.owner = Some((token, window.label().to_owned()));
+                        store.dirty = false;
+                        return Ok(Value::Null);
                     }
-                    Value::String(value) => SqlValue::Text(value),
-                    _ => return Err("SQL parameters must be scalar".into()),
-                })
-            })
-            .collect::<Result<Vec<_>, _>>()?;
-        let sql = sql.ok_or("Missing SQL")?;
-        if action == "select" {
-            let mut statement = store.connection.prepare(&sql)?;
-            if !statement.readonly() {
-                return Err("Select must be read-only".into());
-            }
-            let names = statement
-                .column_names()
-                .into_iter()
-                .map(str::to_owned)
-                .collect::<Vec<_>>();
-            let rows = statement
-                .query_map(params_from_iter(values.iter()), |row| {
-                    let mut object = Map::new();
-                    for (index, name) in names.iter().enumerate() {
-                        let value = match row.get_ref(index)? {
-                            ValueRef::Null => Value::Null,
-                            ValueRef::Integer(value) => json!(value),
-                            ValueRef::Real(value) => json!(value),
-                            ValueRef::Text(value) => json!(String::from_utf8_lossy(value)),
-                            ValueRef::Blob(_) => Value::Null,
-                        };
-                        object.insert(name.clone(), value);
+                    if action == "commit" || action == "rollback" {
+                        store.connection.execute_batch(if action == "commit" {
+                            "COMMIT"
+                        } else {
+                            "ROLLBACK"
+                        })?;
+                        store.owner = None;
+                        if action == "commit" && store.dirty {
+                            let _ = app.emit("storage-changed", ());
+                        }
+                        return Ok(Value::Null);
                     }
-                    Ok(Value::Object(object))
-                })?
-                .collect::<Result<Vec<_>, _>>()?;
-            Ok(Value::Array(rows))
-        } else if action == "execute" {
-            // Transaction control is exclusively through begin/commit/rollback.
-            let command = sql
-                .trim_start()
-                .split_whitespace()
-                .next()
-                .unwrap_or("")
-                .to_uppercase();
-            if !matches!(command.as_str(), "INSERT" | "UPDATE" | "DELETE") {
-                return Err("Unsupported storage write".into());
-            }
-            let affected = store
-                .connection
-                .execute(&sql, params_from_iter(values.iter()))?;
-            let id = store.connection.last_insert_rowid();
-            store.dirty |= affected > 0;
-            if store.owner.is_none() && affected > 0 {
-                let _ = app.emit("storage-changed", ());
-            }
-            Ok(json!({ "id": id, "affected": affected }))
-        } else {
-            Err("Unknown storage action".into())
-        }
-    })();
-    result.map_err(|error| error.to_string())
+                    let values = parameters
+                        .unwrap_or_default()
+                        .into_iter()
+                        .map(|value| -> Result<SqlValue, String> {
+                            Ok(match value {
+                                Value::Null => SqlValue::Null,
+                                Value::Bool(value) => SqlValue::Integer(i64::from(value)),
+                                Value::Number(value) => {
+                                    if let Some(value) = value.as_i64() {
+                                        SqlValue::Integer(value)
+                                    } else {
+                                        SqlValue::Real(value.as_f64().ok_or("Invalid SQL number")?)
+                                    }
+                                }
+                                Value::String(value) => SqlValue::Text(value),
+                                _ => return Err("SQL parameters must be scalar".into()),
+                            })
+                        })
+                        .collect::<Result<Vec<_>, _>>()?;
+                    let sql = sql.ok_or("Missing SQL")?;
+                    if action == "select" {
+                        let mut statement = store.connection.prepare(&sql)?;
+                        if !statement.readonly() {
+                            return Err("Select must be read-only".into());
+                        }
+                        let names = statement
+                            .column_names()
+                            .into_iter()
+                            .map(str::to_owned)
+                            .collect::<Vec<_>>();
+                        let rows = statement
+                            .query_map(params_from_iter(values.iter()), |row| {
+                                let mut object = Map::new();
+                                for (index, name) in names.iter().enumerate() {
+                                    let value = match row.get_ref(index)? {
+                                        ValueRef::Null => Value::Null,
+                                        ValueRef::Integer(value) => json!(value),
+                                        ValueRef::Real(value) => json!(value),
+                                        ValueRef::Text(value) => {
+                                            json!(String::from_utf8_lossy(value))
+                                        }
+                                        ValueRef::Blob(_) => Value::Null,
+                                    };
+                                    object.insert(name.clone(), value);
+                                }
+                                Ok(Value::Object(object))
+                            })?
+                            .collect::<Result<Vec<_>, _>>()?;
+                        Ok(Value::Array(rows))
+                    } else if action == "execute" {
+                        // Transaction control is exclusively through begin/commit/rollback.
+                        let command = sql
+                            .trim_start()
+                            .split_whitespace()
+                            .next()
+                            .unwrap_or("")
+                            .to_uppercase();
+                        if !matches!(command.as_str(), "INSERT" | "UPDATE" | "DELETE") {
+                            return Err("Unsupported storage write".into());
+                        }
+                        let affected = store
+                            .connection
+                            .execute(&sql, params_from_iter(values.iter()))?;
+                        let id = store.connection.last_insert_rowid();
+                        store.dirty |= affected > 0;
+                        if store.owner.is_none() && affected > 0 {
+                            let _ = app.emit("storage-changed", ());
+                        }
+                        Ok(json!({ "id": id, "affected": affected }))
+                    } else {
+                        Err("Unknown storage action".into())
+                    }
+                })();
+                result.map_err(|error| error.to_string())
+            },
+        )
+        .await
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    fn isolated_store() -> Storage {
+        let connection = Connection::open_in_memory().unwrap();
+        setup_schema(&connection).unwrap();
+        Storage {
+            store: Mutex::new(Store {
+                connection,
+                owner: None,
+                dirty: false,
+            }),
+            available: tokio::sync::Notify::new(),
+        }
+    }
+
+    fn begin_test_transaction(storage: &Storage) {
+        tauri::async_runtime::block_on(storage.with_access(
+            "begin",
+            Some("timer-token"),
+            "timer",
+            |store| {
+                store.connection.execute_batch("BEGIN IMMEDIATE").unwrap();
+                store.owner = Some(("timer-token".into(), "timer".into()));
+                store
+                    .connection
+                    .execute("INSERT INTO settings VALUES('pending','value')", [])
+                    .unwrap();
+                Ok(())
+            },
+        ))
+        .unwrap();
+    }
+
+    #[test]
+    fn startup_probe_waits_for_commit_without_entering_another_windows_transaction() {
+        use std::future::Future;
+        let storage = isolated_store();
+        begin_test_transaction(&storage);
+        let mut probe = Box::pin(storage.with_access("select", None, "main", |store| {
+            let ready = store
+                .connection
+                .query_row("SELECT 1", [], |row| row.get::<_, i64>(0))
+                .unwrap();
+            let value = store
+                .connection
+                .query_row(
+                    "SELECT value FROM settings WHERE key='pending'",
+                    [],
+                    |row| row.get::<_, String>(0),
+                )
+                .unwrap();
+            Ok((ready, value))
+        }));
+        let mut context = std::task::Context::from_waker(std::task::Waker::noop());
+        assert!(probe.as_mut().poll(&mut context).is_pending());
+        // Wake before polling again: registration must prevent a lost notification.
+        tauri::async_runtime::block_on(storage.with_access(
+            "commit",
+            Some("timer-token"),
+            "timer",
+            |store| {
+                store.connection.execute_batch("COMMIT").unwrap();
+                store.owner = None;
+                Ok(())
+            },
+        ))
+        .unwrap();
+        assert_eq!(
+            tauri::async_runtime::block_on(probe).unwrap(),
+            (1, "value".into())
+        );
+    }
+
+    #[test]
+    fn queued_write_is_separate_from_rolled_back_transaction() {
+        use std::future::Future;
+        let storage = isolated_store();
+        begin_test_transaction(&storage);
+        let mut write = Box::pin(storage.with_access("execute", None, "main", |store| {
+            store
+                .connection
+                .execute("INSERT INTO settings VALUES('committed','main')", [])
+                .unwrap();
+            Ok(())
+        }));
+        let mut context = std::task::Context::from_waker(std::task::Waker::noop());
+        assert!(write.as_mut().poll(&mut context).is_pending());
+        tauri::async_runtime::block_on(storage.with_access(
+            "rollback",
+            Some("timer-token"),
+            "timer",
+            |store| {
+                store.connection.execute_batch("ROLLBACK").unwrap();
+                store.owner = None;
+                Ok(())
+            },
+        ))
+        .unwrap();
+        tauri::async_runtime::block_on(write).unwrap();
+        let store = storage.store.lock().unwrap();
+        assert_eq!(
+            store
+                .connection
+                .query_row(
+                    "SELECT count(*) FROM settings WHERE key='pending'",
+                    [],
+                    |r| r.get::<_, i64>(0)
+                )
+                .unwrap(),
+            0
+        );
+        assert_eq!(
+            store
+                .connection
+                .query_row(
+                    "SELECT value FROM settings WHERE key='committed'",
+                    [],
+                    |r| r.get::<_, String>(0)
+                )
+                .unwrap(),
+            "main"
+        );
+    }
+
+    #[test]
+    fn next_transaction_waits_and_owner_teardown_rolls_back_and_wakes_it() {
+        use std::future::Future;
+        let storage = isolated_store();
+        begin_test_transaction(&storage);
+        let mut next =
+            Box::pin(
+                storage.with_access("begin", Some("main-token"), "main", |store| {
+                    assert!(store.owner.is_none());
+                    store.connection.execute_batch("BEGIN IMMEDIATE").unwrap();
+                    store.owner = Some(("main-token".into(), "main".into()));
+                    Ok(store
+                        .connection
+                        .query_row("SELECT count(*) FROM settings", [], |r| r.get::<_, i64>(0))
+                        .unwrap())
+                }),
+            );
+        let mut context = std::task::Context::from_waker(std::task::Waker::noop());
+        assert!(next.as_mut().poll(&mut context).is_pending());
+        storage.release_window("unrelated");
+        assert!(next.as_mut().poll(&mut context).is_pending());
+        storage.release_window("timer");
+        assert_eq!(tauri::async_runtime::block_on(next).unwrap(), 0);
+        storage.release_window("main");
+        assert!(storage.store.lock().unwrap().connection.is_autocommit());
+    }
+
+    #[test]
+    fn wrong_tokens_and_windows_are_rejected_without_running_sql() {
+        let storage = isolated_store();
+        begin_test_transaction(&storage);
+        for (token, window) in [("wrong-token", "timer"), ("timer-token", "main")] {
+            let result = tauri::async_runtime::block_on(storage.with_access(
+                "select",
+                Some(token),
+                window,
+                |_| {
+                    panic!("Wrong owner must never reach SQL");
+                    #[allow(unreachable_code)]
+                    Ok(())
+                },
+            ));
+            assert_eq!(result.unwrap_err(), "SQLite transaction owner mismatch");
+        }
+        let result = tauri::async_runtime::block_on(storage.with_access(
+            "begin",
+            Some("timer-token"),
+            "timer",
+            |_| Ok(()),
+        ));
+        assert_eq!(result.unwrap_err(), "SQLite transaction already active");
+        storage.release_window("timer");
+    }
+
     #[test]
     fn schema_enforces_relations_pauses_and_rollback() {
         let db = Connection::open_in_memory().unwrap();

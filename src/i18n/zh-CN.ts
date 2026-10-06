@@ -311,6 +311,7 @@ const zhCN: Record<keyof typeof en, string> = {
   "1-year average": "1 年平均",
   "Focus time by Academic Year": "各学年专注时间",
   "Focus time by Subject": "各科目专注时间",
+  "Periods without study data are omitted.": "未包含学习数据的时间段将被省略。",
   "Subject share over time": "科目占比趋势",
   "Session length distribution": "专注时长分布",
   "Study time by day of week": "按星期统计学习时间",

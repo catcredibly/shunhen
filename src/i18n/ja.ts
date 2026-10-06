@@ -315,6 +315,7 @@ const ja: Record<keyof typeof en, string> = {
   "1-year average": "1年平均",
   "Focus time by Academic Year": "学年別の集中時間",
   "Focus time by Subject": "科目別の集中時間",
+  "Periods without study data are omitted.": "学習データのない期間は省略されます。",
   "Subject share over time": "科目比率の推移",
   "Session length distribution": "セッション時間の分布",
   "Study time by day of week": "曜日別の学習時間",

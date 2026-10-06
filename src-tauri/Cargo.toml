@@ -1,6 +1,6 @@
 [package]
 name = "focus"
-version = "3.1.0"
+version = "3.1.1"
 description = "Shunhen study timer"
 authors = ["Shunhen"]
 edition = "2021"
@@ -16,6 +16,8 @@ tauri-build = { version = "2", features = [] }
 tauri = { version = "2", features = [] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+# Native transaction arbitration across independently starting WebViews.
+tokio = { version = "1", features = ["sync"] }
 rusqlite = { version = "0.40.2", features = ["bundled"] }
 # The updater enables rustls-no-provider. Our diagnostic client also needs the
 # normal provider-enabled path before the updater has created any client.

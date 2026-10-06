@@ -313,6 +313,7 @@ const zhTW: Record<keyof typeof en, string> = {
   "1-year average": "1 年平均",
   "Focus time by Academic Year": "各學年專注時間",
   "Focus time by Subject": "各科目專注時間",
+  "Periods without study data are omitted.": "未包含學習資料的時間段將被省略。",
   "Subject share over time": "科目占比趨勢",
   "Session length distribution": "專注時長分布",
   "Study time by day of week": "按星期統計學習時間",

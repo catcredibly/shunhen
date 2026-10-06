@@ -5716,3 +5716,13 @@ html[data-utility-window] #root {
   resize: vertical;
   user-select: text;
 }
+
+.subject-share-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.subject-share-info {
+  display: block;
+  color: var(--text-muted);
+}

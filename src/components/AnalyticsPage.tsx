@@ -1,6 +1,8 @@
 import { readAnalyticsSnapshot } from "../storage/queries";
 import { useSubjectAnalyticsData } from "../hooks/useSubjectAnalyticsData";
 import { prepareSubjectAnalytics } from "../analytics/subjectData";
+import { SubjectShareAxisTick, SubjectShareYearLabels } from "./SubjectShareAxis";
+import { SubjectShareInfo } from "./SubjectShareInfo";
 import { createAnalyticsSnapshot } from "../analytics/snapshot";
 import { AnalyticsSnapshotContext, useAnalyticsSnapshot } from "../analytics/SnapshotContext";
 import { useAnalyticsClock } from "../hooks/useAnalyticsClock";
@@ -572,41 +574,72 @@ const SubjectShareChart = memo(function SubjectShareChart({
   const interactive = useInteractiveTooltip();
   const { share, shareRows, stackedShareRows, shareNames } = data;
   return (
-    <Panel className="full-row" title={t("Subject share over time")}>
-      <ScrollChart width={share.length * 58}>
-        <AreaChart data={share} onMouseMove={interactive.enter} onMouseLeave={interactive.leave}>
-          <CartesianGrid stroke="var(--chart-grid)" vertical={false} />
-          <XAxis dataKey="label" />
-          <YAxis domain={[0, 100]} tickFormatter={percent} />
-          {stackedShareRows.map((row) => (
-            <Area
-              key={row.subjectId}
-              dataKey={(point) => point.shares[row.subjectId]}
-              name={shareNames.get(row.subjectId)}
-              stackId="subjects"
-              stroke="var(--chart-grid)"
-              strokeWidth={1}
-              fill={row.color}
-              fillOpacity={1}
+    <Panel
+      className="full-row"
+      title={
+        <span className="subject-share-title">
+          {t("Subject share over time")}
+          <SubjectShareInfo />
+        </span>
+      }
+    >
+      {!share.length ? (
+        <Empty />
+      ) : (
+        <ScrollChart width={share.length * 58 + 90}>
+          <AreaChart
+            data={share}
+            margin={{ top: 5, right: 30, bottom: 5, left: 5 }}
+            onMouseMove={interactive.enter}
+            onMouseLeave={interactive.leave}
+          >
+            <CartesianGrid stroke="var(--chart-grid)" vertical={false} />
+            <XAxis
+              dataKey="key"
+              allowDuplicatedCategory={false}
+              interval={0}
+              height={44}
+              tick={<SubjectShareAxisTick points={share} />}
+              label={<SubjectShareYearLabels points={share} />}
             />
-          ))}
-          <Tooltip
-            active={interactive.active || undefined}
-            wrapperStyle={{ pointerEvents: "auto" }}
-            content={(props) => (
-              <div onMouseEnter={interactive.enter} onMouseLeave={interactive.leave}>
-                <ChartTooltip
-                  {...props}
-                  kind="percent"
-                  colors={Object.fromEntries(
-                    shareRows.map((row) => [shareNames.get(row.subjectId) ?? row.name, row.color]),
-                  )}
-                />
-              </div>
-            )}
-          />
-        </AreaChart>
-      </ScrollChart>
+            <YAxis domain={[0, 100]} tickFormatter={percent} />
+            {stackedShareRows.map((row) => (
+              <Area
+                key={row.subjectId}
+                dataKey={(point) => point.shares[row.subjectId]}
+                name={shareNames.get(row.subjectId)}
+                stackId="subjects"
+                stroke="var(--chart-grid)"
+                strokeWidth={1}
+                fill={row.color}
+                fillOpacity={1}
+                type="linear"
+                connectNulls={false}
+                dot={share.length === 1 ? { r: 3 } : false}
+              />
+            ))}
+            <Tooltip
+              active={interactive.active || undefined}
+              wrapperStyle={{ pointerEvents: "auto" }}
+              content={(props) => {
+                const point = share.find((point) => point.key === props.label);
+                return (
+                  <div onMouseEnter={interactive.enter} onMouseLeave={interactive.leave}>
+                    <ChartTooltip
+                      {...props}
+                      label={point?.label ?? props.label}
+                      kind="percent"
+                      colors={Object.fromEntries(
+                        shareRows.map((row) => [shareNames.get(row.subjectId) ?? row.name, row.color]),
+                      )}
+                    />
+                  </div>
+                );
+              }}
+            />
+          </AreaChart>
+        </ScrollChart>
+      )}
     </Panel>
   );
 });
