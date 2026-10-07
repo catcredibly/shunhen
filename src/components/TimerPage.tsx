@@ -15,7 +15,7 @@ import { useTranslation } from "react-i18next";
 import { db } from "../db";
 import { formatDuration } from "../data";
 import { formatTimerDateTime } from "../dateTime";
-import { goalProgress } from "../goals";
+import { goalScopeSessions, goalProgress } from "../goals";
 import { useMainTimer as useTimer } from "../hooks/TimerContext";
 import { StartSessionButton } from "./StartSessionButton";
 import { currentStreak, todaySummary } from "../timerState";
@@ -86,7 +86,10 @@ function LoadedTimerPage({
   const selectedYear = allYears.find((year) => year.id === selectedSubject?.academicYearId);
   const analyticsSessions = validSessions(sessions, allYears);
   const summary = todaySummary(analyticsSessions);
-  const goals = goalProgress(analyticsSessions, now.getTime());
+  const goals = goalProgress(
+    goalScopeSessions(analyticsSessions, allYears, allSubjects, settings.goalScope),
+    now.getTime(),
+  );
   const recent = sessions.filter((session) => !session.archived).slice(0, 4);
   const duration = useMemo(
     () => normaliseDuration(Number(hours), Number(minutes), Number(seconds)).total,

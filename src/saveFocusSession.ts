@@ -2,7 +2,7 @@ import { normalizeTiming, focusIntervals } from "./storage/model";
 import { validSessions } from "./sessionValidity";
 import { noteMetrics } from "./notes";
 import { db, type FocusDatabase } from "./db";
-import { goalProgress, localDayBounds, localWeekBounds } from "./goals";
+import { goalScopeSessions, goalProgress, localDayBounds, localWeekBounds } from "./goals";
 import { loadSettings } from "./settings";
 import type { FocusSession } from "./types";
 import type { ToastMessage } from "./toasts";
@@ -44,8 +44,10 @@ export async function saveFocusSession(
       const settings = await loadSettings(database, false);
       const years = await database.academicYears.toArray();
       const sessions = validSessions(await database.sessions.toArray(), years);
-      const before = goalProgress(sessions, now),
-        after = goalProgress(validSessions([...sessions, session], years), now);
+      const subjects = await database.subjects.toArray();
+      const scoped = (rows: FocusSession[]) => goalScopeSessions(rows, years, subjects, settings.goalScope);
+      const before = goalProgress(scoped(sessions), now),
+        after = goalProgress(scoped(validSessions([...sessions, session], years)), now);
       for (const kind of ["daily", "weekly"] as const) {
         const target = settings[`${kind}GoalSeconds`];
         const period = kind === "daily" ? localDayBounds(now) : localWeekBounds(now);

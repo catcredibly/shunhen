@@ -24,8 +24,9 @@ import {
 import { goalAchievement, goalAxisMaximum } from "../analytics/goalAchievement";
 import { academicYearProgress } from "../analytics/yearProgress";
 import { validSessions } from "../sessionValidity";
-import { academicYearOptions, subjectOptions, pruneSubjectSelection } from "../selectorOptions";
-import { FilterSelect } from "./FilterSelect";
+
+import { LinkedScopeSelectors } from "./LinkedScopeSelectors";
+import { ALL_SCOPE, subjectSelection, type LinkedScope } from "../linkedScope";
 import { dailyActivityScope } from "../analytics/dailyActivity";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { useLiveQuery } from "../hooks/useLiveQuery";
@@ -80,7 +81,7 @@ import {
   type AnalyticsRange,
   type Period,
 } from "../analytics/periods";
-import { goalProgress } from "../goals";
+import { goalScopeSessions, goalProgress } from "../goals";
 import { useSettings } from "../hooks/useSettings";
 import { localeCode } from "../i18n";
 import { ActivityHeatmap } from "./ActivityHeatmap";
@@ -136,8 +137,9 @@ export function AnalyticsPage() {
     subjects = demo?.subjects ?? snapshot?.subjects,
     sessions = demo?.sessions ?? snapshot?.sessions;
   const [tab, setTab] = useState<(typeof tabs)[number]>("Overview");
-  const [yearIds, setYearIds] = useState<string[]>([]);
-  const [subjectIds, setSubjectIds] = useState<string[]>([]);
+  const [scope, setScope] = useState<LinkedScope>(ALL_SCOPE);
+  const yearIds = scope.yearIds;
+  const subjectIds = useMemo(() => subjectSelection(scope, subjects ?? []), [scope, subjects]);
   const [range, setRange] = useState<AnalyticsRange>("All");
   const [customOpen, setCustomOpen] = useState(false);
   const [customRange, setCustomRange] = useState<Period>();
@@ -154,16 +156,12 @@ export function AnalyticsPage() {
     () => filterSessions(validSessions(sessions ?? [], years ?? [])),
     [sessions, years],
   );
-  useEffect(() => {
-    if (!subjects) return;
-    setSubjectIds((selection) => {
-      const next = pruneSubjectSelection(selection, subjects, yearIds);
-      return next.length === selection.length ? selection : next;
-    });
-  }, [subjects, yearIds]);
   // Comparison tabs override the effective scope without destroying saved filter selections.
-  const yearDisabled = tab === "Academic Years",
-    subjectDisabled = yearDisabled;
+  const yearDisabled = tab === "Academic Years";
+  const scopedGoals = useMemo(
+    () => goalScopeSessions(effectiveSessions, years ?? [], subjects ?? [], settings.goalScope),
+    [effectiveSessions, years, subjects, settings.goalScope],
+  );
   const { history, period, filtered, goalHistory, goalPeriod } = useAnalyticsScopes(
     effectiveSessions,
     yearIds,
@@ -173,6 +171,7 @@ export function AnalyticsPage() {
     today,
     customRange,
     yearDisabled || yearIds.length !== 1 ? undefined : years?.find((year) => year.id === yearIds[0]),
+    scopedGoals,
   );
   const timezoneOffset = new Date(now).getTimezoneOffset();
   const snapshotData = useMemo(() => createAnalyticsSnapshot(effectiveSessions), [effectiveSessions, timezoneOffset]);
@@ -198,23 +197,13 @@ export function AnalyticsPage() {
             <p>{t("Explore your study habits across subjects, Academic Years, and self-study.")}</p>
           </div>
           <div className="analytics-filters">
-            <FilterSelect
-              multiple
-              entity="academicYear"
-              label={t("Academic Year")}
-              disabled={yearDisabled || !years.length}
-              value={yearDisabled ? [] : yearIds}
-              onChange={setYearIds}
-              options={[{ value: "", label: t("All Academic Years") }, ...academicYearOptions(years)]}
-            />
-            <FilterSelect
-              multiple
-              entity="subject"
-              label={t("Subject")}
-              disabled={subjectDisabled}
-              value={subjectDisabled ? [] : subjectIds}
-              onChange={setSubjectIds}
-              options={[{ value: "", label: t("All Subjects") }, ...subjectOptions(years, subjects, yearIds)]}
+            <LinkedScopeSelectors
+              years={years}
+              subjects={subjects}
+              value={scope}
+              onChange={setScope}
+              disabled={yearDisabled}
+              showLabels={false}
             />
             <div className="custom-range-wrap">
               <div className="range-control" aria-label={t("Date range")}>
@@ -333,11 +322,15 @@ export function AnalyticsPage() {
 function GoalFilterInfo() {
   const { t } = useTranslation();
   return (
-    <ValueTooltip lines={[t("Not affected by Subject or Academic Year filters.")]}>
+    <ValueTooltip
+      lines={[t("Academic Year and Subject filters do not affect goals. Goal scope can be configured in Settings.")]}
+    >
       <Info
         size={14}
         className="goal-filter-info"
-        aria-label={t("Not affected by Subject or Academic Year filters.")}
+        aria-label={t(
+          "Academic Year and Subject filters do not affect goals. Goal scope can be configured in Settings.",
+        )}
       />
     </ValueTooltip>
   );

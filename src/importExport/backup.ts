@@ -1,8 +1,15 @@
+import { normalizeGoalScope, remapGoalScope } from "../goalScope";
 import { synchronizeStartup } from "../autostart";
 import { sessionInvalidReason } from "../sessionValidity";
 import packageMetadata from "../../package.json";
 import { db, type FocusDatabase } from "../db";
-import { loadSettings, normalizeLegacyRevealShortcut, SETTINGS_KEYS, type FocusSettings } from "../settings";
+import {
+  loadSettings,
+  encodeSetting,
+  normalizeLegacyRevealShortcut,
+  SETTINGS_KEYS,
+  type FocusSettings,
+} from "../settings";
 import { validateData, COLOR_PALETTE, focusIntervals, type NormalizedData, type StoredSession } from "../storage/model";
 import { readNormalized } from "../storage/snapshot";
 import { validateDatabase } from "../storage/validation";
@@ -32,7 +39,11 @@ export async function createBackup(database: FocusDatabase = db): Promise<FocusB
   );
   for (const key of Object.keys(SETTINGS_KEYS) as (keyof FocusSettings)[])
     if (!settings.has(SETTINGS_KEYS[key]))
-      settings.set(SETTINGS_KEYS[key], { key: SETTINGS_KEYS[key], value: String(current[key]) });
+      settings.set(SETTINGS_KEYS[key], { key: SETTINGS_KEYS[key], value: encodeSetting(key, current[key]) });
+  settings.set(SETTINGS_KEYS.goalScope, {
+    key: SETTINGS_KEYS.goalScope,
+    value: encodeSetting("goalScope", current.goalScope),
+  });
   data.settings = [...settings.values()];
   validateData(data);
   return logicalBackup({
@@ -67,10 +78,29 @@ export function sessionView(row: StoredSession, subject: Subject, year: Academic
 const emptyData = (): NormalizedData => ({ academicYears: [], subjects: [], sessions: [], settings: [] });
 function prepareBackup(backup: NormalizedBackup) {
   const unique = uniqueImportSessions(backup.data, backup.unidentifiedSessionIds);
+  const activeYears = new Set(unique.data.academicYears.filter((year) => !year.archived).map((year) => year.id));
+  const eligible = unique.data.subjects
+    .filter((subject) => !subject.archived && activeYears.has(subject.academicYearId))
+    .map((subject) => ({ id: String(subject.id), academicYearId: String(subject.academicYearId) }));
+  unique.data.settings = unique.data.settings.map((row) => {
+    if (row.key !== SETTINGS_KEYS.goalScope) return row;
+    try {
+      return { ...row, value: JSON.stringify(normalizeGoalScope(JSON.parse(row.value), eligible)) };
+    } catch {
+      return row;
+    }
+  });
   validateData(unique.data);
   return { ...backup, data: unique.data, repeatedSessions: (backup.repeatedSessions ?? 0) + unique.repeatedSessions };
 }
 function remapSetting(key: string, value: string, years: Map<number, string>, subjects: Map<number, string>) {
+  if (key === SETTINGS_KEYS.goalScope) {
+    try {
+      return JSON.stringify(remapGoalScope(normalizeGoalScope(JSON.parse(value)), years, subjects));
+    } catch {
+      return JSON.stringify(normalizeGoalScope(undefined));
+    }
+  }
   if (["defaultSubjectId", "lastSubjectId"].includes(key)) return value ? (subjects.get(Number(value)) ?? "") : "";
   if (key === "currentAcademicYearId") return value ? (years.get(Number(value)) ?? "") : "";
   return key === SETTINGS_KEYS.popoutRevealShortcut ? normalizeLegacyRevealShortcut(value) : value;
@@ -227,6 +257,7 @@ export async function restoreBackup(
         originalStartup.value === importedStartup.value ? summary.duplicatesSkipped++ : summary.conflicts++;
       if ((await database.settings.get(SETTINGS_KEYS.launchAtStartup))?.value !== String(verified))
         await database.settings.put({ key: SETTINGS_KEYS.launchAtStartup, value: String(verified) });
+      await database.settings.recoverGoalScope();
       await validateDatabase(database);
     }),
   );

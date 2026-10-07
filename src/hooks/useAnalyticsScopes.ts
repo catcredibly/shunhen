@@ -12,6 +12,7 @@ export function useAnalyticsScopes(
   today: number,
   custom?: Period,
   year?: AcademicYear,
+  scopedGoals?: FocusSession[],
 ) {
   const history = useMemo(
     () =>
@@ -26,14 +27,14 @@ export function useAnalyticsScopes(
       ),
     [sessions, yearIds, subjectIds, ignoreFilters],
   );
-  const goalHistory = sessions;
+  const goalHistory = scopedGoals ?? sessions;
   const period = useMemo(
     () => analyticsPeriod(range, history, today, custom, year),
     [range, history, today, custom?.start, custom?.end, year],
   );
   const goalPeriod = useMemo(
-    () => analyticsPeriod(range, goalHistory, today, custom),
-    [range, goalHistory, today, custom?.start, custom?.end],
+    () => analyticsPeriod(range, sessions, today, custom),
+    [range, sessions, today, custom?.start, custom?.end],
   );
   const filtered = useMemo(() => filterSessions(history, period), [history, period.start, period.end]);
   return { history, goalHistory, period, goalPeriod, filtered };

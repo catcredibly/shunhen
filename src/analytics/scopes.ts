@@ -1,8 +1,10 @@
-import type { AcademicYear, FocusSession } from "../types";
+import { goalScopeSessions } from "../goals";
+import type { LinkedScope } from "../linkedScope";
+import type { AcademicYear, Subject, FocusSession } from "../types";
 import { filterSessions, type AnalyticsFilters } from "./analytics";
 import { analyticsPeriod, type AnalyticsRange, type Period } from "./periods";
 
-/** Goals share the selected time range, but never the selected year or subject. */
+/** Persistent Goal scope shares the time range, never temporary page filters. */
 export function analyticsScopes(
   sessions: FocusSession[],
   filters: Pick<AnalyticsFilters, "academicYearId" | "subjectId" | "academicYearIds" | "subjectIds">,
@@ -10,15 +12,17 @@ export function analyticsScopes(
   now: number,
   customRange?: Period,
   year?: AcademicYear,
+  goals?: { years: AcademicYear[]; subjects: Subject[]; scope: LinkedScope },
 ) {
   const history = filterSessions(sessions, filters);
   const period = analyticsPeriod(range, history, now, customRange, year);
-  const goalHistory = filterSessions(sessions);
+  const all = filterSessions(sessions);
+  const goalHistory = goals ? goalScopeSessions(all, goals.years, goals.subjects, goals.scope) : all;
   return {
     history,
     period,
     filtered: filterSessions(history, period),
     goalHistory,
-    goalPeriod: analyticsPeriod(range, goalHistory, now, customRange),
+    goalPeriod: analyticsPeriod(range, all, now, customRange),
   };
 }

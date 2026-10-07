@@ -338,3 +338,14 @@ it("migrates shortcut enablement without replacing cleared or custom keys", asyn
     popoutRevealTimeoutSeconds: 0,
   });
 });
+
+it("both opacity settings preserve 0, intermediate values, and 100", async () => {
+  const testDb = database();
+  for (const value of [0, 45, 100]) {
+    await saveSetting("popoutTransparency", value, testDb);
+    await saveSetting("popoutBorderOpacity", value, testDb);
+    const settings = await loadSettings(testDb, false);
+    expect(settings.popoutTransparency).toBe(value);
+    expect(settings.popoutBorderOpacity).toBe(value);
+  }
+});

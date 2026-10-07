@@ -1,5 +1,11 @@
 import type { AcademicYear, Subject, FocusSession, AppSetting } from "../types";
 import type { FocusDatabase } from "../db";
+import {
+  includeAutomaticGoalYear,
+  includeAutomaticGoalSubject,
+  normalizeGoalScope,
+  recoverGoalScope,
+} from "../goalScope";
 import { newSourceIdentity, requireSourceIdentity } from "./identity";
 import { noteMetrics } from "../notes";
 import { COLOR_PALETTE, colorId, normalizeTiming, validateTiming, type StoredSession } from "./model";
@@ -40,6 +46,7 @@ export abstract class Repository<T extends { id?: string; key?: string }> {
       );
       if (this.table === "subjects" || this.table === "academic_years")
         await database.settings.clearMissingSubjectReferences();
+      if (this.table === "subjects" || this.table === "academic_years") await database.settings.recoverGoalScope();
     });
   }
   async clear() {
@@ -88,13 +95,29 @@ export class AcademicYearRepository extends Repository<AcademicYear> {
     });
   }
   async put(row: AcademicYear) {
-    return this.database.access(async (connection) => {
+    return this.database.transaction("rw", async (database) => {
+      const previous = row.id ? await database.academicYears.get(row.id) : undefined;
       const id = row.id ? rowId(row.id) : null;
-      const result = await connection.execute(
+      const result = await database.connection.execute(
         "INSERT INTO academic_years(id,name,start_date,end_date,archived) VALUES(?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET name=excluded.name,start_date=excluded.start_date,end_date=excluded.end_date,archived=excluded.archived",
         [id, row.name, row.startDate || null, row.endDate || null, row.archived],
       );
       row.id = String(id ?? result.id);
+      if (!row.archived && (!previous || previous.archived)) {
+        const setting = await database.settings.get("goalScope");
+        if (setting) {
+          let scope;
+          try {
+            scope = normalizeGoalScope(JSON.parse(setting.value));
+          } catch {
+            scope = normalizeGoalScope(undefined);
+          }
+          const next = includeAutomaticGoalYear(scope, row.id, await database.subjects.toArray());
+          const value = JSON.stringify(next);
+          if (value !== setting.value) await database.settings.put({ key: "goalScope", value });
+        }
+      }
+      await database.settings.recoverGoalScope();
       return row.id;
     });
   }
@@ -115,13 +138,28 @@ export class SubjectRepository extends Repository<Subject> {
     );
   }
   async put(row: Subject) {
-    return this.database.access(async (connection) => {
+    return this.database.transaction("rw", async (database) => {
+      const previous = row.id ? await database.subjects.get(row.id) : undefined;
       const id = row.id ? rowId(row.id) : null;
-      const result = await connection.execute(
+      const result = await database.connection.execute(
         "INSERT INTO subjects(id,academic_year_id,name,color_id,archived) VALUES(?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET academic_year_id=excluded.academic_year_id,name=excluded.name,color_id=excluded.color_id,archived=excluded.archived",
         [id, rowId(row.academicYearId), row.name, colorId(row.color), row.archived],
       );
       row.id = String(id ?? result.id);
+      if (!row.archived && (!previous || previous.archived)) {
+        const setting = await database.settings.get("goalScope");
+        if (setting) {
+          let scope;
+          try {
+            scope = normalizeGoalScope(JSON.parse(setting.value));
+          } catch {
+            scope = normalizeGoalScope(undefined);
+          }
+          const next = includeAutomaticGoalSubject(scope, row);
+          if (next !== scope) await database.settings.put({ key: "goalScope", value: JSON.stringify(next) });
+        }
+      }
+      await database.settings.recoverGoalScope();
       return row.id;
     });
   }
@@ -134,6 +172,22 @@ export class SettingsRepository extends Repository<AppSetting> {
     return this.database.access((connection) =>
       connection.select<AppSetting>("SELECT key,value FROM settings ORDER BY key"),
     );
+  }
+  async recoverGoalScope() {
+    const setting = await this.get("goalScope");
+    if (!setting) return;
+    let scope;
+    try {
+      scope = normalizeGoalScope(JSON.parse(setting.value));
+    } catch {
+      return;
+    }
+    const next = recoverGoalScope(
+      scope,
+      await this.database.academicYears.toArray(),
+      await this.database.subjects.toArray(),
+    );
+    if (next !== scope) await this.put({ key: "goalScope", value: JSON.stringify(next) });
   }
   async clearMissingSubjectReferences() {
     const connection = this.database.connection;

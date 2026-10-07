@@ -1,12 +1,8 @@
 import { readHistorySnapshot, readYearsAlphabetically, readSubjectsAlphabetically } from "../storage/queries";
+import { LinkedScopeSelectors } from "./LinkedScopeSelectors";
+import { ALL_SCOPE, subjectSelection, type LinkedScope } from "../linkedScope";
 import { FilterSelect } from "./FilterSelect";
-import {
-  academicYearOptions,
-  orderedAcademicYears,
-  alphabetical,
-  subjectOptions,
-  pruneSubjectSelection,
-} from "../selectorOptions";
+import { academicYearOptions, orderedAcademicYears, alphabetical, subjectOptions } from "../selectorOptions";
 import { HistoryLoading } from "./PageSkeletons";
 import { inHistoryScope, historyStatusAfterScope, matchesHistoryStatus } from "../historyFilters";
 import { sessionInvalidReason, invalidReasonText } from "../sessionValidity";
@@ -995,8 +991,9 @@ export function HistoryPage({ initialInvalid = false }: { initialInvalid?: boole
     managementViewState.historyStatus = value;
     setStatusState(value);
   };
-  const [yearIds, setYearIds] = useState<string[]>([]);
-  const [subjectIds, setSubjectIds] = useState<string[]>([]);
+  const [scope, setScope] = useState<LinkedScope>(ALL_SCOPE);
+  const yearIds = scope.yearIds;
+  const subjectIds = useMemo(() => subjectSelection(scope, subjects), [scope, loadedSubjects]);
   const [page, setPage] = useState(0);
   const [editing, setEditing] = useState<FocusSession | null | undefined>();
   const [deleting, setDeleting] = useState<FocusSession>();
@@ -1048,13 +1045,6 @@ export function HistoryPage({ initialInvalid = false }: { initialInvalid?: boole
   const invalidCount = sessions.filter(
     (session) => inHistoryScope(session, { yearIds, subjectIds }) && invalid.get(session.id),
   ).length;
-  useEffect(() => {
-    if (!loadedSubjects) return;
-    setSubjectIds((selection) => {
-      const next = pruneSubjectSelection(selection, subjects, yearIds);
-      return next.length === selection.length ? selection : next;
-    });
-  }, [yearIds, loadedSubjects]);
   useEffect(() => {
     if (loadedYears && loadedSessions && historyStatusAfterScope(status, invalidCount) !== status) {
       setStatus("all");
@@ -1126,34 +1116,15 @@ export function HistoryPage({ initialInvalid = false }: { initialInvalid?: boole
         }
       />
       <div className="filter-bar history-filters">
-        <label>
-          {t("Academic Year")}
-          <FilterSelect
-            multiple
-            entity="academicYear"
-            label={t("Academic Year")}
-            value={yearIds}
-            onChange={(ids) => {
-              setYearIds(ids);
-              setPage(0);
-            }}
-            options={[{ value: "", label: t("All Academic Years") }, ...academicYearOptions(years)]}
-          />
-        </label>
-        <label>
-          {t("Subject")}
-          <FilterSelect
-            multiple
-            entity="subject"
-            label={t("Subject")}
-            value={subjectIds}
-            onChange={(ids) => {
-              setSubjectIds(ids);
-              setPage(0);
-            }}
-            options={[{ value: "", label: t("All Subjects") }, ...subjectOptions(years, subjects, yearIds)]}
-          />
-        </label>
+        <LinkedScopeSelectors
+          years={years}
+          subjects={subjects}
+          value={scope}
+          onChange={(next) => {
+            setScope(next);
+            setPage(0);
+          }}
+        />
         <label>
           {t("Status")}
           <select

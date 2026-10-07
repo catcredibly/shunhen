@@ -1,6 +1,12 @@
 import en from "./en";
 
 const zhTW: Record<keyof typeof en, string> = {
+  "Goal scope": "目標範圍",
+  "Choose which Academic Years and Subjects contribute to your goals.": "選擇計入目標的學年和科目。",
+  "No active Academic Years available.": "沒有可用的活躍學年。",
+  "No active Subjects available.": "沒有可用的活躍科目。",
+  "Academic Year and Subject filters do not affect goals. Goal scope can be configured in Settings.":
+    "學年和科目篩選不會影響目標。可在設定中配置目標範圍。",
   "Error details": "錯誤詳情",
   "Include these details when reporting this problem.": "回報此問題時，請附上這些詳情。",
   "Unable to open study data": "無法開啟學習資料",
@@ -21,7 +27,6 @@ const zhTW: Record<keyof typeof en, string> = {
   "No active Academic Years": "沒有未封存的學年",
   "Create or unarchive a Subject in a non-archived Academic Year to continue.":
     "請在未封存的學年中建立科目或取消科目封存以繼續。",
-  "Not affected by Subject or Academic Year filters.": "不受科目或學年篩選條件影響。",
   "{{count}} active days": "{{count}} 個學習日",
   "An active day is a day with recorded Focus Time.": "學習日是指記錄了專注時長的日期。",
   "{{active}} of {{eligible}} eligible days": "{{eligible}} 個計入天數中有 {{active}} 個學習日",

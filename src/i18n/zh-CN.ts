@@ -1,6 +1,12 @@
 import en from "./en";
 
 const zhCN: Record<keyof typeof en, string> = {
+  "Goal scope": "目标范围",
+  "Choose which Academic Years and Subjects contribute to your goals.": "选择计入目标的学年和科目。",
+  "No active Academic Years available.": "没有可用的活跃学年。",
+  "No active Subjects available.": "没有可用的活跃科目。",
+  "Academic Year and Subject filters do not affect goals. Goal scope can be configured in Settings.":
+    "学年和科目筛选不会影响目标。可在设置中配置目标范围。",
   "Error details": "错误详情",
   "Include these details when reporting this problem.": "报告此问题时，请附上这些详情。",
   "Unable to open study data": "无法打开学习数据",
@@ -21,7 +27,6 @@ const zhCN: Record<keyof typeof en, string> = {
   "No active Academic Years": "没有未归档的学年",
   "Create or unarchive a Subject in a non-archived Academic Year to continue.":
     "请在未归档的学年中创建科目或取消科目归档以继续。",
-  "Not affected by Subject or Academic Year filters.": "不受科目或学年筛选条件影响。",
   "{{count}} active days": "{{count}} 个学习日",
   "An active day is a day with recorded Focus Time.": "学习日是指记录了专注时长的日期。",
   "{{active}} of {{eligible}} eligible days": "{{eligible}} 个计入天数中有 {{active}} 个学习日",

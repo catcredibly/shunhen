@@ -5516,7 +5516,7 @@ html[data-utility-window] #root {
   font-size: calc(var(--selector-font-size, 14px) - 1px);
 }
 
-/* Match only the Settings Default Subject trigger to its neighboring dropdowns. */
+/* Shared Settings selector trigger, including Default Subject and Goal scope. */
 .setting-control .settings-default-subject {
   width: 220px;
   height: var(--ui-control-height, 40px);
@@ -5717,6 +5717,17 @@ html[data-utility-window] #root {
   user-select: text;
 }
 
+.analytics-filters > label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 0 1 238px;
+  min-width: 0;
+}
+.analytics-filters > label > .analytics-filter-select {
+  width: 100%;
+}
+
 .subject-share-title {
   display: inline-flex;
   align-items: center;
@@ -5725,4 +5736,9 @@ html[data-utility-window] #root {
 .subject-share-info {
   display: block;
   color: var(--text-muted);
+}
+
+.setting-control .settings-default-subject:focus-visible {
+  outline: 2px solid var(--accent, #ff922b);
+  outline-offset: 1px;
 }

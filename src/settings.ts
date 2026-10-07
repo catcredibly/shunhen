@@ -1,3 +1,6 @@
+import { normalizeGoalScope, recoverGoalScope, type GoalScope } from "./goalScope";
+import { selectableSubjects } from "./selectorOptions";
+import { ALL_SCOPE } from "./linkedScope";
 import { synchronizeStartup } from "./autostart";
 import { defaultEdgeForCorner } from "./popoutPlacement";
 import { db, type FocusDatabase } from "./db";
@@ -41,6 +44,7 @@ export type FocusSettings = {
   weekdayStyle: WeekdayStyle;
   showClock: boolean;
   clockFormat: ClockFormat;
+  goalScope: GoalScope;
   dailyGoalEnabled: boolean;
   dailyGoalSeconds: number;
   weeklyGoalEnabled: boolean;
@@ -106,6 +110,7 @@ export const SETTINGS_KEYS: { [K in keyof FocusSettings]: string } = {
   weekdayStyle: "weekdayStyle",
   showClock: "showClock",
   clockFormat: "clockFormat",
+  goalScope: "goalScope",
   dailyGoalEnabled: "dailyGoalEnabled",
   dailyGoalSeconds: "dailyGoalSeconds",
   weeklyGoalEnabled: "weeklyGoalEnabled",
@@ -171,6 +176,7 @@ export const DEFAULT_SETTINGS: FocusSettings = {
   weekdayStyle: "short",
   showClock: true,
   clockFormat: "system",
+  goalScope: ALL_SCOPE,
   dailyGoalEnabled: true,
   dailyGoalSeconds: 2 * 60 * 60,
   weeklyGoalEnabled: true,
@@ -293,6 +299,13 @@ function decode<K extends keyof FocusSettings>(key: K, raw: string | undefined):
       raw?.trim() && Number.isFinite(Number(raw)) ? Math.min(100, Math.max(0, Number(raw))) : 100
     ) as FocusSettings[K];
   if (raw === undefined) return DEFAULT_SETTINGS[key];
+  if (key === "goalScope") {
+    try {
+      return normalizeGoalScope(JSON.parse(raw)) as FocusSettings[K];
+    } catch {
+      return DEFAULT_SETTINGS[key];
+    }
+  }
   if (key === "dailyGoalSeconds" || key === "weeklyGoalSeconds")
     return normalizeGoalSeconds(
       raw,
@@ -365,6 +378,7 @@ export async function reconcileDefaultSubject(database: FocusDatabase = db) {
 
 export async function loadSettings(database: FocusDatabase = db, migrate = true): Promise<FocusSettings> {
   if (migrate) await reconcileDefaultSubject(database);
+  if (migrate) await database.transaction("rw", (database) => database.settings.recoverGoalScope());
   if (migrate)
     await database.transaction("rw", async (database) => {
       const row = await database.settings.get(SETTINGS_KEYS.popoutRevealShortcut);
@@ -390,11 +404,34 @@ export async function loadSettings(database: FocusDatabase = db, migrate = true)
       decode(key, rows.get(SETTINGS_KEYS[key])),
     ]),
   ) as FocusSettings;
+  const rawGoalScope = rows.get(SETTINGS_KEYS.goalScope);
+  if (rawGoalScope) {
+    try {
+      const source = JSON.parse(rawGoalScope);
+      if (source.allSubjectYearIds || source.knownYearIds)
+        settings.goalScope = normalizeGoalScope(
+          source,
+          selectableSubjects(await database.academicYears.toArray(), await database.subjects.toArray()),
+        );
+    } catch {
+      /* Missing or malformed scope already falls back to All. */
+    }
+  }
+  if (settings.goalScope.yearIds.length || settings.goalScope.subjectIds.length)
+    settings.goalScope = recoverGoalScope(
+      settings.goalScope,
+      await database.academicYears.toArray(),
+      await database.subjects.toArray(),
+    );
   settings.popoutRevealShortcut = normalizeLegacyRevealShortcut(settings.popoutRevealShortcut);
   if (!rows.has(SETTINGS_KEYS.popoutShortcutEnabled))
     settings.popoutShortcutEnabled = settings.popoutRevealShortcut !== "";
   settings.popoutAutoHideEdge = defaultEdgeForCorner(settings.popoutDockCorner, settings.popoutAutoHideEdge);
   return settings;
+}
+
+export function encodeSetting<K extends keyof FocusSettings>(key: K, value: FocusSettings[K]): string {
+  return key === "goalScope" ? JSON.stringify(normalizeGoalScope(value)) : String(value);
 }
 
 export async function saveSetting<K extends keyof FocusSettings>(
@@ -408,12 +445,20 @@ export async function saveSetting<K extends keyof FocusSettings>(
       : key === "dailyGoalSeconds" || key === "weeklyGoalSeconds"
         ? normalizeGoalSeconds(value, Number(DEFAULT_SETTINGS[key]), GOAL_MAX_HOURS[key as keyof typeof GOAL_MAX_HOURS])
         : value;
+  if (key === "goalScope") {
+    await database.transaction("rw", async (database) => {
+      await database.settings.put({ key: SETTINGS_KEYS.goalScope, value: encodeSetting(key, value) });
+      await database.settings.recoverGoalScope();
+    });
+    return;
+  }
   if (key === "popoutRevealShortcut") {
     await database.settings.bulkPut([
       { key: SETTINGS_KEYS[key], value: String(normalized) },
       { key: SETTINGS_KEYS.popoutRevealShortcutIntent, value: normalized === "" ? "cleared" : "custom" },
     ]);
-  } else await database.settings.put({ key: SETTINGS_KEYS[key], value: String(normalized) });
+  } else
+    await database.settings.put({ key: SETTINGS_KEYS[key], value: encodeSetting(key, normalized as FocusSettings[K]) });
 }
 
 export async function restoreSettingDefaults(keys: (keyof FocusSettings)[], database: FocusDatabase = db) {

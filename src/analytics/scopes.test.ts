@@ -110,12 +110,12 @@ describe("goal filter independence", () => {
   });
 
   it("provides the exact tooltip text in all four languages", () => {
-    const key = "Not affected by Subject or Academic Year filters.";
+    const key = "Academic Year and Subject filters do not affect goals. Goal scope can be configured in Settings.";
     expect([en[key], zhCN[key], zhTW[key], ja[key]]).toEqual([
       key,
-      "不受科目或学年筛选条件影响。",
-      "不受科目或學年篩選條件影響。",
-      "科目または学年のフィルターの影響を受けません。",
+      "学年和科目筛选不会影响目标。可在设置中配置目标范围。",
+      "學年和科目篩選不會影響目標。可在設定中配置目標範圍。",
+      "学年と科目のフィルターは目標には影響しません。目標範囲は設定で変更できます。",
     ]);
   });
 });

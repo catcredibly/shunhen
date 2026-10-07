@@ -1,4 +1,11 @@
 const en = {
+  "Goal scope": "Goal scope",
+  "Choose which Academic Years and Subjects contribute to your goals.":
+    "Choose which Academic Years and Subjects contribute to your goals.",
+  "No active Academic Years available.": "No active Academic Years available.",
+  "No active Subjects available.": "No active Subjects available.",
+  "Academic Year and Subject filters do not affect goals. Goal scope can be configured in Settings.":
+    "Academic Year and Subject filters do not affect goals. Goal scope can be configured in Settings.",
   "Error details": "Error details",
   "Include these details when reporting this problem.": "Include these details when reporting this problem.",
   "Unable to open study data": "Unable to open study data",
@@ -19,7 +26,6 @@ const en = {
   "No active Academic Years": "No active Academic Years",
   "Create or unarchive a Subject in a non-archived Academic Year to continue.":
     "Create or unarchive a Subject in a non-archived Academic Year to continue.",
-  "Not affected by Subject or Academic Year filters.": "Not affected by Subject or Academic Year filters.",
   "{{count}} active days": "{{count}} active days",
   "An active day is a day with recorded Focus Time.": "An active day is a day with recorded Focus Time.",
   "{{active}} of {{eligible}} eligible days": "{{active}} of {{eligible}} eligible days",

@@ -1,5 +1,26 @@
 import { allocatedFocusInRange } from "./sessionAllocation";
-import type { FocusSession } from "./types";
+import { matchesGoalScope, recoverGoalScope, type GoalScope } from "./goalScope";
+import { ALL_SCOPE } from "./linkedScope";
+import { selectableSubjects } from "./selectorOptions";
+import type { AcademicYear, Subject, FocusSession } from "./types";
+
+/** One eligibility path for goal progress, achievement and completion notifications. */
+export function goalScopeSessions(
+  sessions: FocusSession[],
+  years: AcademicYear[],
+  subjects: Subject[],
+  scope: GoalScope = ALL_SCOPE,
+) {
+  scope = recoverGoalScope(scope, years, subjects);
+  const eligible = new Map(
+    selectableSubjects(years, subjects)
+      .filter((subject) => matchesGoalScope(scope, subject))
+      .map((subject) => [subject.id, subject]),
+  );
+  return sessions.filter(
+    (session) => !session.archived && session.focusedDurationSeconds > 0 && eligible.has(session.subjectId),
+  );
+}
 
 export function localDayBounds(now = Date.now()) {
   const date = new Date(now);

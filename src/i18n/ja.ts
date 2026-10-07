@@ -1,6 +1,12 @@
 import en from "./en";
 
 const ja: Record<keyof typeof en, string> = {
+  "Goal scope": "目標範囲",
+  "Choose which Academic Years and Subjects contribute to your goals.": "目標に含める学年と科目を選択します。",
+  "No active Academic Years available.": "利用可能なアクティブな学年がありません。",
+  "No active Subjects available.": "利用可能なアクティブな科目がありません。",
+  "Academic Year and Subject filters do not affect goals. Goal scope can be configured in Settings.":
+    "学年と科目のフィルターは目標には影響しません。目標範囲は設定で変更できます。",
   "Error details": "エラーの詳細",
   "Include these details when reporting this problem.": "この問題を報告する際は、この詳細を添えてください。",
   "Unable to open study data": "学習データを開けません",
@@ -21,7 +27,6 @@ const ja: Record<keyof typeof en, string> = {
   "No active Academic Years": "有効な学年度がありません",
   "Create or unarchive a Subject in a non-archived Academic Year to continue.":
     "続けるには、アーカイブされていない学年度で科目を作成するか、科目のアーカイブを解除してください。",
-  "Not affected by Subject or Academic Year filters.": "科目または学年のフィルターの影響を受けません。",
   "{{count}} active days": "学習日数：{{count}} 日",
   "An active day is a day with recorded Focus Time.": "学習日とは、集中時間が記録された日です。",
   "{{active}} of {{eligible}} eligible days": "対象日数 {{eligible}} 日のうち {{active}} 日",

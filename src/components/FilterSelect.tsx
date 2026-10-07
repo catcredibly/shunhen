@@ -14,6 +14,10 @@ type FilterSelectProps = {
   name?: string;
   autoFocus?: boolean;
   hideMultiSelect?: boolean;
+  forceMultiSelect?: boolean;
+  onMultiSelectChange?: (multiple: boolean) => void;
+  preventEmptySelection?: boolean;
+  allAsParent?: boolean;
 } & (
   | { multiple: true; value: string[]; onChange: (value: string[]) => void }
   | { multiple?: false; value: string; onChange: (value: string) => void }
@@ -29,24 +33,32 @@ export function FilterSelect(props: FilterSelectProps) {
   const list = useRef<HTMLDivElement>(null);
   const search = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState(false);
-  const [multiSelect, setMultiSelect] = useState(Boolean(props.multiple && props.value.length > 1));
+  const [multiSelect, setMultiSelect] = useState(
+    Boolean(props.forceMultiSelect || (props.multiple && props.value.length > 1)),
+  );
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
   const [position, setPosition] = useState({ left: 0, top: 0, width: 240, maxHeight: 360 });
   const selectedValues = props.multiple ? props.value : value ? [value as string] : [];
+  const parentAll = Boolean(props.multiple && multiSelect && props.allAsParent);
+  const semanticAll = props.multiple && props.value.length === 0;
+  const availableValues = options.filter((option) => option.value).map((option) => option.value);
+  const includedValues = parentAll && semanticAll ? availableValues : selectedValues;
   const selectedOptions = options.filter((option) => option.value && selectedValues.includes(option.value));
   const selectedNames = selectedOptions.map((option) => option.label).join(", ");
   const selected =
-    selectedOptions.length > 2
-      ? t(entity === "academicYear" ? "{{count}} Academic Years" : "{{count}} Subjects", {
-          count: selectedOptions.length,
-        })
-      : selectedNames || options.find((option) => !option.value)?.label || label;
+    parentAll && semanticAll
+      ? options.find((option) => !option.value)?.label || label
+      : selectedOptions.length > 2
+        ? t(entity === "academicYear" ? "{{count}} Academic Years" : "{{count}} Subjects", {
+            count: selectedOptions.length,
+          })
+        : selectedNames || options.find((option) => !option.value)?.label || label;
   const visibleOptions = searchSelectorOptions(options, query);
   const selectedIndex = Math.max(
     0,
     visibleOptions.findIndex((option) =>
-      option.value ? selectedValues.includes(option.value) : !selectedValues.length,
+      option.value ? includedValues.includes(option.value) : !selectedValues.length,
     ),
   );
   const searchLabel = t(entity === "academicYear" ? "Search Academic Years..." : "Search Subjects...");
@@ -58,11 +70,29 @@ export function FilterSelect(props: FilterSelectProps) {
     if (!props.multiple) return;
     if (multiSelect && props.value.length > 1) props.onChange([]);
     setMultiSelect(!multiSelect);
+    props.onMultiSelectChange?.(!multiSelect);
   };
   const choose = (index: number) => {
     const option = visibleOptions[index];
     if (!option) return;
-    if (props.multiple) {
+    if (
+      props.multiple &&
+      multiSelect &&
+      props.preventEmptySelection &&
+      option.value &&
+      selectedValues.includes(option.value) &&
+      availableValues.filter((id) => selectedValues.includes(id)).length === 1
+    )
+      return;
+    if (props.multiple && parentAll) {
+      const next = !option.value
+        ? []
+        : includedValues.includes(option.value)
+          ? includedValues.filter((id) => id !== option.value)
+          : [...includedValues, option.value];
+      if (option.value && !next.some((id) => availableValues.includes(id))) return;
+      props.onChange(next.length && availableValues.every((id) => next.includes(id)) ? [] : next);
+    } else if (props.multiple) {
       props.onChange(
         !option.value
           ? []
@@ -244,7 +274,8 @@ export function FilterSelect(props: FilterSelectProps) {
               }}
             >
               {visibleOptions.map((option, index) => {
-                const checked = option.value ? selectedValues.includes(option.value) : !selectedValues.length;
+                const checked = option.value ? includedValues.includes(option.value) : !selectedValues.length;
+                const indeterminate = parentAll && !option.value && !semanticAll;
                 return (
                   <Fragment key={option.value}>
                     {option.archived && !visibleOptions[index - 1]?.archived && (
@@ -267,12 +298,16 @@ export function FilterSelect(props: FilterSelectProps) {
                       id={`${listId}-${index}`}
                       role="option"
                       aria-selected={checked}
+                      aria-checked={parentAll ? (indeterminate ? "mixed" : checked) : undefined}
                       className={active === index ? "active" : ""}
                       onMouseMove={() => setActive(index)}
                       onClick={() => choose(index)}
                     >
                       {multiSelect && (
                         <input
+                          ref={(node) => {
+                            if (node) node.indeterminate = indeterminate;
+                          }}
                           className="selector-checkbox"
                           type="checkbox"
                           checked={checked}

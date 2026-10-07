@@ -1,5 +1,9 @@
+import { OpacitySetting } from "./OpacitySetting";
 import { Row, Toggle } from "./SettingsControls";
 import { updatePreview } from "../updatePreview";
+import { goalSubjectSelection, refineGoalSubjects } from "../goalScope";
+import { LinkedScopeSelectors } from "./LinkedScopeSelectors";
+import { selectableSubjects } from "../selectorOptions";
 import { subjectOptions } from "../selectorOptions";
 import { FilterSelect } from "./FilterSelect";
 import { resetPreferences } from "../resetPreferences";
@@ -606,8 +610,32 @@ function Timer({ settings, setSetting }: SettingsProps) {
           onChange={(value) => void setSetting("weeklyGoalSeconds", value)}
         />
       </Row>
+      <div className="settings-subheading settings-group-heading">
+        <strong>{t("Goal scope")}</strong>
+        <span>{t("Choose which Academic Years and Subjects contribute to your goals.")}</span>
+      </div>
+      <LinkedScopeSelectors
+        years={years.filter((year) => !year.archived)}
+        subjects={selectableSubjects(years, subjects)}
+        value={settings.goalScope}
+        selectedSubjectIds={goalSubjectSelection(settings.goalScope, selectableSubjects(years, subjects))}
+        onChange={(value, change) =>
+          void setSetting(
+            "goalScope",
+            change === "subject"
+              ? refineGoalSubjects(settings.goalScope, value, selectableSubjects(years, subjects))
+              : value,
+          )
+        }
+        requireNonEmptyScope
+        multiOnly
+        variant="settings"
+        emptyYears={t("No active Academic Years available.")}
+        emptySubjects={t("No active Subjects available.")}
+      />
       <RestoreSection
         keys={[
+          "goalScope",
           "timerDurationMode",
           "lastTimerDurationSeconds",
           "fixedTimerDurationSeconds",
@@ -971,28 +999,18 @@ function Popout({ settings, setSetting }: SettingsProps) {
           <option value="large">{t("Large")}</option>
         </select>
       </Row>
-      <Row label={t("Background opacity")} hint={`${settings.popoutTransparency}%`}>
-        <input
-          aria-label={t("Background opacity")}
-          type="range"
-          min="0"
-          max="100"
-          step="5"
-          value={settings.popoutTransparency}
-          onChange={(event) => void setSetting("popoutTransparency", Number(event.target.value))}
-        />
-      </Row>
-      <Row label={t("Border opacity")} hint={`${settings.popoutBorderOpacity}%`}>
-        <input
-          aria-label={t("Border opacity")}
-          type="range"
-          min="0"
-          max="100"
-          step="1"
-          value={settings.popoutBorderOpacity}
-          onChange={(event) => void setSetting("popoutBorderOpacity", Number(event.target.value))}
-        />
-      </Row>
+      <OpacitySetting
+        label={t("Background opacity")}
+        value={settings.popoutTransparency}
+        step={5}
+        onChange={(value) => setSetting("popoutTransparency", value)}
+      />
+      <OpacitySetting
+        label={t("Border opacity")}
+        value={settings.popoutBorderOpacity}
+        step={1}
+        onChange={(value) => setSetting("popoutBorderOpacity", value)}
+      />
       <Row label={t("Hide controls until hovered")}>
         <Toggle
           label={t("Hide controls until hovered")}
