@@ -1,4 +1,5 @@
 import { noteMetrics } from "../notes";
+import { popoutStopwatchState, scheduleStopwatchDisplay } from "../stopwatchPopout";
 import { useLiveQuery } from "./useLiveQuery";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { db } from "../db";
@@ -36,16 +37,21 @@ const TIMER_INITIALIZED_KEY = "focus.timerInitialized";
 
 export type TimerRecovery = "checking" | "running" | "relationship" | "save-failed" | null;
 
-export function useTimer() {
+export function useTimer({ wholeSecondStopwatch = false }: { wholeSecondStopwatch?: boolean } = {}) {
+  const displayState = useCallback(
+    (snapshot: TimerState) => (wholeSecondStopwatch ? popoutStopwatchState(snapshot) : stateAt(snapshot)),
+    [wholeSecondStopwatch],
+  );
   const isPopout = window.location.hash.includes("popout");
   const firstMainMount = !isPopout && sessionStorage.getItem(TIMER_INITIALIZED_KEY) !== "true";
   const initial = useRef(readStored());
-  const [state, setState] = useState<TimerState>(() => stateAt(initial.current));
+  const [state, setState] = useState<TimerState>(() => displayState(initial.current));
   const [recovery, setRecovery] = useState<TimerRecovery>(() =>
     firstMainMount && initial.current.running && !initial.current.paused ? "checking" : null,
   );
   const [saveError, setSaveError] = useState(false);
-  const stateRef = useRef(state);
+  // Actions, persistence, and recording always read the precise authoritative snapshot.
+  const stateRef = useRef(stateAt(initial.current));
   const channelRef = useRef<BroadcastChannel | null>(null);
   const completingRef = useRef(false);
   const noteTimerRef = useRef(0);
@@ -65,11 +71,11 @@ export function useTimer() {
     (next: TimerState, shouldPersist = true) => {
       if (shouldPersist) next = checkpointTimerState(next);
       stateRef.current = next;
-      setState(stateAt(next));
+      setState(displayState(next));
       if (shouldPersist) persist(next);
       channelRef.current?.postMessage(next);
     },
-    [persist],
+    [persist, displayState],
   );
 
   useEffect(() => {
@@ -125,11 +131,11 @@ export function useTimer() {
     channel.onmessage = (event) => {
       const next = normalizeTimerState(event.data as TimerState);
       stateRef.current = next;
-      setState(stateAt(next));
+      setState(displayState(next));
     };
     channelRef.current = channel;
     return () => channel.close();
-  }, []);
+  }, [displayState]);
 
   useEffect(() => {
     if (!firstMainMount || startupHandledRef.current) return;
@@ -173,7 +179,10 @@ export function useTimer() {
     if (!current.running || current.finished) return;
     if (recovery || current.paused) return;
     if (current.mode === "stopwatch") {
-      setState(stateAt(current));
+      const next = displayState(current);
+      setState((previous) =>
+        wholeSecondStopwatch && previous.remainingSeconds === next.remainingSeconds ? previous : next,
+      );
       return;
     }
     if (!current.targetEnd) return;
@@ -196,20 +205,38 @@ export function useTimer() {
     void effects.finally(() => {
       completingRef.current = false;
     });
-  }, [commit, isPopout, recovery]);
+  }, [commit, isPopout, recovery, displayState, wholeSecondStopwatch]);
 
+  // Only the Stopwatch popout opts into boundary scheduling; the main display and Timer keep their cadence.
+  const secondDisplay = wholeSecondStopwatch && state.mode === "stopwatch";
+  const displayInterval = secondDisplay ? state.runningSince : null;
+  const displayRunning = secondDisplay && state.running && !state.paused && !state.finished;
   useEffect(() => {
-    reconcile();
-    const id = window.setInterval(reconcile, 250);
-    const wake = () => reconcile();
+    let stop = () => {};
+    const refresh = () => {
+      stop();
+      if (secondDisplay) {
+        if (displayRunning && !recovery) stop = scheduleStopwatchDisplay(() => stateRef.current, reconcile);
+        else {
+          reconcile();
+          stop = () => {};
+        }
+      } else {
+        reconcile();
+        const id = window.setInterval(reconcile, 250);
+        stop = () => window.clearInterval(id);
+      }
+    };
+    refresh();
+    const wake = () => (secondDisplay ? refresh() : reconcile());
     window.addEventListener("focus", wake);
     document.addEventListener("visibilitychange", wake);
     return () => {
-      window.clearInterval(id);
+      stop();
       window.removeEventListener("focus", wake);
       document.removeEventListener("visibilitychange", wake);
     };
-  }, [reconcile]);
+  }, [reconcile, secondDisplay, displayRunning, displayInterval, recovery]);
 
   useEffect(() => {
     if (isPopout || recovery) return;
@@ -296,12 +323,12 @@ export function useTimer() {
     (note: string) => {
       const next = stateAt({ ...stateRef.current, note });
       stateRef.current = next;
-      setState(stateAt(next));
+      setState(displayState(next));
       channelRef.current?.postMessage(next);
       window.clearTimeout(noteTimerRef.current);
       noteTimerRef.current = window.setTimeout(() => persist(stateRef.current), 350);
     },
-    [persist],
+    [persist, displayState],
   );
 
   const continueRecovery = useCallback(() => {

@@ -36,7 +36,7 @@ function parts(total: number) {
 }
 
 export function PopoutTimer() {
-  const timer = useTimer();
+  const timer = useTimer({ wholeSecondStopwatch: true });
   const { t } = useTranslation();
   const { settings, loaded } = useSettings();
   const [menu, setMenu] = useState<"extend" | null>(null);
