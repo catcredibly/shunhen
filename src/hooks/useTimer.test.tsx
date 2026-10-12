@@ -119,9 +119,14 @@ it("retains fractional Stopwatch updates when the popout display option is disab
 
 it("retains the Timer countdown update cadence", async () => {
   const stored = JSON.parse(localStorage.getItem(ACTIVE_TIMER_STORAGE_KEY)!) as TimerState;
-  localStorage.setItem(ACTIVE_TIMER_STORAGE_KEY, JSON.stringify({
-    ...stored, mode: "timer", targetEnd: Date.now() + 1250,
-  }));
+  localStorage.setItem(
+    ACTIVE_TIMER_STORAGE_KEY,
+    JSON.stringify({
+      ...stored,
+      mode: "timer",
+      targetEnd: Date.now() + 1250,
+    }),
+  );
   await act(async () => root.render(<Display />));
   expect(host.textContent).toBe("2");
   await act(async () => vi.advanceTimersByTime(250));

@@ -8,7 +8,13 @@ let host: HTMLDivElement, root: Root;
 const originalWidth = window.innerWidth;
 function Layout() {
   const { hidden, collapsed, toggle } = useSidebarLayout();
-  return hidden ? <span>Hidden</span> : <button onClick={toggle} aria-expanded={!collapsed}>Menu</button>;
+  return hidden ? (
+    <span>Hidden</span>
+  ) : (
+    <button onClick={toggle} aria-expanded={!collapsed}>
+      Menu
+    </button>
+  );
 }
 function width(value: number) {
   Object.defineProperty(window, "innerWidth", { configurable: true, value });

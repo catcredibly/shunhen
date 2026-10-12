@@ -232,7 +232,7 @@ Create a GitHub release using the same `RELEASE_NOTES.md`.
 
 If using GitHub CLI:
 
-```powershell
+````powershell
 gh release create "v$version" `
   "$dir\$installer" `
   "$dir\$installer.sig" `
@@ -247,7 +247,7 @@ This creates the release and uploads:
 Shunhen_<version>_x64-setup.exe
 Shunhen_<version>_x64-setup.exe.sig
 latest.json
-```
+````
 
 GitHub automatically provides the source `.zip` and `.tar.gz` archives.
 
