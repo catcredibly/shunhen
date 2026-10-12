@@ -22,6 +22,7 @@ import i18n from "./i18n";
 import { useTranslation } from "react-i18next";
 import { hasActiveTimer } from "./settings";
 import { usePopoutLifecycle } from "./hooks/usePopoutLifecycle";
+import { useSidebarLayout } from "./hooks/useSidebarLayout";
 
 const closeMainWindow = () => closeAfterCheckpoint(() => invoke("close_main_window")).catch(console.error);
 
@@ -30,16 +31,7 @@ const AnalyticsPage = lazy(() =>
 );
 
 export default function App() {
-  const [manualCollapsed, setCollapsed] = useState(false);
-  const [viewportWidth, setViewportWidth] = useState(() => window.innerWidth);
-  useEffect(() => {
-    const resize = () => setViewportWidth(window.innerWidth);
-    window.addEventListener("resize", resize);
-    return () => window.removeEventListener("resize", resize);
-  }, []);
-  const sidebarHidden = viewportWidth <= 1200;
-  const sidebarForced = viewportWidth <= 1360;
-  const collapsed = sidebarForced || manualCollapsed;
+  const { hidden: sidebarHidden, collapsed, toggle: toggleSidebar } = useSidebarLayout();
   const [invalidHistory, setInvalidHistory] = useState(false);
   const [page, setPage] = useState(() =>
     import.meta.env.DEV && new URLSearchParams(window.location.search).get("analyticsDemo") === "1"
@@ -145,13 +137,13 @@ export default function App() {
   return (
     <TimerProvider>
       <div
-        className={`app-shell ${collapsed ? "app-shell--collapsed" : ""} ${sidebarHidden ? "app-shell--no-sidebar" : ""} ${sidebarForced ? "app-shell--responsive" : ""}`}
+        className={`app-shell ${collapsed ? "app-shell--collapsed" : ""} ${sidebarHidden ? "app-shell--no-sidebar" : ""}`}
         data-accent={settings.accentColour}
         data-theme={settings.theme}
         data-scale={settings.uiScale}
       >
         {!sidebarHidden && (
-          <Sidebar collapsed={collapsed} onToggle={() => setCollapsed((v) => !v)} active={page} onNavigate={setPage} />
+          <Sidebar collapsed={collapsed} onToggle={toggleSidebar} active={page} onNavigate={setPage} />
         )}
         <UpdatePrompt ready={loaded} />
         <ToastHost />

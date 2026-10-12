@@ -41,6 +41,8 @@ beforeEach(() => {
     },
   );
   window.location.hash = "#/popout";
+  // Flush jsdom's queued hashchange event before checking Stopwatch timers.
+  vi.advanceTimersByTime(0);
   localStorage.setItem(
     ACTIVE_TIMER_STORAGE_KEY,
     JSON.stringify({

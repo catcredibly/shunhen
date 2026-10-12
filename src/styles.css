@@ -5071,13 +5071,11 @@ html[data-utility-window] #root {
   background: transparent;
 }
 
-/* Responsive shell preserves the manual sidebar choice above the forced breakpoints. */
+/* Narrow windows preserve content space; visible sidebars always retain their manual toggle. */
 .app-shell.app-shell--no-sidebar {
   grid-template-columns: minmax(0, 1fr);
 }
-.app-shell--responsive .sidebar-toggle {
-  display: none;
-}
+
 .filter-archive-heading {
   color: var(--text-muted);
   font-size: 11px;
