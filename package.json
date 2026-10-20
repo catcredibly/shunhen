@@ -24,32 +24,32 @@
     "prebuild": "npm run version:check"
   },
   "dependencies": {
-    "@tauri-apps/api": "^2.12.3",
+    "@tauri-apps/api": "^2.12.4",
     "@tauri-apps/plugin-autostart": "^2.7.0",
-    "@tauri-apps/plugin-dialog": "^2.8.2",
-    "@tauri-apps/plugin-fs": "^2.7.0",
-    "@tauri-apps/plugin-notification": "^2.6.0",
+    "@tauri-apps/plugin-dialog": "^2.8.3",
+    "@tauri-apps/plugin-fs": "^2.7.1",
+    "@tauri-apps/plugin-notification": "^2.7.0",
     "@tauri-apps/plugin-process": "^2.4.0",
-    "@tauri-apps/plugin-updater": "^2.13.3",
-    "i18next": "^26.4.3",
-    "lucide-react": "^1.55.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-i18next": "^17.0.16",
+    "@tauri-apps/plugin-updater": "^2.14.0",
+    "i18next": "^26.4.7",
+    "lucide-react": "^1.59.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-i18next": "^17.0.20",
     "recharts": "^3.10.1"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.0",
-    "@tauri-apps/cli": "^2.12.2",
+    "@tauri-apps/cli": "^2.12.3",
     "@types/node": "^26.6.5",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^6.1.2",
-    "jsdom": "^30.1.2",
+    "jsdom": "^30.1.3",
     "prettier": "^3.9.10",
     "tailwindcss": "^4.0.0",
     "typescript": "~7.0.2",
     "vite": "^8.3.4",
-    "vitest": "^5.0.3"
+    "vitest": "^5.0.5"
   }
 }
