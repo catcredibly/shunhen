@@ -18,7 +18,7 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 # Native transaction arbitration across independently starting WebViews.
 tokio = { version = "1", features = ["sync"] }
-rusqlite = { version = "0.40.2", features = ["bundled"] }
+rusqlite = { version = "0.41.1", features = ["bundled"] }
 # The updater enables rustls-no-provider. Our diagnostic client also needs the
 # normal provider-enabled path before the updater has created any client.
 reqwest = { version = "0.13", default-features = false, features = ["rustls"] }
