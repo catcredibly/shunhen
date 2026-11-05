@@ -181,6 +181,12 @@ src-tauri/
   tauri.conf.json   Application and window configuration
 ```
 
+## Native dependency security
+
+The updater retains TLS, proxy support and signature verification, but disables its optional ZIP feature. Windows updates use direct signed installers; Linux uses direct signed AppImage/deb/rpm files. Legacy ZIP updates and compressed Linux AppImages are not supported.
+
+The Linux GTK 3 stack resolves GLib 0.18.5 through a local Cargo patch containing the upstream fix for RUSTSEC-2024-0429. See [the backport provenance and removal criteria](../src-tauri/vendor/README.md). The Linux build runs iterator regression tests with optimizations.
+
 ## Release notes and updater metadata
 
 GitHub Release notes and updater metadata use the same UTF-8 Markdown notes file.

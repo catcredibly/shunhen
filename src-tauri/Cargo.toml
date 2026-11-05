@@ -30,7 +30,8 @@ tauri-plugin-single-instance = "2"
 
 [target.'cfg(any(target_os = "macos", windows, target_os = "linux"))'.dependencies]
 tauri-plugin-autostart = "2"
-tauri-plugin-updater = "2"
+# Releases use signed installers and uncompressed AppImages, not legacy ZIP updates.
+tauri-plugin-updater = { version = "2", default-features = false, features = ["rustls-tls", "system-proxy"] }
 tauri-plugin-process = "2"
 tauri-plugin-global-shortcut = "2"
 
@@ -40,3 +41,7 @@ windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Graphic
 [target.'cfg(target_os = "linux")'.dependencies]
 # Tauri already uses GTK; access its actual backend and monitor-change signals.
 gtk = "0.18"
+
+[patch.crates-io]
+# GTK 3 requires GLib 0.18; retain its API with the upstream iterator safety fix.
+glib = { path = "vendor/glib" }

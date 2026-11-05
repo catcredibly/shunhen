@@ -49,6 +49,9 @@ jobs:
           cargo check --locked --all-targets --manifest-path src-tauri/Cargo.toml
           cargo test --locked --lib --manifest-path src-tauri/Cargo.toml
 
+      - name: Test GLib iterator security backport with optimizations
+        run: cargo test --locked --release --manifest-path src-tauri/Cargo.toml --test glib_variant_iter
+
       - name: Build Shunhen for Linux
         uses: tauri-apps/tauri-action@v1
         env:
