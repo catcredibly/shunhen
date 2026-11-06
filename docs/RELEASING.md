@@ -117,6 +117,12 @@ If you rebuild the installer for any reason, always use the newly generated `.si
 
 ---
 
+## Updater artifact compatibility
+
+The updater accepts signed direct Windows installers and Linux AppImage/deb/rpm files. Legacy ZIP updates and compressed Linux AppImages are disabled to remove the vulnerable ZIP dependency. Do not wrap updater artifacts in ZIP or tar.gz files. Keep the embedded public key and matching artifact signatures; signature verification remains enabled. macOS uses its existing tar-based updater path.
+
+Before publishing, test an update from the previous supported release to the new signed artifact on Windows and Linux. After installing the new build, test its next-update path with the same direct artifact formats.
+
 ## 4. Generate `latest.json`
 
 Still from the repository root:
