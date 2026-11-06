@@ -5,11 +5,16 @@ The original package checksum in Cargo.lock was
 `233daaf6e83ae6a12a52055f568f9d7cf4671dabb78ff9560ab6da230ce00ee5`.
 The original `.cargo_vcs_info.json` records its upstream revision.
 
-The only Rust source changes are the two-line upstream fix for
+The only runtime change is the two-line upstream fix for
 [RUSTSEC-2024-0429 / GHSA-wrw7-89jp-8q8g](https://rustsec.org/advisories/RUSTSEC-2024-0429.html):
 [gtk-rs/gtk-rs-core#1343](https://github.com/gtk-rs/gtk-rs-core/pull/1343).
 In `VariantStrIter::impl_get`, the C out-pointer is mutable and passed as
 `&mut p`, rather than writing through an immutable reference.
+
+In this copy, `src/lib.rs` also allows `unused_parens` and
+`mismatched_lifetime_syntaxes` inside GLib. Current compilers report these
+syntax warnings in the published bindings when built as a local dependency.
+Shunhen retains its own strict warning policy.
 
 Tauri's GTK 3 dependencies require GLib 0.18. Adding GLib 0.20 directly would
 not replace that dependency and its types are not interchangeable. The root
