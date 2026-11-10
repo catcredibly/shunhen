@@ -882,25 +882,14 @@ impl<T: TransparentPtrType> PtrSlice<T> {
     }
 
     // rustdoc-stripper-ignore-next
-    /// Shortens the slice by keeping the last `len` items.
+    /// Shortens the slice by keeping the first `len` items.
     ///
     /// If there are fewer than `len` items then this has no effect.
     #[inline]
     pub fn truncate(&mut self, len: usize) {
-        if self.len <= len {
-            return;
-        }
-
-        unsafe {
-            while self.len > len {
-                self.len -= 1;
-                let p = self.ptr.as_ptr().add(self.len);
-                ptr::drop_in_place::<T>(p as *mut T);
-                ptr::write(
-                    p,
-                    Ptr::from(ptr::null_mut::<<T as GlibPtrDefault>::GlibType>()),
-                );
-            }
+        while self.len > len {
+            // Restore the NULL terminator before running the element's destructor.
+            drop(self.pop());
         }
     }
 }

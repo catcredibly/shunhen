@@ -466,12 +466,12 @@ impl<'a> ToGlibPtr<'a, *mut gobject_ffi::GObject> for ObjectRef {
 impl FromGlibPtrNone<*mut gobject_ffi::GObject> for ObjectRef {
     #[inline]
     unsafe fn from_glib_none(ptr: *mut gobject_ffi::GObject) -> Self {
-        debug_assert!(!ptr.is_null());
-        debug_assert_ne!((*ptr).ref_count, 0);
+        let ptr = ptr::NonNull::new(ptr).expect("GObject pointer must be non-null");
 
         // Attention: This takes ownership of floating references!
         Self {
-            inner: ptr::NonNull::new_unchecked(gobject_ffi::g_object_ref_sink(ptr)),
+            inner: ptr::NonNull::new(gobject_ffi::g_object_ref_sink(ptr.as_ptr()))
+                .expect("g_object_ref_sink returned null"),
         }
     }
 }
@@ -489,12 +489,9 @@ impl FromGlibPtrNone<*const gobject_ffi::GObject> for ObjectRef {
 impl FromGlibPtrFull<*mut gobject_ffi::GObject> for ObjectRef {
     #[inline]
     unsafe fn from_glib_full(ptr: *mut gobject_ffi::GObject) -> Self {
-        debug_assert!(!ptr.is_null());
-        debug_assert_ne!((*ptr).ref_count, 0);
+        let ptr = ptr::NonNull::new(ptr).expect("GObject pointer must be non-null");
 
-        Self {
-            inner: ptr::NonNull::new_unchecked(ptr),
-        }
+        Self { inner: ptr }
     }
 }
 
@@ -502,12 +499,9 @@ impl FromGlibPtrFull<*mut gobject_ffi::GObject> for ObjectRef {
 impl FromGlibPtrBorrow<*mut gobject_ffi::GObject> for ObjectRef {
     #[inline]
     unsafe fn from_glib_borrow(ptr: *mut gobject_ffi::GObject) -> Borrowed<Self> {
-        debug_assert!(!ptr.is_null());
-        debug_assert_ne!((*ptr).ref_count, 0);
+        let ptr = ptr::NonNull::new(ptr).expect("GObject pointer must be non-null");
 
-        Borrowed::new(Self {
-            inner: ptr::NonNull::new_unchecked(ptr),
-        })
+        Borrowed::new(Self { inner: ptr })
     }
 }
 
