@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { sessionInvalidReason, validSessions } from "./sessionValidity";
+import { sessionInvalidReason } from "./sessionValidity";
 import type { AcademicYear } from "./types";
 
 const year: AcademicYear = {

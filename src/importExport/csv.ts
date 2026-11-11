@@ -8,7 +8,7 @@ import { requireSourceIdentity } from "../storage/identity";
 import { canonicalSession, classifySession, fallbackFingerprint, normalizedName, matchOne } from "./duplicates";
 import type { ConflictPolicy, CsvMapping, CsvPreview, CsvPreviewRow, ImportSummary } from "./types";
 
-export const FOCUS_CSV_HEADERS = [
+const FOCUS_CSV_HEADERS = [
   "Source Identity",
   "Session ID",
   "Academic Year",
@@ -88,7 +88,7 @@ export function parseCsv(text: string) {
   };
 }
 const normalize = normalizedName;
-export function detectMapping(headers: string[]): CsvMapping {
+function detectMapping(headers: string[]): CsvMapping {
   const find = (...names: string[]) => headers.find((header) => names.includes(normalize(header)));
   return {
     sessionId: find("session id", "id"),
@@ -107,7 +107,7 @@ export function detectMapping(headers: string[]): CsvMapping {
 }
 const combine = (date?: string, time?: string) =>
   date && time ? new Date(`${date.trim()}T${time.trim()}`).getTime() : NaN;
-export function sessionFingerprint(
+function sessionFingerprint(
   session: Pick<FocusSession, "startTime" | "endTime" | "focusedDurationSeconds"> & Partial<FocusSession>,
 ) {
   return fallbackFingerprint(

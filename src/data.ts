@@ -26,7 +26,7 @@ export function formatDuration(totalSeconds: number) {
   return formatDurationForLocale(totalSeconds);
 }
 
-export function formatDurationAxisForLocale(totalSeconds: number, locale = localeCode()) {
+function formatDurationAxisForLocale(totalSeconds: number, locale = localeCode()) {
   const total = Math.max(0, totalSeconds);
   const units =
     locale === "zh-CN"

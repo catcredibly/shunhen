@@ -57,7 +57,7 @@ export async function createBackup(database: FocusDatabase = db): Promise<FocusB
 
 export const validateBackup = parseBackup;
 
-export function sessionView(row: StoredSession, subject: Subject, year: AcademicYear): FocusSession {
+function sessionView(row: StoredSession, subject: Subject, year: AcademicYear): FocusSession {
   return {
     id: String(row.id),
     subjectId: subject.id,

@@ -85,7 +85,7 @@ export function UpdatePrompt({ ready = true }: { ready?: boolean }) {
 }
 
 /** Production and development preview share this complete presentation path. */
-export function UpdateDialog({
+function UpdateDialog({
   state,
   dismiss,
   install,

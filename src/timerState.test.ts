@@ -1,6 +1,5 @@
 import { createTestDatabase } from "./storage/testDatabase";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { FocusDatabase } from "./db";
 import { filterSessions } from "./analytics/analytics";
 import { createDevelopmentAnalyticsDataset } from "./analytics/developmentDataset";
 import {

@@ -35,7 +35,7 @@ export function resetPopoutTransientState() {
 
 // Serialize native + persistence transitions across webviews. Read fresh settings
 // inside the lock so stale React effects cannot undo an explicit Dock command.
-export function withPopoutGeometry<T>(operation: () => Promise<T>): Promise<T> {
+function withPopoutGeometry<T>(operation: () => Promise<T>): Promise<T> {
   return navigator.locks.request("focus.popout.geometry", operation);
 }
 async function persist(values: Partial<FocusSettings>) {

@@ -12,13 +12,12 @@ export type AnalyticsFilters = {
   end?: number;
 };
 export type TimePoint = { key: string; label: string; start: number; seconds: number; sessionCount: number };
-const DAY = 86_400_000;
 const pad = (n: number) => String(n).padStart(2, "0");
 export const localDayKey = (stamp: number) => {
   const d = new Date(stamp);
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 };
-export const localMonthKey = (stamp: number) => {
+const localMonthKey = (stamp: number) => {
   const d = new Date(stamp);
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}`;
 };
@@ -115,7 +114,7 @@ export function longestStreak(sessions: FocusSession[]) {
   }
   return longest;
 }
-export function percentile(values: number[], p: number) {
+function percentile(values: number[], p: number) {
   if (!values.length) return 0;
   const sorted = [...values].sort((a, b) => a - b);
   const index = (sorted.length - 1) * p,

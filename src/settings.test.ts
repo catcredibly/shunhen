@@ -1,6 +1,5 @@
 import { createTestDatabase } from "./storage/testDatabase";
 import { afterEach, describe, expect, it } from "vitest";
-import { FocusDatabase } from "./db";
 import { ACTIVE_TIMER_STORAGE_KEY } from "./timerState";
 import {
   resetAllSettings,

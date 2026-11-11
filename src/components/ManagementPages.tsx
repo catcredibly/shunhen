@@ -22,7 +22,6 @@ import {
   X,
   Archive,
   CalendarDays,
-  Check,
   Pencil,
   Plus,
   RotateCcw,

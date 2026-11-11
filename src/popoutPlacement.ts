@@ -5,8 +5,8 @@ export type Size = { width: number; height: number };
 export type WorkArea = Point & Size;
 
 export const POPOUT_SIZE: Size = { width: 360, height: 170 };
-export const DOCK_MARGIN = 12;
-export const SNAP_THRESHOLD = 52;
+const DOCK_MARGIN = 12;
+const SNAP_THRESHOLD = 52;
 
 const clamp = (value: number, minimum: number, maximum: number) =>
   Math.min(Math.max(value, minimum), Math.max(minimum, maximum));

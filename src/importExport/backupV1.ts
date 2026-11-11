@@ -4,15 +4,15 @@ import { isSourceIdentity } from "../storage/identity";
 import { normalizeNote } from "../notes";
 import { convertLegacyFileTiming } from "./legacyTiming";
 
-export type BackupV1Session = Omit<FocusSession, "manual"> & { manual?: boolean; legacyContinuous?: true };
-export type BackupV1Data = {
+type BackupV1Session = Omit<FocusSession, "manual"> & { manual?: boolean; legacyContinuous?: true };
+type BackupV1Data = {
   academicYears: AcademicYear[];
   subjects: (Subject & { archivedBeforeParent?: boolean })[];
   sessions: BackupV1Session[];
   settings: AppSetting[];
 };
 
-export function convertBackupV1(data: BackupV1Data) {
+function convertBackupV1(data: BackupV1Data) {
   const yearMap = new Map<string, number>(),
     subjectMap = new Map<string, number>();
   const mapIds = (rows: { id: string }[], map: Map<string, number>) =>

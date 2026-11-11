@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import type { FocusSettings } from "../settings";
 
-export function Skeleton({ className = "" }: { className?: string }) {
+function Skeleton({ className = "" }: { className?: string }) {
   return <span className={`loading-skeleton ${className}`} aria-hidden="true" />;
 }
 

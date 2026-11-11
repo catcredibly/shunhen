@@ -43,8 +43,6 @@ Desktop.ini
 *.lnk
 .DS_Store
 
-# Local instructions
-/AGENTS.md
 
 # IDE-local state
 .idea/
@@ -69,7 +67,6 @@ focus-sessions*.csv
 tmp/
 .npm-cache/
 
-AGENTS.md
 docs/RELEASE_NOTES.md
 
 # Shihen exports (legacy Focus patterns remain above).

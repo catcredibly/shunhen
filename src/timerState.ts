@@ -87,7 +87,6 @@ export function startTimerState(
   year: AcademicYear,
   now = Date.now(),
   sessionId: string = crypto.randomUUID(),
-  mode: "timer" | "stopwatch" = "timer",
 ): TimerState {
   if (
     !Number.isFinite(seconds) ||
@@ -137,7 +136,7 @@ export function startStopwatchState(
 ): TimerState {
   if (subject.archived || year.archived || subject.academicYearId !== year.id) return state;
   return {
-    ...startTimerState(state, state.plannedDurationSeconds, subject, year, now, sessionId, "stopwatch"),
+    ...startTimerState(state, state.plannedDurationSeconds, subject, year, now, sessionId),
     mode: "stopwatch",
     remainingSeconds: 0,
     targetEnd: null,

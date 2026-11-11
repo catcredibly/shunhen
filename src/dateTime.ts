@@ -1,7 +1,5 @@
 import type { ClockFormat, DateFormat, Locale, WeekdayStyle } from "./settings";
 
-export const intlLocale = (locale: Locale) => locale;
-
 /** Presentation-only: keep the saved format intact across locale changes/backups. */
 export function effectiveTimerDateFormat(locale: Locale, saved: DateFormat): DateFormat {
   return saved === "standard" && ["zh-CN", "zh-TW", "ja"].includes(locale) ? "full" : saved;
@@ -29,11 +27,11 @@ export function formatTimerDate(
           ? { month: "short", day: "numeric" }
           : { year: "numeric", month: "2-digit", day: "2-digit" };
   if (showWeekday) options.weekday = weekdayStyle === "full" ? "long" : "short";
-  return new Intl.DateTimeFormat(intlLocale(locale), options).format(date);
+  return new Intl.DateTimeFormat(locale, options).format(date);
 }
 
 export function formatTimerClock(date: Date, locale: Locale, format: ClockFormat) {
-  return new Intl.DateTimeFormat(intlLocale(locale), {
+  return new Intl.DateTimeFormat(locale, {
     hour: "numeric",
     minute: "2-digit",
     ...(format === "system" ? {} : { hour12: format === "12-hour" }),

@@ -17,14 +17,6 @@ not replace that dependency and its types are not interchangeable. The root
 The version remains truthful; a scanner that matches only the version may
 still flag it. Do not globally suppress the advisory or claim it was upgraded.
 
-The Linux build workflow runs `tests/glib_variant_iter.rs`, covering the affected iterator methods,
-in release mode, where the original undefined behaviour was reproduced.
-From the repository root on a Linux machine with the build prerequisites:
-
-```sh
-cargo test --locked --release --manifest-path src-tauri/Cargo.toml --test glib_variant_iter
-```
-
 Remove this directory and the Cargo patch when the GTK/Tauri stack can resolve
 a supported fixed GLib release (0.20 or newer), then regenerate Cargo.lock.
 Do not edit generated bindings or reformat the vendored package.

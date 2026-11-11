@@ -14,7 +14,7 @@ const soundProfiles: Record<CompletionSound, { frequencies: number[]; type: Osci
   bright: { frequencies: [880, 1175], type: "triangle", duration: 0.42 },
 };
 
-export function playCompletionSound(choice: CompletionSound, volume: number) {
+function playCompletionSound(choice: CompletionSound, volume: number) {
   const context = new AudioContext();
   const profile = soundProfiles[choice];
   profile.frequencies.forEach((frequency, index) => {
@@ -33,7 +33,7 @@ export function playCompletionSound(choice: CompletionSound, volume: number) {
   window.setTimeout(() => void context.close(), (profile.duration + 0.3) * 1000);
 }
 
-export async function sendFocusNotification(title: string, body: string) {
+async function sendFocusNotification(title: string, body: string) {
   if (!isTauri()) throw new Error("Notifications are available in the Shunhen desktop app.");
   let granted = await isPermissionGranted();
   if (!granted) granted = (await requestPermission()) === "granted";

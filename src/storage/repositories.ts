@@ -12,7 +12,7 @@ import { COLOR_PALETTE, colorId, normalizeTiming, validateTiming, type StoredSes
 import { readSessionViews, yearView } from "./queries";
 
 /** UI selectors serialize row IDs to strings. All SQL IDs and foreign keys are integers. */
-export function rowId(value: string | number): number {
+function rowId(value: string | number): number {
   const id = Number(value);
   if (!Number.isSafeInteger(id) || id <= 0) throw new Error("Invalid SQLite row ID.");
   return id;

@@ -1,6 +1,5 @@
 import { createTestDatabase } from "./storage/testDatabase";
 import { afterEach, expect, it, vi } from "vitest";
-import { FocusDatabase } from "./db";
 import {
   readTimerRecovery,
   persistTimerRecovery,

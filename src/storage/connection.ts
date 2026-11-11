@@ -9,7 +9,7 @@ export type Request = (
   sql?: string,
   parameters?: SqlValue[],
 ) => Promise<unknown>;
-export const nativeRequest: Request = (action, token, sql, parameters) =>
+const nativeRequest: Request = (action, token, sql, parameters) =>
   invoke("storage_request", { action, token: token ?? null, sql: sql ?? null, parameters: parameters ?? [] });
 const subscribers = new Set<() => void>();
 export function changed() {

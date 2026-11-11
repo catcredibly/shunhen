@@ -1,14 +1,13 @@
 import type { NormalizedData, StoredSession, StoredSubject, StoredYear } from "../storage/model";
 import type { NormalizedBackup } from "./types";
-export { requireSourceIdentity } from "../storage/identity";
 
 export const normalizedName = (name: string) => name.normalize("NFC").trim().toLowerCase();
-export const academicYearIdentity = (year: Pick<StoredYear, "name">) => normalizedName(year.name);
-export const subjectIdentity = (subject: Pick<StoredSubject, "name">, year: string | number) =>
+const academicYearIdentity = (year: Pick<StoredYear, "name">) => normalizedName(year.name);
+const subjectIdentity = (subject: Pick<StoredSubject, "name">, year: string | number) =>
   JSON.stringify([String(year), normalizedName(subject.name)]);
-export const yearDetails = (year: Omit<StoredYear, "id" | "name">) =>
+const yearDetails = (year: Omit<StoredYear, "id" | "name">) =>
   JSON.stringify([year.startDate ?? null, year.endDate ?? null, year.archived]);
-export const subjectDetails = (subject: Pick<StoredSubject, "colorId" | "archived">) =>
+const subjectDetails = (subject: Pick<StoredSubject, "colorId" | "archived">) =>
   JSON.stringify([subject.colorId, subject.archived]);
 export type SessionContents = Pick<StoredSession, "startedAt" | "elapsedSeconds" | "pauses" | "manual" | "note">;
 export const canonicalSession = (row: SessionContents, destination: string | number) =>

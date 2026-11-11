@@ -370,7 +370,6 @@ function GoalSummary({
 }
 
 function Overview({
-  sessions,
   history,
   period,
   range,
@@ -758,7 +757,6 @@ function YearsAnalytics({
 }
 
 function TimeTrends({
-  sessions,
   history,
   period,
   range,

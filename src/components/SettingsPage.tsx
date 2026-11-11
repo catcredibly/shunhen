@@ -1222,7 +1222,6 @@ function Data({ settings, setSetting, onNavigate }: SettingsProps & { onNavigate
 
 function About() {
   const { t } = useTranslation();
-  const { settings } = useSettings();
   const [version, setVersion] = useState(packageMetadata.version);
   useEffect(() => {
     if (isTauri())
