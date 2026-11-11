@@ -5,11 +5,16 @@ The original package checksum in Cargo.lock was
 `233daaf6e83ae6a12a52055f568f9d7cf4671dabb78ff9560ab6da230ce00ee5`.
 The original `.cargo_vcs_info.json` records its upstream revision.
 
-The only Rust source changes are the two-line upstream fix for
+The runtime change is the two-line upstream fix for
 [RUSTSEC-2024-0429 / GHSA-wrw7-89jp-8q8g](https://rustsec.org/advisories/RUSTSEC-2024-0429.html):
 [gtk-rs/gtk-rs-core#1343](https://github.com/gtk-rs/gtk-rs-core/pull/1343).
 In `VariantStrIter::impl_get`, the C out-pointer is mutable and passed as
 `&mut p`, rather than writing through an immutable reference.
+
+The crate also allows the syntax lints `unused_parens` and
+`mismatched_lifetime_syntaxes` within this vendored package. Newer Rust
+compilers report these in the published 0.18 bindings. The scoped exceptions
+let the Linux workflow retain `-D warnings` for application code.
 
 Tauri's GTK 3 dependencies require GLib 0.18. Adding GLib 0.20 directly would
 not replace that dependency and its types are not interchangeable. The root

@@ -1,6 +1,8 @@
 // Take a look at the license at the top of the repository in the LICENSE file.
 
 #![cfg_attr(docsrs, feature(doc_cfg))]
+// Published GLib 0.18 bindings predate these syntax lints.
+#![allow(unused_parens, mismatched_lifetime_syntaxes)]
 #![allow(clippy::missing_safety_doc)]
 #![allow(renamed_and_removed_lints)]
 #![doc = include_str!("../README.md")]
